@@ -14,7 +14,7 @@ class RawTransformer:
         bound = len(normal.columns)
         for i in range(0, bound, 6):
             stock = normal.ix[:, i:i + 6].copy()
-            stock["id"] = stock.columns[0]
+            stock["id"] = NameCoder.idShorten(stock.columns[0])
             stock.columns = ["open", "high", "low", "close", "vol", "tun", "id"]
             stock = stock.set_index(["id"], append=True)
             if ans is None:
@@ -33,7 +33,7 @@ class RawTransformer:
         ans = None
         for i in range(0, bound, 7):
             stock = ex.ix[:, i:i + 5].copy()
-            stock["id"] = stock.columns[0]
+            stock["id"] = NameCoder.idShorten(stock.columns[0])
             stock.columns = ["swing", "ma", "shares", "pe_ttm", "pb_lf", "id"]
             stock = stock.set_index(["id"], append=True)
             if ans is None:
@@ -54,15 +54,20 @@ class RawTransformer:
         normal = pd.read_pickle(normal_file)
         ex = pd.read_pickle(ex_file)
         return normal.add(ex, fill_value=0)
+    
+    @staticmethod
+    def parseSh14():
+        rt = RawTransformer()
+        print time.ctime()
+        s = rt.parseNormal("../data/sh14_normal.pkl")
+        s.to_pickle("../data/sh14_normal_multindex.pkl")
+        print time.ctime()
+        s = rt.parseEx("../data/sh14_ex.pkl")
+        s.to_pickle("../data/sh14_ex_multindex.pkl")
+        print time.ctime()
+        m = rt.merge("../data/sh14_normal_multindex.pkl", "../data/sh14_ex_multindex.pkl")
+        m.to_pickle("../data/sh14.pkl")
+        print time.ctime()
 
 if __name__ == '__main__':
-    rt = RawTransformer()
-    print time.ctime()
-    # s = rt.parseNormal("../data/sh14_normal.pkl")
-    # s.to_pickle("../data/sh14_normal_multindex.pkl")
-    # print time.ctime()
-    # s = rt.parseEx("../data/sh14_ex.pkl")
-    # s.to_pickle("../data/sh14_ex_multindex.pkl")
-    m = rt.merge("../data/sh14_normal_multindex.pkl", "../data/sh14_ex_multindex.pkl")
-    m.to_pickle("../data/sh14.pkl")
-    print time.ctime()
+    RawTransformer.parseSh14()
