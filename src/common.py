@@ -7,3 +7,5 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from name_coder import *
+import os
+import sys

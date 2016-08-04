@@ -27,7 +27,9 @@ class RawTransformer:
     def parseEx(ex_file):
         """ex raw to multiindex df"""
         ex = pd.read_pickle(ex_file)
+        ex = ex.set_index("date")
         bound = len(ex.columns)
+        bound += 2
         print "trim", bound % 7
         bound = bound / 7 * 7
         ans = None
@@ -56,18 +58,29 @@ class RawTransformer:
         return normal.add(ex, fill_value=0)
     
     @staticmethod
-    def parseSh14():
+    def process(filebase):
+        os.chdir("../data")
+        
         rt = RawTransformer()
         print time.ctime()
-        s = rt.parseNormal("../data/sh14_normal.pkl")
-        s.to_pickle("../data/sh14_normal_multindex.pkl")
+        pkl = filebase + "_normal.pkl"
+        s = rt.parseNormal(pkl)
+        normal_multindex = filebase + "_normal_multindex.pkl"
+        s.to_pickle(normal_multindex)
+
         print time.ctime()
-        s = rt.parseEx("../data/sh14_ex.pkl")
-        s.to_pickle("../data/sh14_ex_multindex.pkl")
+        pkl = filebase + "_ex.pkl"
+        s = rt.parseEx(pkl)
+        ex_multindex = filebase + "_ex_multindex.pkl"
+        s.to_pickle(ex_multindex)
+        
         print time.ctime()
-        m = rt.merge("../data/sh14_normal_multindex.pkl", "../data/sh14_ex_multindex.pkl")
-        m.to_pickle("../data/sh14.pkl")
+        m = rt.merge(normal_multindex, ex_multindex)
+        ans = filebase + ".pkl"
+        m.to_pickle(ans)
         print time.ctime()
+        
+        os.chdir("../src")
 
 if __name__ == '__main__':
-    RawTransformer.parseSh14()
+    RawTransformer.process("sh15")
