@@ -63,22 +63,32 @@ class Stats:
                                                          % (s['trade'].sum(), corr, cov),
                                              ax=axes[ax])
 
+def normal(df, vol):
+    df[vol] = (df[vol] - df[vol].mean()) / df[vol].std()
+
 if __name__ == '__main__':
     os.chdir("../data")
-    st = Stats("sh.pkl")
-    # st.allPrice()
+    # st = Stats("sh.pkl")
     
-    fig, axes = plt.subplots(nrows=2, ncols=3)
-    for c, s in enumerate(st.nameCoder.name(4, 10)):
-        # st.oneStock(s, c)
-        st.oneTarget(s, c)
+    sh = pd.read_pickle("sh.pkl")
+    s4 = sh.xs('sh4', level="id")
+    s4 = s4[-30:]
+    normal(s4, 'close')
+    normal(s4, 'vol')
+    s4[['close', 'vol']].plot()
     plt.show()
-    exit(1)
-    price = pd.read_pickle("sh_price.pkl")
-    price['all'] = (price['all'] - price['all'].mean()) / price['all'].std()
-    price['trade'] = (price['trade'] - price['trade'].mean()) / price['trade'].std()
     
-    corr = price['all'].corr(price['trade'])
-    cov = price['all'].cov(price['trade'])
-    price.plot(title="corr-%.2f, cov-%.2f" % (corr, cov))
-    plt.show()
+    # fig, axes = plt.subplots(nrows=2, ncols=3)
+    # for c, s in enumerate(st.nameCoder.name(4, 10)):
+    #     # st.oneStock(s, c)
+    #     st.oneTarget(s, c)
+    # plt.show()
+    # exit(1)
+    # price = pd.read_pickle("sh_price.pkl")
+    # price['all'] = (price['all'] - price['all'].mean()) / price['all'].std()
+    # price['trade'] = (price['trade'] - price['trade'].mean()) / price['trade'].std()
+    #
+    # corr = price['all'].corr(price['trade'])
+    # cov = price['all'].cov(price['trade'])
+    # price.plot(title="corr-%.2f, cov-%.2f" % (corr, cov))
+    # plt.show()
