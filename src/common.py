@@ -9,3 +9,6 @@ import time
 from name_coder import *
 import os
 import sys
+import math
+import scipy
+import scipy.stats
