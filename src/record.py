@@ -12,7 +12,6 @@ class Record:
         self.df = df
         
         self.get_daily_cap()
-        
         self.ans = []
         keys = set(df.index.get_level_values('id'))
         for c, key in enumerate(keys):
@@ -32,15 +31,15 @@ class Record:
     @staticmethod
     def parse_target(ary):
         p = (ary[1:] / ary[:-1] - 1) * 100 + 10
-        p = np.concatenate([[0], p])
+        p = np.concatenate([p, [0]])
         p[p < 0] = 0
         p = np.floor(p / 4)
         p = p.astype(int)
-        p[p == 5] = 4
+        p[p >= 5] = 4
         return p
     
     def dump(self):
-        fout = open("test.dump", "w")
+        fout = open("test.dump." + str(self.step), "w")
         for r in self.ans:
             r = [str(_) for _ in r]
             fout.write(",".join(r) + "\n")
@@ -58,16 +57,23 @@ class Record:
         st = st.dropna()
         st['capital'] = st['close'] * st['vol']
         st['target'] = self.parse_target(st['close'].get_values())
-        del st['close'], st['vol']
-        step = 10
-        for i in range(0, len(st) - step):
-            swing = np.array([st.iloc[i + _, 0] for _ in range(step)])
+        # del st['close'], st['vol']
+        
+        step = 50
+        self.step = step
+        for i in range(0, len(st) - step - 1):
+            swing = np.array([st['swing'][i + _] for _ in range(step)])
             swing_ex = self.get_stats(swing)
-            cap = np.array([st.iloc[i + _, 1] for _ in range(step)])
+            cap = np.array([st['capital'][i + _] for _ in range(step)])
             cap_ex = self.get_stats(cap)
-            cap2 = np.array([st.iloc[i + _, 1] / self.cap[st.index[i + _]] for _ in range(step)])
+            cap2 = np.array([st['capital'][i + _] / self.cap[st.index[i + _]] for _ in range(step)])
             cap2_ex = self.get_stats(cap2)
-            self.ans += [np.concatenate([swing_ex, cap_ex, cap2_ex, [st.iloc[i + step - 1, 2]]])]
+            vol = np.array([st['vol'][i + _] for _ in range(step)])
+            vol_ex = self.get_stats(vol)
+            clo = np.array([st['close'][i + _] for _ in range(step)])
+            clo_ex = self.get_stats(clo)
+            self.ans += [np.concatenate([swing_ex, cap_ex, cap2_ex, vol_ex, clo_ex,
+                                         [st['target'][i + step - 1]]])]
 
 if __name__ == '__main__':
     os.chdir("../data")

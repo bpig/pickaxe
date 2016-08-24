@@ -8,7 +8,7 @@ import os
 if __name__ == '__main__':
     tmpl = "http://sk5.proxy.taobao.org/part-%05d.bz2"
     os.chdir("../data/mfcc")
-    for i in range(400, 500):
+    for i in range(500, 600):
         print time.ctime(), i
         ret = wget.download(tmpl % i)
         print time.ctime()
