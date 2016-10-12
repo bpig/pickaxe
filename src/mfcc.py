@@ -5,10 +5,26 @@ import wget
 import time
 import os
 
-if __name__ == '__main__':
-    tmpl = "http://sk5.proxy.taobao.org/part-%05d.bz2"
-    os.chdir("../data/mfcc")
-    for i in range(500, 600):
+def download():
+    tmpl = "http://60.191.48.94:8000/download/%s_2016-10-%02d.csv"
+    for i in range(11, 12):
         print time.ctime(), i
-        ret = wget.download(tmpl % i)
+        url = tmpl % ("derivativeindicator", i)
+        wget.download(url)
+        url = tmpl % ("price", i)
+        wget.download(url)
         print time.ctime()
+
+def wc():
+    files = os.listdir(".")
+    for f in files:
+        if not os.path.isfile(f):
+            continue
+        lf = len(open(f).readlines())
+        if lf <= 7:
+            os.remove(f)
+
+if __name__ == '__main__':
+    os.chdir("../data/mfcc")
+    for l in open("price_2016-08-22.csv").readlines()[:3]:
+        print l
