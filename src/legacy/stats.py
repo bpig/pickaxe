@@ -2,7 +2,7 @@
 # __author__ = "shuai.li(286287737@qq.com)"
 # __date__ = "2016/8/3"
 
-from common import *
+from src.common import *
 
 class Stats:
     def __init__(self, pkl):

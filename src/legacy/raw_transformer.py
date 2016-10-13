@@ -2,7 +2,7 @@
 # __author__ = "shuai.li(286287737@qq.com)"
 # __date__ = "2016/8/2"
 
-from common import *
+from src.common import *
 
 class RawTransformer:
     @staticmethod

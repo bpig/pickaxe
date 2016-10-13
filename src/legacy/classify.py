@@ -4,7 +4,7 @@
 
 # min 1.84e9 sh3909
 # max 1.5e12 sh1398
-from common import *
+from src.common import *
 
 class Classify:
     def __init__(self):
