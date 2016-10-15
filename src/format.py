@@ -8,15 +8,15 @@ def getline(filename):
         yield l
 
 def getKv(filename):
-    # code,dt,rate,volumn,amount,pe,s,high,low,e,turnover,high52,low52w,shares
     kv = defaultdict(list)
     for l in getline(filename):
         pos = l.find(",")
         key = l[:pos]
         value = l[pos + 1:].split(",")
-        if value[9] == 'NULL' or float(value[9]) == 0.0:
-            continue
+#        if value[9] == 'NULL' or float(value[9]) == 0.0:
+#            continue
         kv[key].append(value)
+    # code,dt,rate,volumn,amount,pe,s,high,low,e,turnover,shares,status,in,out,target
     return kv
 
 def dump(kv, filename):
@@ -32,6 +32,8 @@ def process(fin, fout):
     dump(kv, fout)
 
 if __name__ == "__main__":
-    fin = sys.argv[1]
-    fout = sys.argv[2]
+    #fin = sys.argv[1]
+    #fout = sys.argv[2]
+    fin = "../data/small.csv"
+    fout = "../data/small.ft"
     process(fin, fout)
