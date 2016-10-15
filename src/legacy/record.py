@@ -6,9 +6,8 @@ from src.common import *
 
 class Record:
     def __init__(self):
-        df = pd.read_pickle("1.pkl")
-        del df['tun'], df['pb_lf'], df['pe_ttm'], df['shares'], df['ma']
-        del df['open'], df['low'], df['high']
+        df = pd.read_pickle("sh.pkl")
+        del df['tun'], df['open'], df['low'], df['high']
         self.df = df
         
         self.get_daily_cap()
@@ -61,7 +60,12 @@ class Record:
         
         step = 50
         self.step = step
+        
         for i in range(0, len(st) - step - 1):
+            ma = np.array([st['ma'][i + _] for _ in range(step)])
+            ma_ex = self.get_stats(ma)
+            pb_lf = np.array([st['pb_lf'][i + _] for _ in range(step)])
+            pe_ttm = np.array([st['pe_ttm'][i + _] for _ in range(step)])
             swing = np.array([st['swing'][i + _] for _ in range(step)])
             swing_ex = self.get_stats(swing)
             cap = np.array([st['capital'][i + _] for _ in range(step)])
@@ -72,7 +76,7 @@ class Record:
             vol_ex = self.get_stats(vol)
             clo = np.array([st['close'][i + _] for _ in range(step)])
             clo_ex = self.get_stats(clo)
-            self.ans += [np.concatenate([swing_ex, cap_ex, cap2_ex, vol_ex, clo_ex,
+            self.ans += [np.concatenate([ma_ex, pb_lf, pe_ttm, swing_ex, cap_ex, cap2_ex, vol_ex, clo_ex,
                                          [st['target'][i + step - 1]]])]
 
 if __name__ == '__main__':
