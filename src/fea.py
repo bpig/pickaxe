@@ -23,6 +23,7 @@ from common import *
 #  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,12, 13,    14
 
 def getSt(fin):
+    dates = set()
     kv = {}
     for l in open(fin):
         l = l.strip()
@@ -32,20 +33,19 @@ def getSt(fin):
         key = l[:pos]
         items = l[pos + 1:].split(",")
         items = map(lambda x: x.split("_"), items)
+        dates.update(items[0])
         for i in range(1, len(items)):
             items[i] = map(float, items[i])
         # items = map(np.array, items)
         kv[key] = items
-    return kv
+    return kv, dates
 
 def dump(st, filename, ds):
-    try:
-        index = st.values()[0][0].index(ds)
-    except:
-        return
     fout = open(filename + "_" + ds, "w")
     for items in st.items():
-        dumpOne(items, fout, index)
+        if ds not in items[1][0]:
+            continue
+        dumpOne(items, fout, ds)
 
 def daySpan(d1, d2):
     v1 = datetime.datetime(int(d1[:4]), int(d1[4:6]), int(d1[6:]))
@@ -65,14 +65,18 @@ def oneHotStatus(status):
     arr[int(status)] = 1
     return arr
 
-def dumpOne(kv, fout, index):
-    if index <= 1:
-        return
+def dumpOne(kv, fout, ds):
     feas = []
     key, values = kv
+
+    index = values[0].index(ds)
+    if index <= 1:
+        return
+
     # stock is stoped
     if values[11][index - 1] == 1 or values[11][index - 2] == 1:
         return
+        
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
     #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
     windows = [2, 3]  # , 5, 7, 15, 30, 60]
@@ -84,7 +88,7 @@ def dumpOne(kv, fout, index):
         feas += [values[i][0] / values[4][0]]
     feas += oneHotStatus(values[11][0])
     tgt = values[12][0]
-    assert tgt > 0
+    assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea
     for window in windows:
         fea = []
@@ -97,7 +101,7 @@ def dumpOne(kv, fout, index):
         for i in range(1, 11):
             if i == 4:
                 continue
-            elif i == 5 or i == 8:
+            elif i in range(5, 9):
                 items[i] = np.array(items[i]) / np.array(items[4])
             else:
                 items[i] = np.array(items[i])
@@ -105,13 +109,14 @@ def dumpOne(kv, fout, index):
         fea += [ct[0], ct[1], ct[2], ct[3], span, gain]
         feas += fea
     feas += [tgt]
-    ds = values[0][0]
     values = map(str, feas)
     fout.write(key + "_" + ds + ":" + ",".join(values) + "\n")
 
 def process(fin, fout, ds):
     np.seterr(all='raise')
-    st = getSt(fin)
+    st, dates = getSt(fin)
+    if ds not in dates:
+        return
     dump(st, fout, ds)
 
 if __name__ == "__main__":

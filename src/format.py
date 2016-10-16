@@ -52,8 +52,8 @@ def extend(v):
     status = map(getStatus, zip(v[1], v[9]))
     buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
     sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
-    buy = buy[1:] + [-1.0]
-    sell = sell[2:] + [-1.0, -1.0]
+    buy = [-1.0] + buy[:-1]
+    sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
     v += [status, tgt]
     for i in range(-4, 0):
@@ -61,10 +61,21 @@ def extend(v):
 
 def dump(kv, filename):
     fout = open(filename, "w")
+    fdebug = open(filename + ".debug", "w")
+
     for k, v in kv.items():
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
         extend(v)
+
+        # for debug
+        d = zip(*v)
+        for l in d:
+            key = k + "_" + l[0]
+            value = ",".join(l[1:])
+            fdebug.write(key + "," + value + "\n")
+
+        # normal output
         v = map(lambda x: "_".join(x), v)
         fout.write(k + "," + ",".join(v) + "\n")
 
