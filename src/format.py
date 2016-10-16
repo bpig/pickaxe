@@ -25,9 +25,9 @@ def getKv(filename):
 
 def getStatus((rate, turnover)):
     rate = float(rate)
-    if rate >= 0.99:
+    if rate >= 9.9:
         return 2
-    if rate <= -0.99:
+    if rate <= -9.9:
         return 3
     if turnover == "NULL":
         return 1
@@ -36,27 +36,24 @@ def getStatus((rate, turnover)):
         return 1
     return 0
 
-def refineSell(sell, status):
-    idx = len(sell) - 1
-    while sell[idx] != -1.0 and idx >= 0:
-        idx -= 1
-    for i in range(idx, 0, -1):
-        if sell[i - 1] == -1.0:
-            sell[i - 1] = sell[i]
-    sell = map(lambda (x, y): y if x != 1 else -1.0, zip(status, sell))
-    return sell
+# def refineSell(sell, status):
+#     idx = len(sell) - 1
+#     while sell[idx] != -1.0 and idx >= 0:
+#         idx -= 1
+#     for i in range(idx, 0, -1):
+#         if sell[i - 1] == -1.0:
+#             sell[i - 1] = sell[i]
+#     sell = map(lambda (x, y): y if x != 1 else -1.0, zip(status, sell))
+#     return sell
 
 def extend(v):
     status = map(getStatus, zip(v[1], v[9]))
-    v += [status]
-    buy = map(lambda (x, y): y if x != 1 and x != 2 else -1.0, zip(v[-1], v[5]))
-    sell = map(lambda (x, y): y if x != 1 and x != 3 else -1.0, zip(v[-1], v[8]))
-    sell = refineSell(sell, status)
+    buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
+    sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
     buy = buy[1:] + [-1.0]
     sell = sell[2:] + [-1.0, -1.0]
-    v += [buy, sell]
-    tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(v[-2], v[-1]))
-    v += [tgt]
+    tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
+    v += [status, buy, sell, tgt]
     for i in range(-4, 0):
         v[i] = map(str, v[i])
 
@@ -66,7 +63,7 @@ def dump(kv, filename):
         v = sorted(v, key=lambda x: x[0])
         v = zip(*v)
         extend(v)
-        v = map(lambda x: "~".join(x), v)
+        v = map(lambda x: "_".join(x), v)
         fout.write(k + "," + ",".join(v) + "\n")
 
 def process(fin, fout):
