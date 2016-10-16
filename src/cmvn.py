@@ -14,7 +14,7 @@ def loadData(filename):
             continue
         pos = l.find(":")
         key = l[:pos]
-        value = l[pos + 1].split(",")
+        value = l[pos + 1:].split(",")
         tgt = value[-1]
         value = np.asarray(value[:-1]).astype(np.float32)
         datas.append(Fea(key, value, tgt))
@@ -27,7 +27,10 @@ def globalCal(data):
     ct = len(data)
     mu = x / ct
     delta = xx / ct - mu * mu
+    delta = np.maximum(delta, 0)
+    
     delta **= .5
+    delta += 1
     return mu, delta
 
 def process(fin, foutName):
