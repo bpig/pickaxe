@@ -29,7 +29,7 @@ def globalScale(values):
     return values
 
 def sigmoid(values):
-    return 1/(1 + np.exp(-values))
+    return 1 / (1 + np.exp(-values))
 
 def process(fin, foutName):
     data = loadData(fin)
@@ -44,5 +44,3 @@ def process(fin, foutName):
 if __name__ == '__main__':
     fin = sys.argv[1]
     process(fin, fin + ".sigmoid")
-
-
