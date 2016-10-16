@@ -8,11 +8,11 @@ import tensorflow as tf
 DataSet = namedtuple("DataSet", ["fea", "tgt"])
 
 def tgtClassify(num):
-    return 0 if num <= 1.002 else 1
+    return 0 if float(num) <= 1.102 else 1
 
 def transform(feas):
     n_samples = len(feas)
-    n_features = len(feas.value[0])
+    n_features = len(feas[0].value)
     data = np.zeros((n_samples, n_features), dtype=np.float32)
     target = np.zeros((n_samples,), dtype=np.int)
     
@@ -27,6 +27,9 @@ def getData(fin):
     point = int(len(feas) * 0.9)
     trainSet = transform(feas[:point])
     testSet = transform(feas[point:])
+    print sum(trainSet.tgt), len(trainSet.tgt)
+    print sum(testSet.tgt), len(testSet.tgt)
+    print trainSet.tgt.shape, trainSet.fea.shape
     return trainSet, testSet
 
 if __name__ == '__main__':
@@ -39,11 +42,16 @@ if __name__ == '__main__':
     
     # Build 3 layer DNN with 10, 20, 10 units respectively.
     classifier = tf.contrib.learn.DNNClassifier(
-        feature_columns=feature_columns, hidden_units=[30], n_classes=2)
-    
+        feature_columns=feature_columns, hidden_units=[30], n_classes=3)
+
+    n_samples = 50
+    data = np.zeros((n_samples, n_features), dtype=np.float32)
+    target = np.zeros((n_samples,), dtype=np.int)
+    classifier.fit(x=data, y=target, steps=2000)
+
     # Fit model.
-    classifier.fit(x=trainSet.data, y=trainSet.target, steps=2000)
+    #classifier.fit(x=trainSet.fea, y=trainSet.tgt, steps=2000)
     
     # Evaluate accuracy.
-    accuracy_score = classifier.evaluate(x=testSet.data, y=testSet.target)["accuracy"]
-    print('Accuracy: {0:f}'.format(accuracy_score))
+    # accuracy_score = classifier.evaluate(x=testSet.fea, y=testSet.tgt)["accuracy"]
+    # print('Accuracy: {0:f}'.format(accuracy_score))
