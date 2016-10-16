@@ -34,7 +34,7 @@ def sigmoid(values):
 def process(fin, foutName):
     data = loadData(fin)
     value = [fea.value for fea in data]
-    value = globalCal(value)
+    value = globalScale(value)
     value = sigmoid(value)
     
     fout = open(foutName, "w")
