@@ -1,4 +1,4 @@
-from copy import copy
+#!/bin/env python
 
 from common import *
 
@@ -15,8 +15,10 @@ def getKv(filename):
         pos = l.find(",")
         key = l[:pos]
         value = l[pos + 1:].split(",")
-        #        if value[9] == 'NULL' or float(value[9]) == 0.0:
-        #            continue
+        if value[9] == 'NULL':
+            value[9] = "0.0"
+        # if value[0] < "20151220":
+        #     continue
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10
@@ -63,7 +65,7 @@ def dump(kv, filename):
         v = sorted(v, key=lambda x: x[0])
         v = zip(*v)
         extend(v)
-        v = map(lambda x: "_".join(x), v)
+        v = map(lambda x: "_".join(x), v)
         fout.write(k + "," + ",".join(v) + "\n")
 
 def process(fin, fout):
@@ -71,8 +73,8 @@ def process(fin, fout):
     dump(kv, fout)
 
 if __name__ == "__main__":
-    # fin = sys.argv[1]
-    # fout = sys.argv[2]
-    fin = "../data/small.csv"
-    fout = "../data/small.ft"
+    fin = sys.argv[1]
+    fout = sys.argv[2]
+    # fin = "../data/small.csv"
+    # fout = "../data/small.ft"
     process(fin, fout)
