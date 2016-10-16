@@ -68,7 +68,7 @@ def dumpOne(kv, fout, ds):
     windows = [2, 3]  # , 5, 7, 15, 30, 60]
     
     values = zip(*values)
-    feas[1] = [values[index][1:12]] + [values[index][8] / values[index][5]]
+    feas[1] = list(values[index][1:12]) + [values[index][8] / values[index][5]]
     
     for window in windows:
         fea = []
@@ -94,7 +94,7 @@ def dumpOne(kv, fout, ds):
     values = [feas[_] for _ in sorted(feas.keys())]
     values = [item for sub in values for item in sub]
     values = map(str, values)
-    fout.write(key + ":" + ",".join(values) + "," + "\n")
+    fout.write(key + ":" + ",".join(values) + "\n")
 
 if __name__ == "__main__":
     # dt,rate,volumn,amount,pe,s,high,low,e,turnover,high52,low52w,shares,target
