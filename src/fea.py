@@ -54,10 +54,10 @@ def daySpan(d1, d2):
 
 def genBasic(vals):
     res = [sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
-    if len(vals) > 7:
-        res += [stats.skewtest(vals)]
-    if len(vals) > 4:
-        res += [stats.kurtosistest(vals)]
+    # if len(vals) > 7:
+    #     res += [stats.skewtest(vals)]
+    # if len(vals) > 20:
+    #     res += [stats.kurtosistest(vals)]
     return res
 
 def oneHotStatus(status):
@@ -79,8 +79,12 @@ def dumpOne(kv, fout, ds):
         
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
     #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
-    windows = [2, 3]  # , 5, 7, 15, 30, 60]
+    windows = [2, 3, 5, 7, 15, 30, 60]
     values = map(lambda x: x[index:index + 60], values)
+
+    if len(values[0]) != 60:
+        print "%s_%s, %d" % (key, ds, len(values[0]))
+        return
     
     # today day fea
     feas += [values[_][0] for _ in [1, 2, 3, 9, 10]]
@@ -116,6 +120,7 @@ def process(fin, fout, ds):
     np.seterr(all='raise')
     st, dates = getSt(fin)
     if ds not in dates:
+        print "%s not work day" % ds
         return
     dump(st, fout, ds)
 
