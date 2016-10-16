@@ -2,7 +2,7 @@ from collections import Counter
 
 from common import *
 
-#600227.SH,
+# 600227.SH,
 # 20160304_20160305_20160306_20160307_20160308,     dt
 # 3.0_-9.9_-9.9_3.0_3.0,      rate
 # 3000_3000_3000_3000_3000,    volumn
@@ -34,12 +34,12 @@ def getSt(fin):
         items = map(lambda x: x.split("_"), items)
         for i in range(1, len(items)):
             items[i] = map(float, items[i])
-        #items = map(np.array, items)
+        # items = map(np.array, items)
         kv[key] = items
     return kv
 
 def dump(st, filename, ds):
-    fout = open(filename+"_"+ds, "w")
+    fout = open(filename + "_" + ds, "w")
     for items in st.items():
         dumpOne(items, fout, ds)
 
@@ -65,15 +65,15 @@ def dumpOne(kv, fout, ds):
     if values[11][index + 1] == 1 or values[11][index + 2] == 1:
         return
     
-    windows = [2, 3] #, 5, 7, 15, 30, 60]
+    windows = [2, 3]  # , 5, 7, 15, 30, 60]
     
     values = zip(*values)
     feas[1] = [values[index][1:12]] + [values[index][8] / values[index][5]]
     
     for window in windows:
         fea = []
-    #    items = map(lambda x: x[index: index + window], values)
-        items = values[index:index+window]
+        #    items = map(lambda x: x[index: index + window], values)
+        items = values[index:index + window]
         items = zip(*items)
         status = items[11]
         status = map(int, status)
