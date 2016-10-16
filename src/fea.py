@@ -23,7 +23,6 @@ from common import *
 #  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,12, 13,    14
 
 def getSt(fin):
-    dates = set()
     kv = {}
     for l in open(fin):
         l = l.strip()
@@ -33,19 +32,20 @@ def getSt(fin):
         key = l[:pos]
         items = l[pos + 1:].split(",")
         items = map(lambda x: x.split("_"), items)
-        dates.update(items[0])
         for i in range(1, len(items)):
             items[i] = map(float, items[i])
         # items = map(np.array, items)
         kv[key] = items
-    return kv, dates
+    return kv
 
-def dump(st, filename, ds):
+def dump(st, filename, ds, num):
+    try:
+        index = st.values()[0][0].index(ds)
+    except:
+        return
     fout = open(filename + "_" + ds, "w")
     for items in st.items():
-        if ds not in items[1][0]:
-            continue
-        dumpOne(items, fout, ds)
+        dumpOne(items, fout, index)
 
 def daySpan(d1, d2):
     v1 = datetime.datetime(int(d1[:4]), int(d1[4:6]), int(d1[6:]))
@@ -60,39 +60,22 @@ def genBasic(vals):
         res += [stats.kurtosistest(vals)]
     return res
 
-def oneHotStatus(status):
-    arr = [0] * 4
-    arr[int(status)] = 1
-    return arr
-
-def dumpOne(kv, fout, ds):
-    feas = []
+def dumpOne(kv, fout, index):
+    feas = {}
     key, values = kv
-
-    index = values[0].index(ds)
-    if index <= 1:
-        return
-
-    # stock is stoped
     if values[11][index - 1] == 1 or values[11][index - 2] == 1:
         return
-        
-    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
-    #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
-    windows = [2, 3]  # , 5, 7, 15, 30, 60]
-    values = map(lambda x: x[index:index + 60], values)
     
-    # today day fea
-    feas += [values[_][0] for _ in [1, 2, 3, 9, 10]]
-    for i in [5, 6, 7, 8]:
-        feas += [values[i][0] / values[4][0]]
-    feas += oneHotStatus(values[11][0])
-    tgt = values[12][0]
-    assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
-    # win fea
+    windows = [2, 3]  # , 5, 7, 15, 30, 60]
+    
+    values = zip(*values)
+    feas[1] = list(values[index][1:12]) + [values[index][8] / values[index][5]]
+    
     for window in windows:
         fea = []
-        items = map(lambda x: x[:window], values)
+        #    items = map(lambda x: x[index: index + window], values)
+        items = values[index:index + window]
+        items = zip(*items)
         status = items[11]
         status = map(int, status)
         ct = Counter(status)
@@ -101,29 +84,30 @@ def dumpOne(kv, fout, ds):
         for i in range(1, 11):
             if i == 4:
                 continue
-            elif i in range(5, 9):
+            elif i == 5 or i == 8:
                 items[i] = np.array(items[i]) / np.array(items[4])
             else:
                 items[i] = np.array(items[i])
             fea += genBasic(items[i])
-        fea += [ct[0], ct[1], ct[2], ct[3], span, gain]
-        feas += fea
-    feas += [tgt]
-    values = map(str, feas)
-    fout.write(key + "_" + ds + ":" + ",".join(values) + "\n")
+        fea += [ct[1], ct[2], ct[3], span, gain]
+        feas[window] = fea
+    
+    values = [feas[_] for _ in sorted(feas.keys())]
+    values = [item for sub in values for item in sub]
+    values = map(str, values)
+    fout.write(key + ":" + ",".join(values) + "\n")
 
-def process(fin, fout, ds):
+def process(fin, fout, ds, num):
     np.seterr(all='raise')
-    st, dates = getSt(fin)
-    if ds not in dates:
-        return
-    dump(st, fout, ds)
+    st = getSt(fin)
+    dump(st, fout, ds, num)
 
 if __name__ == "__main__":
     fin = sys.argv[1]
     fout = sys.argv[2]
     ds = sys.argv[3]
-    process(fin, fout, ds)
+    num = sys.argv[4]
+    process(fin, fout, ds, num)
     
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
     #       % (fout + ".tmp", fout)

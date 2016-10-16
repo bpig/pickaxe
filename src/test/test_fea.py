@@ -7,4 +7,4 @@ __date__ = "10/16/16"
 
 class TestFea(TestCase):
     def test_main(self):
-        fea.process("small.ft", "small", "20160306")
+        fea.process("small.ft", "small", "20160306", 2)
