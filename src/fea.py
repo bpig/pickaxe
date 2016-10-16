@@ -2,6 +2,23 @@ from collections import Counter
 
 from common import *
 
+#600227.SH,
+# 20160304_20160305_20160306_20160307_20160308,     dt
+# 3.0_-9.9_-9.9_3.0_3.0,      rate
+# 3000_3000_3000_3000_3000,    volumn
+# 3000_3000_3000_3000_3000,    amount
+# 10_10_10_10_10,               pe
+# 10.1_9.1_8.19_8.3_10.1,       s
+# 10.1_9.1_8.19_8.3_10.3,       hight
+# 10.1_9.1_8.19_8.3_10.0,       low
+# 10.1_9.1_8.19_8.3_10.2,       e
+# 2.0_3.0_3.0_4.0_2.0,          turnover
+# 3000_3000_3000_3000_3000,     shares
+# 0_3_3_0_0,                    status
+# 9.1_8.19_8.3_10.1_-1.0,       int
+# 8.19_8.3_10.2_-1.0_-1.0,      out
+# 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
+
 # dt,rate,volumn,amount,pe,s,high,low,e,turnover,shares,status,in,out,target
 #  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,12, 13,    14
 
@@ -14,10 +31,10 @@ def getSt(fin):
         pos = l.find(",")
         key = l[:pos]
         items = l[pos + 1:].split(",")
-        items = map(lambda x: x.split(""), items)
+        items = map(lambda x: x.split("_"), items)
         for i in range(1, len(items)):
             items[i] = map(float, items[i])
-        items = map(np.array, items)
+        #items = map(np.array, items)
         kv[key] = items
     return kv
 
@@ -32,8 +49,12 @@ def daySpan(d1, d2):
     return (v2 - v1).days
 
 def genBasic(vals):
-    return [sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals),
-            stats.skewtest(vals), stats.kurtosistest(vals)]
+    res = [sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
+    if len(vals) > 7:
+        res += [stats.skewtest(vals)]
+    if len(vals) > 4:
+        res += [stats.kurtosistest(vals)]
+    return res
 
 def dumpOne(kv, fout, ds):
     feas = {}
@@ -44,23 +65,29 @@ def dumpOne(kv, fout, ds):
     if values[11][index + 1] == 1 or values[11][index + 2] == 1:
         return
     
-    windows = [2, 3, 5, 7, 15, 30, 60]
+    windows = [2, 3] #, 5, 7, 15, 30, 60]
     
     values = zip(*values)
-    feas[1] = values[index][1:11] + [values[index][8] / values[index][5]];
+    feas[1] = [values[index][1:12]] + [values[index][8] / values[index][5]]
     
     for window in windows:
         fea = []
-        items = map(lambda x: x[index: index + window], values)
+    #    items = map(lambda x: x[index: index + window], values)
+        items = values[index:index+window]
         items = zip(*items)
+        status = items[11]
+        status = map(int, status)
+        ct = Counter(status)
+        span = daySpan(items[0][-1], items[0][0])
+        gain = items[8][0] / items[5][-1]
         for i in range(1, 11):
             if i == 4:
                 continue
+            elif i == 5 or i == 8:
+                items[i] = np.array(items[i]) / np.array(items[4])
+            else:
+                items[i] = np.array(items[i])
             fea += genBasic(items[i])
-        status = items[11]
-        ct = Counter(status)
-        span = daySpan(items[0][0], items[0][-1])
-        gain = items[8][-1] / items[5][0]
         fea += [ct[1], ct[2], ct[3], span, gain]
         feas[window] = fea
     
@@ -79,7 +106,7 @@ if __name__ == "__main__":
     # ds = sys.argv[3]
     fin = "../data/small.ft"
     fout = "../data/small.fea"
-    ds = "20160901"
+    ds = "20160306"
     st = getSt(fin)
     dump(st, fout, ds)
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \

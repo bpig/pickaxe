@@ -62,7 +62,7 @@ def extend(v):
 def dump(kv, filename):
     fout = open(filename, "w")
     for k, v in kv.items():
-        v = sorted(v, key=lambda x: x[0])
+        v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
         extend(v)
         v = map(lambda x: "_".join(x), v)
