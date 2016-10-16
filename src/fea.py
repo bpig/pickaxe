@@ -39,9 +39,13 @@ def getSt(fin):
     return kv
 
 def dump(st, filename, ds):
+    try:
+        index = st.values()[0][0].index(ds)
+    except:
+        return
     fout = open(filename + "_" + ds, "w")
     for items in st.items():
-        dumpOne(items, fout, ds)
+        dumpOne(items, fout, index)
 
 def daySpan(d1, d2):
     v1 = datetime.datetime(int(d1[:4]), int(d1[4:6]), int(d1[6:]))
@@ -56,13 +60,10 @@ def genBasic(vals):
         res += [stats.kurtosistest(vals)]
     return res
 
-def dumpOne(kv, fout, ds):
+def dumpOne(kv, fout, index):
     feas = {}
     key, values = kv
-    index = values[0].index(ds)
-    if index == -1:
-        return
-    if values[11][index + 1] == 1 or values[11][index + 2] == 1:
+    if values[11][index - 1] == 1 or values[11][index - 2] == 1:
         return
     
     windows = [2, 3]  # , 5, 7, 15, 30, 60]
@@ -96,19 +97,17 @@ def dumpOne(kv, fout, ds):
     values = map(str, values)
     fout.write(key + ":" + ",".join(values) + "\n")
 
-if __name__ == "__main__":
-    # dt,rate,volumn,amount,pe,s,high,low,e,turnover,high52,low52w,shares,target
-    #  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,    12,    13
-    
+def process(fin, fout, ds):
     np.seterr(all='raise')
-    # fin = sys.argv[1]
-    # fout = sys.argv[2]
-    # ds = sys.argv[3]
-    fin = "../data/small.ft"
-    fout = "../data/small.fea"
-    ds = "20160306"
     st = getSt(fin)
     dump(st, fout, ds)
+
+if __name__ == "__main__":
+    fin = sys.argv[1]
+    fout = sys.argv[2]
+    ds = sys.argv[3]
+    process(fin, fout, ds)
+    
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
     #       % (fout + ".tmp", fout)
     # os.system(cmd)
