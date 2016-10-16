@@ -22,7 +22,7 @@ def getKv(filename):
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10
-    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, in, out, target
+    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
     return kv
 
 def getStatus((rate, turnover)):
@@ -55,7 +55,7 @@ def extend(v):
     buy = buy[1:] + [-1.0]
     sell = sell[2:] + [-1.0, -1.0]
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
-    v += [status, buy, sell, tgt]
+    v += [status, tgt]
     for i in range(-4, 0):
         v[i] = map(str, v[i])
 

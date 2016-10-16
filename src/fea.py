@@ -60,22 +60,35 @@ def genBasic(vals):
         res += [stats.kurtosistest(vals)]
     return res
 
+def oneHotStatus(status):
+    arr = [0] * 4
+    arr[int(status)] = 1
+    return arr
+
 def dumpOne(kv, fout, index):
-    feas = {}
+    if index <= 1:
+        return
+    feas = []
     key, values = kv
+    # stock is stoped
     if values[11][index - 1] == 1 or values[11][index - 2] == 1:
         return
-    
+    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
+    #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
     windows = [2, 3]  # , 5, 7, 15, 30, 60]
+    values = map(lambda x: x[index:index + 60], values)
     
-    values = zip(*values)
-    feas[1] = list(values[index][1:12]) + [values[index][8] / values[index][5]]
-    
+    # today day fea
+    feas += [values[_][0] for _ in [1, 2, 3, 9, 10]]
+    for i in [5, 6, 7, 8]:
+        feas += [values[i][0] / values[4][0]]
+    feas += oneHotStatus(values[11][0])
+    tgt = values[12][0]
+    assert tgt > 0
+    # win fea
     for window in windows:
         fea = []
-        #    items = map(lambda x: x[index: index + window], values)
-        items = values[index:index + window]
-        items = zip(*items)
+        items = map(lambda x: x[:window], values)
         status = items[11]
         status = map(int, status)
         ct = Counter(status)
@@ -89,13 +102,12 @@ def dumpOne(kv, fout, index):
             else:
                 items[i] = np.array(items[i])
             fea += genBasic(items[i])
-        fea += [ct[1], ct[2], ct[3], span, gain]
-        feas[window] = fea
-    
-    values = [feas[_] for _ in sorted(feas.keys())]
-    values = [item for sub in values for item in sub]
-    values = map(str, values)
-    fout.write(key + ":" + ",".join(values) + "\n")
+        fea += [ct[0], ct[1], ct[2], ct[3], span, gain]
+        feas += fea
+    feas += [tgt]
+    ds = values[0][0]
+    values = map(str, feas)
+    fout.write(key + "_" + ds + ":" + ",".join(values) + "\n")
 
 def process(fin, fout, ds):
     np.seterr(all='raise')
