@@ -75,6 +75,4 @@ def process(fin, fout):
 if __name__ == "__main__":
     fin = sys.argv[1]
     fout = sys.argv[2]
-    # fin = "../data/small.csv"
-    # fout = "../data/small.ft"
     process(fin, fout)
