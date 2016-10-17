@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from collections import Counter
 
 from common import *
@@ -12,8 +13,8 @@ def loadFile(fin):
         key = l[:pos]
         items = l[pos + 1:].split(",")
         items = map(lambda x: x.split("_"), items)
-        for i in range(1, len(items)):
-            items[i] = map(float, items[i])
+ #       for i in range(1, len(items)):
+ #           items[i] = map(float, items[i])
         kv[key] = items
     return kv
 
@@ -31,19 +32,21 @@ def gain(predict, stock, numStock, period):
             if count[ii] == numStock:
                 break
             key = rec[0]
+            if key not in stock.keys():
+                continue
             items = stock[key]
             if d not in items[0]:
                 continue
             index = items[0].index(d)
+            # 停盘 or 开盘涨停
             if items[11][index] == 1 or items[12][index] == 2:
-                #停盘 or 开盘涨停
                 continue
-            inPrice = items[5][index]
+            inPrice = float(items[5][index])
             nextDayIndex = index - 1
+            # 停盘 or 收盘跌停
             while nextDayIndex >= 0 and (items[11][nextDayIndex] == 1 or items[11][nextDayIndex] == 3):
-                #停盘 or 收盘跌停
                 nextDayIndex -= 1
-            outPrice = items[8][nextDayIndex]
+            outPrice = float(items[8][nextDayIndex])
             buy[ii] += str(key) + "_" + rec[1] + ","
             increase[ii] += outPrice / inPrice
         updateMoney[ii] = (increase[ii] / numStock - 0.0015) * totalMoney[ii]
@@ -52,13 +55,19 @@ def gain(predict, stock, numStock, period):
 
     return totalMoney
 
-def process(predictFile, stockFile, numStock, period, x):
+def process(predictFile, stockFile, numStock, period):
     stock = loadFile(stockFile)
     predict = {}
     for k, v in loadFile(predictFile).items():
-        v = sorted(v, key=lambda x: x[1], reverse=True)
+        v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
     money = gain(predict, stock, numStock, period)
 
     print "final: " + str(sum(money))
 
+if __name__ == "__main__":
+    predictFile = sys.argv[1]
+    stockFile = sys.argv[2]
+    numStock = int(sys.argv[3])
+    period = int(sys.argv[4])
+    process(predictFile, stockFile, numStock, period)
