@@ -21,11 +21,23 @@ def loadData(filename):
     return datas
 
 def globalScale(values):
-    minval = values.min()
-    maxval = values.max()
-    lower = -4
-    upper = 4
-    values = lower + (upper - lower) * (values - minval) / (maxval - minval)
+    # minval = values.min()
+    # maxval = values.max()
+    # lower = -4
+    # upper = 4
+    # values = lower + (upper - lower) * (values - minval) / (maxval - minval)
+    # return values
+    return doScale(values, -4, 4)
+
+def doScale(arr, lower, upper):
+    minval = arr.min()
+    maxval = arr.max()
+    return lower + (upper - lower) * (arr - minval) / (maxval - minval + 0.1)
+
+def scaleByColumn(values):
+    for i in range(len(values[0])):
+        cl = values[:, i:i+1]
+        values[:, i:i+1] = doScale(cl, -4, 4)
     return values
 
 def sigmoid(values):
@@ -34,12 +46,13 @@ def sigmoid(values):
 def process(fin):
     data = loadData(fin)
     value = np.array([fea.value for fea in data])
-    value = globalScale(value)
+    value = scaleByColumn(value)
     value = sigmoid(value)
-    value = map(str, value)
     fout = open(fin + ".sigmoid", "w")
     for c, fea in enumerate(data):
-        fout.write(fea.key + ":" + ",".join(value[c]) + "," + fea.tgt + "\n")
+        v = value[c]
+        v = map(str, v)
+        fout.write(fea.key + ":" + ",".join(v) + "," + fea.tgt + "\n")
 
 if __name__ == '__main__':
     fin = sys.argv[1]
