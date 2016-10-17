@@ -14,15 +14,15 @@ def loadData(filename):
             continue
         pos = l.find(":")
         key = l[:pos]
-        value = l[pos + 1].split(",")
+        value = l[pos + 1:].split(",")
         tgt = value[-1]
         value = np.asarray(value[:-1]).astype(np.float32)
         datas.append(Fea(key, value, tgt))
     return datas
 
 def globalScale(values):
-    minval = min(values)
-    maxval = max(values)
+    minval = values.min()
+    maxval = values.max()
     lower = -4
     upper = 4
     values = lower + (upper - lower) * (values - minval) / (maxval - minval)
@@ -31,16 +31,16 @@ def globalScale(values):
 def sigmoid(values):
     return 1 / (1 + np.exp(-values))
 
-def process(fin, foutName):
+def process(fin):
     data = loadData(fin)
-    value = [fea.value for fea in data]
+    value = np.array([fea.value for fea in data])
     value = globalScale(value)
     value = sigmoid(value)
-    
-    fout = open(foutName, "w")
+    value = map(str, value)
+    fout = open(fin + ".sigmoid", "w")
     for c, fea in enumerate(data):
         fout.write(fea.key + ":" + ",".join(value[c]) + "," + fea.tgt + "\n")
 
 if __name__ == '__main__':
     fin = sys.argv[1]
-    process(fin, fin + ".sigmoid")
+    process(fin)
