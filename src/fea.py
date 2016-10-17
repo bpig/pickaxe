@@ -1,23 +1,31 @@
+# -*- coding:utf-8 -*-
 from collections import Counter
 
 from common import *
 
+#states
+#正常 0
+#停盘 1
+#涨停 2
+#跌停 3
+
 # 600227.SH,
-# 20160304_20160305_20160306_20160307_20160308,     dt
-# 3.0_-9.9_-9.9_3.0_3.0,      rate
-# 3000_3000_3000_3000_3000,    volumn
-# 3000_3000_3000_3000_3000,    amount
-# 10_10_10_10_10,               pe
-# 10.1_9.1_8.19_8.3_10.1,       s
-# 10.1_9.1_8.19_8.3_10.3,       hight
-# 10.1_9.1_8.19_8.3_10.0,       low
-# 10.1_9.1_8.19_8.3_10.2,       e
-# 2.0_3.0_3.0_4.0_2.0,          turnover
-# 3000_3000_3000_3000_3000,     shares
-# 0_3_3_0_0,                    status
-# 9.1_8.19_8.3_10.1_-1.0,       int
-# 8.19_8.3_10.2_-1.0_-1.0,      out
-# 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
+#0 20160304_20160305_20160306_20160307_20160308,     dt
+#1 3.0_-9.9_-9.9_3.0_3.0,      rate
+#2 3000_3000_3000_3000_3000,    volumn
+#3 3000_3000_3000_3000_3000,    amount
+#4 10_10_10_10_10,               pe
+#5 10.1_9.1_8.19_8.3_10.1,       s
+#6 10.1_9.1_8.19_8.3_10.3,       hight
+#7 10.1_9.1_8.19_8.3_10.0,       low
+#8 10.1_9.1_8.19_8.3_10.2,       e
+#9 2.0_3.0_3.0_4.0_2.0,          turnover
+#10 3000_3000_3000_3000_3000,     shares
+#11 0_3_2_0_0,                    status
+#12 0_3_0_0_0                     sstatus
+#13 9.1_8.19_8.3_10.1_-1.0,       int
+#14 8.19_8.3_10.2_-1.0_-1.0,      out
+#15 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
 
 # dt,rate,volumn,amount,pe,s,high,low,e,turnover,shares,status,in,out,target
 #  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,12, 13,    14
@@ -79,17 +87,20 @@ def dumpOne(kv, fout, ds):
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
     #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
     windows = [2, 3, 5, 7, 15, 30, 60]
-    values = map(lambda x: x[index:index + 60], values)
+    max_win = windows[-1]
+    values = map(lambda x: x[index:index + max_win], values)
     
-    if len(values[0]) != 60:
+    if len(values[0]) != max_win:
         print "%s_%s, %d" % (key, ds, len(values[0]))
         return
     
     # today day fea
-    feas += [values[_][0] for _ in [1, 2, 3, 9, 10]]
-    for i in [5, 6, 7, 8]:
-        feas += [values[i][0] / values[4][0]]
-    feas += oneHotStatus(values[11][0])
+    for d in range(max_win):
+        feas += [values[_][d] for _ in [1, 2, 3, 9, 10]]
+        for i in [5, 6, 7, 8]:
+            feas += [values[i][d] / values[4][d]]
+        feas += oneHotStatus(values[11][d])
+
     tgt = values[12][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea
