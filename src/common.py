@@ -7,6 +7,25 @@ import os
 import numpy as np
 import datetime
 from collections import defaultdict
-from scipy import stats
-import yaml
+#from scipy import stats
+#import yaml
 from collections import namedtuple
+import random
+
+Fea = namedtuple("Fea", ["key", "value", "tgt"])
+
+def loadFea(filename, shuffle=False):
+    datas = []
+    for l in open(filename):
+        l = l.strip()
+        if not l:
+            continue
+        pos = l.find(":")
+        key = l[:pos]
+        value = l[pos + 1:].split(",")
+        tgt = value[-1]
+        value = np.asarray(value[:-1]).astype(np.float32)
+        datas.append(Fea(key, value, tgt))
+    if shuffle:
+        random.shuffle(datas)
+    return datas
