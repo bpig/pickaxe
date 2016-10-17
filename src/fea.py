@@ -79,17 +79,20 @@ def dumpOne(kv, fout, ds):
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
     #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
     windows = [2, 3, 5, 7, 15, 30, 60]
-    values = map(lambda x: x[index:index + 60], values)
+    max_win = windows[-1]
+    values = map(lambda x: x[index:index + max_win], values)
     
-    if len(values[0]) != 60:
+    if len(values[0]) != max_win:
         print "%s_%s, %d" % (key, ds, len(values[0]))
         return
     
     # today day fea
-    feas += [values[_][0] for _ in [1, 2, 3, 9, 10]]
-    for i in [5, 6, 7, 8]:
-        feas += [values[i][0] / values[4][0]]
-    feas += oneHotStatus(values[11][0])
+    for d in range(max_win):
+        feas += [values[_][d] for _ in [1, 2, 3, 9, 10]]
+        for i in [5, 6, 7, 8]:
+            feas += [values[i][d] / values[4][d]]
+        feas += oneHotStatus(values[11][d])
+
     tgt = values[12][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea
