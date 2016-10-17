@@ -40,8 +40,7 @@ def getSt(fin):
         kv[key] = items
     return kv, dates
 
-def dump(st, filename, ds):
-    fout = open(filename + "_" + ds, "w")
+def dump(st, fout, ds):
     for items in st.items():
         if ds not in items[1][0]:
             continue
@@ -68,20 +67,20 @@ def oneHotStatus(status):
 def dumpOne(kv, fout, ds):
     feas = []
     key, values = kv
-
+    
     index = values[0].index(ds)
     if index <= 1:
         return
-
+    
     # stock is stoped
     if values[11][index - 1] == 1 or values[11][index - 2] == 1:
         return
-        
+    
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
     #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
     windows = [2, 3, 5, 7, 15, 30, 60]
     values = map(lambda x: x[index:index + 60], values)
-
+    
     if len(values[0]) != 60:
         print "%s_%s, %d" % (key, ds, len(values[0]))
         return
@@ -122,14 +121,22 @@ def process(fin, fout, ds):
     if ds not in dates:
         print "%s not work day" % ds
         return
+    fout = open(fout + "_" + ds, "w")
     dump(st, fout, ds)
+
+def genAll(fin, fout):
+    st, dates = getSt(fin)
+    fout = open(fout, "w")
+    for ds in dates:
+        print ds
+        dump(st, fout, ds)
 
 if __name__ == "__main__":
     fin = sys.argv[1]
     fout = sys.argv[2]
-    ds = sys.argv[3]
-    process(fin, fout, ds)
-    
+    # ds = sys.argv[3]
+    # process(fin, fout, ds)
+    genAll(fin, fout)
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
     #       % (fout + ".tmp", fout)
     # os.system(cmd)
