@@ -127,7 +127,7 @@ def process(fin, fout, ds):
 def genAll(fin, fout):
     st, dates = getSt(fin)
     fout = open(fout, "w")
-    for ds in st:
+    for ds in dates:
         print ds
         dump(st, fout, ds)
 
