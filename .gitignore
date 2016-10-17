@@ -3,3 +3,4 @@ data/*
 base/*
 src/test/small*
 *.pyc
+model*
