@@ -25,17 +25,10 @@ def getKv(filename):
     # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
     return kv
 
-def getSstatus(s_rate):
-    if s_rate <= 0.901:
+def getStatus(rate):
+    if rate <= 0.901:
         return 2
-    elif s_rate >= 1.099:
-        return 1
-    return 0
-
-def getEstatus(e_rate):
-    if e_rate <= 0.901:
-        return 2
-    elif e_rate >= 1.099:
+    elif rate >= 1.099:
         return 1
     return 0
 
@@ -48,9 +41,6 @@ def getWavStatus((h_rate, l_rate)):
         return 1
     return 0
 
-def getStatus(turnover):
-    return 1 if turnover == 0.0 else 0
-
 def extend(key, v):
     for i in [4, 5, 6, 7, 8, 9]:
         v[i] = map(float, v[i])
@@ -58,10 +48,10 @@ def extend(key, v):
     h_rate = map(lambda (x, y): y / x, zip(v[4], v[6]))
     l_rate = map(lambda (x, y): y / x, zip(v[4], v[7]))
     e_rate = map(lambda (x, y): y / x, zip(v[4], v[8]))
-    status = map(getStatus, v[9])
-    s_status = map(getSstatus, s_rate)
+    status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
+    s_status = map(getStatus, s_rate)
     wav_status = map(getWavStatus, zip(h_rate, l_rate))
-    e_status = map(getEstatus, e_rate)
+    e_status = map(getStatus, e_rate)
     
     for i in range(len(status)):
         if status[i] == 0:

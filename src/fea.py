@@ -27,9 +27,6 @@ from common import *
 # 收盘涨停 1
 # 收盘跌停 2
 
-
-
-
 # key           600227.SH
 # values
 # 0  dt         20160309_20160308_20160307_20160306_20160305_20160304,
@@ -126,7 +123,7 @@ def dumpOne(kv, fout, ds):
     # stock is stoped
     if values[15][index - 1] == 1 or values[15][index - 2] == 1:
         return
-
+    
     windows = [2, 3, 5, 7, 15, 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
@@ -169,8 +166,9 @@ def process(fin, fout, ds):
 def genAll(fin, fout):
     st, dates = getSt(fin)
     fout = open(fout, "w")
-    for ds in dates:
-        print ds
+    total = len(dates)
+    for c, ds in enumerate(sorted(dates)):
+        print ds, c, "/", total
         dump(st, fout, ds)
 
 if __name__ == "__main__":
