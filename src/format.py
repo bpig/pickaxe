@@ -77,7 +77,7 @@ def extend(key, v):
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
     v += [s_rate, h_rate, l_rate, e_rate, status, s_status, e_status, wav_status, tgt]
-    v = map(str, v)
+    v = map(lambda x: map(str, x), v)
     return v
 
 def dump(kv, filename):
