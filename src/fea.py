@@ -44,8 +44,8 @@ from common import *
 # 14 e / pe                        e-rate
 # 15                               status
 # 16                               s-status
-# 17                               e-status
-# 18                               wav-status
+# 17                               wav-status
+# 18                               e-status
 # 19 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
 
 # dt,rate,volumn,amount,pe,s,high,low,e,turnover,shares,status,in,out,target

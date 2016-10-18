@@ -22,7 +22,7 @@ def getKv(filename):
     #  -1    0    1      2       3     4  5    6    7   8      9        10
     
     # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
-    # s-rate, h-rate, l-rate, e-rate, status, s-status, e-status, wav-status, target
+    # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
     return kv
 
 def getStatus2(args):
@@ -69,14 +69,14 @@ def extend(key, v):
         if status[i] == 0:
             continue
         if s_status[i] != 0 or e_status[i] != 0 or wav_status[i] != 0:
-            print "strange %s_%s %d %d %d %d" % (key, v[0][i], status[i], s_status[i], e_status[i], wav_status[i])
+            print "strange %s_%s %d %d %d %d" % (key, v[0][i], status[i], s_status[i], wav_status[i], e_status[i])
     
     buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
     sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
-    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, e_status, wav_status, tgt]
+    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, tgt]
     v = map(lambda x: map(str, x), v)
     return v
 
