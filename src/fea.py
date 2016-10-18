@@ -101,7 +101,7 @@ def dumpOne(kv, fout, ds):
             feas += [values[i][d] / values[4][d]]
         feas += oneHotStatus(values[11][d])
 
-    tgt = values[12][0]
+    tgt = values[-1][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea
     for window in windows:
