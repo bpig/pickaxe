@@ -62,8 +62,8 @@ def extend(key, v):
     e_rate = map(lambda (x, y): y / x, zip(v[8], v[4]))
     status = map(getStatus, v[9])
     s_status = map(getSstatus, s_rate)
-    e_status = map(getSstatus, e_rate)
     wav_status = map(getWavStatus, zip(h_rate, l_rate))
+    e_status = map(getEstatus, e_rate)
     
     for i in range(len(status)):
         if status[i] == 0:
