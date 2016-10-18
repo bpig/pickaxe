@@ -23,33 +23,35 @@ from common import *
 # 当天有跌停 2
 # 当天有涨停又有跌停 3
 
+
+# key           600227.SH
+# values
+# 0  dt         20160309_20160308_20160307_20160306_20160305_20160304,
+# 1  rate       3.0_3.0_3.0_-9.9_-9.9_3.0,
+# 2  volumn     3000_3000_3000_3000_3000_3000,
+# 3  amount     3000_3000_3000_3000_3000_3000,
+# 4  pe         10.0_10.0_10.0_10.0_10.0_10.0,
+# 5  start      10.1_10.1_8.3_8.19_9.1_10.1,
+# 6  high       10.3_10.3_8.3_8.19_9.1_10.1,
+# 7  low        10.0_10.0_8.3_8.19_9.1_10.1,
+# 8  end        10.2_10.2_8.3_8.19_9.1_10.1,
+# 9  turnover   2.0_2.0_4.0_3.0_3.0_2.0,
+# 10 shares     3000_3000_3000_3000_3000_3000,
+# 11 s-rate     1.01_1.01_0.83_0.819_0.91_1.01,
+# 12 h-rate     1.03_1.03_0.83_0.819_0.91_1.01,
+# 13 l-rate     1.0_1.0_0.83_0.819_0.91_1.01,
+# 14 e-rate     1.02_1.02_0.83_0.819_0.91_1.01,
+# 15 status     0_0_0_0_0_0,
+# 16 s-status   0_0_2_2_0_0,
+# 17 wav-status 0_0_2_2_0_0,
+# 18 e-status   0_0_2_2_0_0,
+# 19 target     -1.0_-1.0_1.0099009901_1.22891566265_1.01343101343_0.9
+
+
 # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
-# s-rate, h-rate, l-rate, e-rate, status, s-status, e-status, wav-status, target
-
-# 600227.SH,
-# 0 20160304_20160305_20160306_20160307_20160308,     dt
-# 1 3.0_-9.9_-9.9_3.0_3.0,      rate
-# 2 3000_3000_3000_3000_3000,    volumn
-# 3 3000_3000_3000_3000_3000,    amount
-# 4 10_10_10_10_10,               pe
-# 5 10.1_9.1_8.19_8.3_10.1,       s
-# 6 10.1_9.1_8.19_8.3_10.3,       high
-# 7 10.1_9.1_8.19_8.3_10.0,       low
-# 8 10.1_9.1_8.19_8.3_10.2,       e
-# 9 2.0_3.0_3.0_4.0_2.0,          turnover
-# 10 3000_3000_3000_3000_3000,     shares
-# 11 s / pe                        s-rate
-# 12 high / pe                     h-rate
-# 13 low / pe                      l-rate
-# 14 e / pe                        e-rate
-# 15                               status
-# 16                               s-status
-# 17                               wav-status
-# 18                               e-status
-# 19 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
-
-# dt,rate,volumn,amount,pe,s,high,low,e,turnover,shares,status,in,out,target
-#  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,12, 13,    14
+#  0,    1,      2,      3,  4, 5,    6,   7, 8,        9,     10,
+# s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
+#     11,     12,     13,     14,     15,       16,         17,       18,     19
 
 def getSt(fin):
     dates = set()
@@ -81,6 +83,7 @@ def daySpan(d1, d2):
     return (v2 - v1).days
 
 def genBasic(vals):
+    vals = np.array(vals)
     res = [sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
     # if len(vals) > 7:
     #     res += [stats.skewtest(vals)]
@@ -88,10 +91,23 @@ def genBasic(vals):
     #     res += [stats.kurtosistest(vals)]
     return res
 
-def oneHotStatus(status):
-    arr = [0] * 4
-    arr[int(status)] = 1
-    return arr
+def genStatus(status):
+    ct0 = Counter(map(int, status[0]))
+    ct1 = Counter(map(int, status[1]))
+    ct2 = Counter(map(int, status[2]))
+    ct3 = Counter(map(int, status[3]))
+    return [ct0[0], ct0[1], ct1[0], ct1[1], ct1[2], ct2[0], ct2[1], ct2[2], ct2[3], ct3[0], ct3[1], ct3[2]]
+
+def oneHotStatus(status, sstatus, wavstatus, estatus):
+    arr1 = [0] * 2
+    arr1[int(status)] = 1
+    arr2 = [0] * 3
+    arr2[int(sstatus)] = 1
+    arr3 = [0] * 4
+    arr3[int(wavstatus)] = 1
+    arr4 = [0] * 3
+    arr4[int(estatus)] = 1
+    return arr1 + arr2 + arr3 + arr4
 
 def dumpOne(kv, fout, ds):
     feas = []
@@ -102,11 +118,9 @@ def dumpOne(kv, fout, ds):
         return
     
     # stock is stoped
-    if values[11][index - 1] == 1 or values[11][index - 2] == 1:
+    if values[15][index - 1] == 1 or values[15][index - 2] == 1:
         return
-    
-    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
-    #  -1    0    1      2       3     4  5    6    7   8      9        10     11     12
+
     windows = [2, 3, 5, 7, 15, 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
@@ -117,31 +131,21 @@ def dumpOne(kv, fout, ds):
     
     # today day fea
     for d in range(max_win):
-        feas += [values[_][d] for _ in [1, 2, 3, 9, 10]]
-        for i in [5, 6, 7, 8]:
-            feas += [values[i][d] / values[4][d]]
-        feas += oneHotStatus(values[11][d])
+        feas += [values[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
+        feas += oneHotStatus(values[15][d], values[16][d], values[17][d], values[18][d])
     
-    tgt = values[12][0]
+    tgt = values[-1][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea
     for window in windows:
         fea = []
         items = map(lambda x: x[:window], values)
-        status = items[11]
-        status = map(int, status)
-        ct = Counter(status)
         span = daySpan(items[0][-1], items[0][0])
         gain = items[8][0] / items[5][-1]
-        for i in range(1, 11):
-            if i == 4:
-                continue
-            elif i in range(5, 9):
-                items[i] = np.array(items[i]) / np.array(items[4])
-            else:
-                items[i] = np.array(items[i])
+        for i in [1, 2, 3, 9, 10, 11, 12, 13, 14]:
             fea += genBasic(items[i])
-        fea += [ct[0], ct[1], ct[2], ct[3], span, gain]
+        fea += genStatus(items[15:19])
+        fea += [span, gain]
         feas += fea
     feas += [tgt]
     values = map(str, feas)
