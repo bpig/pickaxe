@@ -26,10 +26,18 @@ def getKv(filename):
     return kv
 
 def getSstatus(s_rate):
-    return 1 if s_rate >= 1.099 else 0
+    if s_rate <= 0.901:
+        return 2
+    elif s_rate >= 1.099:
+        return 1
+    return 0
 
 def getEstatus(e_rate):
-    return 1 if e_rate <= 0.901 else 0
+    if e_rate <= 0.901:
+        return 2
+    elif e_rate >= 1.099:
+        return 1
+    return 0
 
 def getWavStatus((h_rate, l_rate)):
     if h_rate >= 1.099 and l_rate <= 0.901:
