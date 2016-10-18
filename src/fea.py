@@ -3,29 +3,50 @@ from collections import Counter
 
 from common import *
 
-#states
-#正常 0
-#停盘 1
-#涨停 2
-#跌停 3
+# states
+# 正常 0
+# 停盘 1
+
+# s-status
+# 开盘正常 0
+# 开盘涨停 1
+# 开盘跌停 2
+
+# e-status
+# 收盘正常 0
+# 收盘涨停 1
+# 收盘跌停 2
+
+# wav-status
+# 当天正常 0
+# 当天有涨停 1
+# 当天有跌停 2
+# 当天有涨停又有跌停 3
+
+# dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
+# s-rate, h-rate, l-rate, e-rate, status, s-status, e-status, wav-status, target
 
 # 600227.SH,
-#0 20160304_20160305_20160306_20160307_20160308,     dt
-#1 3.0_-9.9_-9.9_3.0_3.0,      rate
-#2 3000_3000_3000_3000_3000,    volumn
-#3 3000_3000_3000_3000_3000,    amount
-#4 10_10_10_10_10,               pe
-#5 10.1_9.1_8.19_8.3_10.1,       s
-#6 10.1_9.1_8.19_8.3_10.3,       hight
-#7 10.1_9.1_8.19_8.3_10.0,       low
-#8 10.1_9.1_8.19_8.3_10.2,       e
-#9 2.0_3.0_3.0_4.0_2.0,          turnover
-#10 3000_3000_3000_3000_3000,     shares
-#11 0_3_2_0_0,                    status
-#12 0_3_0_0_0                     sstatus
-#13 9.1_8.19_8.3_10.1_-1.0,       int
-#14 8.19_8.3_10.2_-1.0_-1.0,      out
-#15 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
+# 0 20160304_20160305_20160306_20160307_20160308,     dt
+# 1 3.0_-9.9_-9.9_3.0_3.0,      rate
+# 2 3000_3000_3000_3000_3000,    volumn
+# 3 3000_3000_3000_3000_3000,    amount
+# 4 10_10_10_10_10,               pe
+# 5 10.1_9.1_8.19_8.3_10.1,       s
+# 6 10.1_9.1_8.19_8.3_10.3,       high
+# 7 10.1_9.1_8.19_8.3_10.0,       low
+# 8 10.1_9.1_8.19_8.3_10.2,       e
+# 9 2.0_3.0_3.0_4.0_2.0,          turnover
+# 10 3000_3000_3000_3000_3000,     shares
+# 11 s / pe                        s-rate
+# 12 high / pe                     h-rate
+# 13 low / pe                      l-rate
+# 14 e / pe                        e-rate
+# 15                               status
+# 16                               s-status
+# 17                               wav-status
+# 18                               e-status
+# 19 0.9_1.01343101343_1.22891566265_-1.0_-1.0     target
 
 # dt,rate,volumn,amount,pe,s,high,low,e,turnover,shares,status,in,out,target
 #  0,   1,     2,     3, 4,5,   6,  7,8,       9,    10,    11,12, 13,    14
@@ -100,7 +121,7 @@ def dumpOne(kv, fout, ds):
         for i in [5, 6, 7, 8]:
             feas += [values[i][d] / values[4][d]]
         feas += oneHotStatus(values[11][d])
-
+    
     tgt = values[12][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea

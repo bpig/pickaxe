@@ -31,48 +31,41 @@ flags = tf.app.flags
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("model_dir", "", "Base directory for output models.")
-flags.DEFINE_string("model_type", "wide_n_deep",
-                    "Valid model types: {'wide', 'deep', 'wide_n_deep'}.")
+flags.DEFINE_string("model_type", "wide_n_deep", "Valid model types: {'wide', 'deep', 'wide_n_deep'}.")
 flags.DEFINE_integer("train_steps", 200, "Number of training steps.")
-flags.DEFINE_string(
-    "train_data",
-    "house_train",
-    "Path to the training data.")
-flags.DEFINE_string(
-    "test_data",
-    "house_test",
-    "Path to the test data.")
+flags.DEFINE_string("train_data", "", "Path to the training data.")
+flags.DEFINE_string("test_data", "", "Path to the test data.")
 
 COLUMNS = ["age", "workclass", "fnlwgt", "education", "education_num",
            "marital_status", "occupation", "relationship", "race", "gender",
-           "capital_gain", "capital_loss", "hours_per_week", "native_country",
-           "income_bracket"]
+           "capital_gain", "capital_loss", "hours_per_week", "native_country", "income_bracket"]
+
 LABEL_COLUMN = "label"
+
 CATEGORICAL_COLUMNS = ["workclass", "education", "marital_status", "occupation",
                        "relationship", "race", "gender", "native_country"]
-CONTINUOUS_COLUMNS = ["age", "education_num", "capital_gain", "capital_loss",
-                      "hours_per_week"]
+
+CONTINUOUS_COLUMNS = ["age", "education_num", "capital_gain", "capital_loss", "hours_per_week"]
+
+def download_data(url):
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        urllib.request.urlretrieve(url, tmp.name)
+        return tmp.name
 
 def maybe_download():
     """May be downloads training data and returns train and test file names."""
     if FLAGS.train_data:
         train_file_name = FLAGS.train_data
     else:
-        train_file = tempfile.NamedTemporaryFile(delete=False)
-        urllib.request.urlretrieve("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data",
-                                   train_file.name)  # pylint: disable=line-too-long
-        train_file_name = train_file.name
-        train_file.close()
+        train_file_name = download_data(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data")
         print("Training data is downloaded to %s" % train_file_name)
     
     if FLAGS.test_data:
         test_file_name = FLAGS.test_data
     else:
-        test_file = tempfile.NamedTemporaryFile(delete=False)
-        urllib.request.urlretrieve("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test",
-                                   test_file.name)  # pylint: disable=line-too-long
-        test_file_name = test_file.name
-        test_file.close()
+        test_file_name = download_data(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test")
         print("Test data is downloaded to %s" % test_file_name)
     
     return train_file_name, test_file_name
@@ -129,18 +122,15 @@ def build_estimator(model_dir):
     ]
     
     if FLAGS.model_type == "wide":
-        m = tf.contrib.learn.LinearClassifier(model_dir=model_dir,
-                                              feature_columns=wide_columns)
+        m = tf.contrib.learn.LinearClassifier(
+            model_dir=model_dir, feature_columns=wide_columns)
     elif FLAGS.model_type == "deep":
-        m = tf.contrib.learn.DNNClassifier(model_dir=model_dir,
-                                           feature_columns=deep_columns,
-                                           hidden_units=[100, 50])
+        m = tf.contrib.learn.DNNClassifier(
+            model_dir=model_dir, feature_columns=deep_columns, hidden_units=[100, 50])
     else:
         m = tf.contrib.learn.DNNLinearCombinedClassifier(
-            model_dir=model_dir,
-            linear_feature_columns=wide_columns,
-            dnn_feature_columns=deep_columns,
-            dnn_hidden_units=[100, 50])
+            model_dir=model_dir, linear_feature_columns=wide_columns,
+            dnn_feature_columns=deep_columns, dnn_hidden_units=[100, 50])
     return m
 
 def input_fn(df):
@@ -158,7 +148,7 @@ def input_fn(df):
     feature_cols.update(categorical_cols)
     # Converts the label column into a constant Tensor.
     if FLAGS.model_type == "deep":
-        label = tf.constant(df[LABEL_COLUMN].values, shape=[df[LABEL_COLUMN], 1])
+        label = tf.constant(df[LABEL_COLUMN].values, shape=[df[LABEL_COLUMN].size, 1])
     else:
         label = tf.constant(df[LABEL_COLUMN].values)
     # Returns the feature columns and the label.

@@ -13,8 +13,6 @@ def loadFile(fin):
         key = l[:pos]
         items = l[pos + 1:].split(",")
         items = map(lambda x: x.split("_"), items)
- #       for i in range(1, len(items)):
- #           items[i] = map(float, items[i])
         kv[key] = items
     return kv
 
@@ -23,6 +21,8 @@ def gain(predict, stock, numStock, period):
     totalMoney = [0.5, 0.5]
     updateMoney = [0, 0]
     for i in range(period):
+        if i >= len(ds):
+            return i-1, totalMoney
         d = ds[i]
         buy = ["", ""]
         increase = [0, 0]
@@ -46,14 +46,19 @@ def gain(predict, stock, numStock, period):
             # 停盘 or 收盘跌停
             while nextDayIndex >= 0 and (items[11][nextDayIndex] == 1 or items[11][nextDayIndex] == 3):
                 nextDayIndex -= 1
+            if nextDayIndex < 0:
+                return i, totalMoney
             outPrice = float(items[8][nextDayIndex])
             buy[ii] += str(key) + "_" + rec[1] + ","
             increase[ii] += outPrice / inPrice
-        updateMoney[ii] = (increase[ii] / numStock - 0.0015) * totalMoney[ii]
-        print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]), "buy: " + buy[ii]
+            count[ii] += 1
+        updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
+        print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]), "buy " + str(count[ii]) + " stocks: " +buy[ii]
+        if count[ii] < numStock:
+            print "no enough number of stocks to buy in"
         totalMoney[ii] = updateMoney[ii]
 
-    return totalMoney
+    return i, totalMoney
 
 def process(predictFile, stockFile, numStock, period):
     stock = loadFile(stockFile)
@@ -61,8 +66,8 @@ def process(predictFile, stockFile, numStock, period):
     for k, v in loadFile(predictFile).items():
         v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
-    money = gain(predict, stock, numStock, period)
-
+    i, money = gain(predict, stock, numStock, period)
+    print "after " + str(i+1) + " days:"
     print "final: " + str(sum(money))
 
 if __name__ == "__main__":

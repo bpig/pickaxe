@@ -28,10 +28,10 @@ def loadFea(filename):
         value = np.asarray(value[:-1]).astype(np.float32)
         a += [(value, tgt)]
         ct[tgt] += 1
-
+    
     print ct
     random.shuffle(a)
-    #a = a[:100000]
+    # a = a[:100000]
     point = int(len(a) * 0.9)
     train = a[:point]
     test = a[point:]
@@ -42,8 +42,8 @@ def loadFea(filename):
     # tgts = np.array(tgts)
     return np.array(train_data), np.array(train_tgt), np.array(test_data), np.array(test_tgt)
 
-#data, target = loadFea("../data/fe_20150907.cmvn")
-
+# data, target = loadFea("../data/fe_20150907.cmvn")
+# data, target, test_data, test_tgt = loadFea("../data/fe_20150907.cmvn")
 print time.ctime()
 #data, target, test_data, test_tgt = loadFea("data/fe_20150907.cmvn")
 data, target, test_data, test_tgt = loadFea("data/2015.fe")
@@ -54,6 +54,7 @@ def my_model(features, target):
     # Convert the target to a one-hot tensor of shape (length of features, 3) and
     # with a on-value of 1 for each one-hot vector of length 3.
     
+
     # target = tf.one_hot(target, 2, 1, 0)
     
     features = layers.stack(features, layers.fully_connected, [800, 100, 10])
@@ -63,6 +64,7 @@ def my_model(features, target):
     )
     
     train_op = tf.contrib.layers.optimize_loss(
+
             loss, tf.contrib.framework.get_global_step(), optimizer='Adam',
             learning_rate=0.001)
 
@@ -70,10 +72,6 @@ def my_model(features, target):
 
 # with tf.device('/gpu:0'):
 classifier = learn.Estimator(model_fn=my_model, model_dir="model/" + sys.argv[1])
-
-print data.shape
-print target.shape
-print target[0]
 
 classifier.fit(data, target, steps=2000)
 

@@ -1,4 +1,4 @@
 set -x
 
 cd ..
-python src/dnn_train.py data/$1
+python src/tflearn_simple.py $1
