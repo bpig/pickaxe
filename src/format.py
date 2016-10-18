@@ -17,12 +17,10 @@ def getKv(filename):
         value = l[pos + 1:].split(",")
         if value[9] == 'NULL':
             value[9] = "0.0"
-        # if value[0] < "20151220":
-        #     continue
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10
-
+    
     # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
     # s-rate, h-rate, l-rate, e-rate, status, s-status, e-status, wav-status, target
     return kv
@@ -36,31 +34,51 @@ def getStatus2(args):
         st[1] = 1
     return st
 
-def getStatus((rate, turnover)):
-    rate = float(rate)
-    if rate >= 9.9:
-        return 2
-    if rate <= -9.9:
+def getSstatus(s_rate):
+    return 1 if s_rate >= 1.099 else 0
+
+def getEstatus(e_rate):
+    return 1 if e_rate <= 0.901 else 0
+
+def getWavStatus((h_rate, l_rate)):
+    if h_rate >= 1.099 and l_rate <= 0.901:
         return 3
-    if turnover == "NULL":
-        return 1
-    turnover = float(turnover)
-    if turnover == 0.0:
+    elif l_rate <= 0.901:
+        return 2
+    elif h_rate >= 1.099:
         return 1
     return 0
 
+def getStatus(turnover):
+    turnover = float(turnover)
+    return 1 if turnover == 0.0 else 0
+
 def extend(v):
-    status = map(getStatus, zip(v[1], v[9]))
-    status2 = map(getStatus2, zip(v[4], v[5], v[8]))
-    s10, e10 = zip(*status2)
+    for i in [4, 5, 6, 7, 8]:
+        v[i] = map(float, v[i])
+    s_rate = map(lambda (x, y): y / x, zip(v[5], v[4]))
+    h_rate = map(lambda (x, y): y / x, zip(v[6], v[4]))
+    l_rate = map(lambda (x, y): y / x, zip(v[7], v[4]))
+    e_rate = map(lambda (x, y): y / x, zip(v[8], v[4]))
+    status = map(getStatus, v[9])
+    s_status = map(getSstatus, s_rate)
+    e_status = map(getSstatus, e_rate)
+    wav_status = map(getSstatus, zip(h_rate, l_rate))
+    
+    for i in range(len(status)):
+        if status[i] == 0:
+            continue
+        if s_status[i] != 0 or e_status[i] != 0 or wav_status[i] != 0:
+            print "strange"
+    
     buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
     sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
-    v += [status, s10, e10, tgt]
-    for i in range(-4, 0):
-        v[i] = map(str, v[i])
+    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, e_status, wav_status, tgt]
+    v = map(str, v)
+    return v
 
 def dump(kv, filename):
     fout = open(filename, "w")
@@ -69,7 +87,7 @@ def dump(kv, filename):
     for k, v in kv.items():
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
-        extend(v)
+        v = extend(v)
         
         # for debug
         d = zip(*v)
