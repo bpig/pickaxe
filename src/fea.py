@@ -166,6 +166,7 @@ def process(fin, fout, ds):
 def genAll(fin, fout):
     st, dates = getSt(fin)
     fout = open(fout, "w")
+    dates = filter(lambda x: x >= "20160000" , dates)
     total = len(dates)
     for c, ds in enumerate(sorted(dates)):
         print ds, c, "/", total

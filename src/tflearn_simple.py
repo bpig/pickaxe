@@ -46,7 +46,7 @@ def loadFea(filename):
 # data, target, test_data, test_tgt = loadFea("../data/fe_20150907.cmvn")
 print time.ctime()
 # data, target, test_data, test_tgt = loadFea("data/fe_20150907.cmvn")
-data, target, test_data, test_tgt = loadFea("data/2015.fe")
+data, target, test_data, test_tgt = loadFea("data/20.fe.2015.sigmoid")
 print time.ctime()
 
 def my_model(features, target):
@@ -54,7 +54,7 @@ def my_model(features, target):
     # Convert the target to a one-hot tensor of shape (length of features, 3) and
     # with a on-value of 1 for each one-hot vector of length 3.
     
-    # target = tf.one_hot(target, 2, 1, 0)
+    target = tf.one_hot(target, 2, 1, 0)
     
     features = layers.stack(features, layers.fully_connected, [800, 100, 10])
     
