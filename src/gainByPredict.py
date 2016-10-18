@@ -39,12 +39,12 @@ def gain(predict, stock, numStock, period):
                 continue
             index = items[0].index(d)
             # 停盘 or 开盘涨停
-            if items[11][index] == 1 or items[12][index] == 2:
+            if items[15][index] == 1 or items[16][index] == 1:
                 continue
             inPrice = float(items[5][index])
             nextDayIndex = index - 1
             # 停盘 or 收盘跌停
-            while nextDayIndex >= 0 and (items[11][nextDayIndex] == 1 or items[11][nextDayIndex] == 3):
+            while nextDayIndex >= 0 and (items[15][nextDayIndex] == 1 or items[18][nextDayIndex] == 2):
                 nextDayIndex -= 1
             if nextDayIndex < 0:
                 return i, totalMoney

@@ -3,25 +3,31 @@ from collections import Counter
 
 from common import *
 
+# 15
 # states
 # 正常 0
 # 停盘 1
 
+# 16
 # s-status
 # 开盘正常 0
 # 开盘涨停 1
 # 开盘跌停 2
 
-# e-status
-# 收盘正常 0
-# 收盘涨停 1
-# 收盘跌停 2
-
+# 17
 # wav-status
 # 当天正常 0
 # 当天有涨停 1
 # 当天有跌停 2
 # 当天有涨停又有跌停 3
+
+# 18
+# e-status
+# 收盘正常 0
+# 收盘涨停 1
+# 收盘跌停 2
+
+
 
 
 # key           600227.SH
