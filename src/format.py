@@ -53,7 +53,7 @@ def getStatus(turnover):
     turnover = float(turnover)
     return 1 if turnover == 0.0 else 0
 
-def extend(v):
+def extend(key, v):
     for i in [4, 5, 6, 7, 8]:
         v[i] = map(float, v[i])
     s_rate = map(lambda (x, y): y / x, zip(v[5], v[4]))
@@ -69,7 +69,7 @@ def extend(v):
         if status[i] == 0:
             continue
         if s_status[i] != 0 or e_status[i] != 0 or wav_status[i] != 0:
-            print "strange"
+            print "strange %s_%s %d %d %d %d" % (key, v[0][i], status[i], s_status[i], e_status[i], wav_status[i])
     
     buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
     sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
@@ -87,7 +87,7 @@ def dump(kv, filename):
     for k, v in kv.items():
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
-        v = extend(v)
+        v = extend(k, v)
         
         # for debug
         d = zip(*v)
