@@ -22,8 +22,19 @@ def getKv(filename):
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10
-    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares, status, target
+
+    # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
+    # s-rate, h-rate, l-rate, e-rate, status, s-status, e-status, wav-status, target
     return kv
+
+def getStatus2(args):
+    pe, s, e = map(float, args)
+    st = [0, 0]
+    if s / pe >= 1.099:
+        st[0] = 1
+    if e / pe <= 0.901:
+        st[1] = 1
+    return st
 
 def getStatus((rate, turnover)):
     rate = float(rate)
@@ -38,43 +49,35 @@ def getStatus((rate, turnover)):
         return 1
     return 0
 
-# def refineSell(sell, status):
-#     idx = len(sell) - 1
-#     while sell[idx] != -1.0 and idx >= 0:
-#         idx -= 1
-#     for i in range(idx, 0, -1):
-#         if sell[i - 1] == -1.0:
-#             sell[i - 1] = sell[i]
-#     sell = map(lambda (x, y): y if x != 1 else -1.0, zip(status, sell))
-#     return sell
-
 def extend(v):
     status = map(getStatus, zip(v[1], v[9]))
+    status2 = map(getStatus2, zip(v[4], v[5], v[8]))
+    s10, e10 = zip(*status2)
     buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
     sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
-    v += [status, tgt]
+    v += [status, s10, e10, tgt]
     for i in range(-4, 0):
         v[i] = map(str, v[i])
 
 def dump(kv, filename):
     fout = open(filename, "w")
     fdebug = open(filename + ".debug", "w")
-
+    
     for k, v in kv.items():
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
         extend(v)
-
+        
         # for debug
         d = zip(*v)
         for l in d:
             key = k + "_" + l[0]
             value = ",".join(l[1:])
             fdebug.write(key + "," + value + "\n")
-
+        
         # normal output
         v = map(lambda x: "_".join(x), v)
         fout.write(k + "," + ",".join(v) + "\n")

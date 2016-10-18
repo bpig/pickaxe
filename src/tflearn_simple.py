@@ -25,10 +25,10 @@ def loadFea(filename):
         value = np.asarray(value[:-1]).astype(np.float32)
         a += [(value, tgt)]
         ct[tgt] += 1
-
+    
     print ct
     random.shuffle(a)
-    #a = a[:100000]
+    # a = a[:100000]
     point = int(len(a) * 0.9)
     train = a[:point]
     test = a[point:]
@@ -39,8 +39,8 @@ def loadFea(filename):
     # tgts = np.array(tgts)
     return np.array(train_data), np.array(train_tgt), np.array(test_data), np.array(test_tgt)
 
-#data, target = loadFea("../data/fe_20150907.cmvn")
-#data, target, test_data, test_tgt = loadFea("../data/fe_20150907.cmvn")
+# data, target = loadFea("../data/fe_20150907.cmvn")
+# data, target, test_data, test_tgt = loadFea("../data/fe_20150907.cmvn")
 print time.ctime()
 data, target, test_data, test_tgt = loadFea("../data/2015.fe.cmvn")
 print time.ctime()
@@ -53,9 +53,9 @@ def my_model(features, target):
     
     # Create three fully connected layers respectively of size 10, 20, and 10 with
     # each layer having a dropout probability of 0.1.
-
+    
     features = layers.stack(features, layers.fully_connected, [1000, 400, 400, 100, 10])
-
+    
     # Create two tensors respectively for prediction and loss.
     prediction, loss = (
         tf.contrib.learn.models.logistic_regression(features, target)
@@ -65,13 +65,10 @@ def my_model(features, target):
     train_op = tf.contrib.layers.optimize_loss(
         loss, tf.contrib.framework.get_global_step(), optimizer='Adam',
         learning_rate=0.001)
-
+    
     return {'class': tf.argmax(prediction, 1), 'prob': prediction}, loss, train_op
 
 classifier = learn.Estimator(model_fn=my_model, model_dir="m0.001_dl")
-print data.shape
-print target.shape
-print target[0]
 
 classifier.fit(data, target, steps=2000)
 
