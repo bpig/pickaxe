@@ -63,7 +63,7 @@ def extend(key, v):
     status = map(getStatus, v[9])
     s_status = map(getSstatus, s_rate)
     e_status = map(getSstatus, e_rate)
-    wav_status = map(getSstatus, zip(h_rate, l_rate))
+    wav_status = map(getWavStatus, zip(h_rate, l_rate))
     
     for i in range(len(status)):
         if status[i] == 0:
