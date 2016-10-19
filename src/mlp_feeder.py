@@ -30,6 +30,7 @@ import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 
 Datasets = collections.namedtuple('Datasets', ['train','test'])
+PredictSets = collections.namedtuple('PredictSets', ['key','fea', 'tgt'])
 
 from tensorflow.python.framework import dtypes
 
@@ -77,20 +78,18 @@ class DataSet(object):
 
 
 def tgtMap(tgt):
-    # m1 = 0.7363636363636363
-    # m2 = 1.3444444444444443
-    m1 = 0.8
-    m2 = 1.2
-    if tgt < m1:
-        tgt = 0.8
-    elif tgt > m2:
-        tgt = m2
+    m1 = 0.7363636363636363
+    m2 = 1.3444444444444443
     ans = (tgt - m1) / (m2 - m1)
-    # assert ans >= 0.0, ans
-    # assert ans <= 1.0, ans
+    if ans < 0.0:
+        print(ans)
+        ans = 0.0
+    if ans > 1.0:
+        print(ans)
+        ans = 1.0
     return ans
 
-def loadFea(filename, cv=None):
+def loadFea(filename, cv=None, convert=True):
     keys = []
     feas = []
     tgts = []
@@ -105,7 +104,10 @@ def loadFea(filename, cv=None):
         # if ds >= "20160800":
         #     continue
         value = l[pos + 1:].split(",")
-        tgt = tgtMap(float(value[-1]))
+        if convert:
+            tgt = tgtMap(float(value[-1]))
+        else:
+            tgt = float(value[-1])
         fea = np.asarray(value[:-1]).astype(np.float32)
 
         keys += [key]
@@ -114,10 +116,11 @@ def loadFea(filename, cv=None):
         if cv and c == cv:
             break
     ct = len(tgts)
-    return keys, np.asarray(feas), np.asarray(tgts).reshape([ct, 1])
-    
+    if convert:
+        return keys, np.asarray(feas), np.asarray(tgts).reshape([ct, 1])
+    return keys, np.asarray(feas), np.asarray(tgts)
 
-def read_data_sets(datafile, cv=None, skip=False):
+def base_data(datafile, cv=None, skip=False, convert=True):
     keyfile = datafile + ".key.npy"
     feafile = datafile + ".fea.npy"
     tgtfile = datafile + ".tgt.npy"
@@ -127,10 +130,14 @@ def read_data_sets(datafile, cv=None, skip=False):
         feas = np.load(feafile)
         tgts = np.load(tgtfile)
     else:
-        keys, feas, tgts = loadFea(datafile, cv)
+        keys, feas, tgts = loadFea(datafile, cv, convert)
         np.save(keyfile, keys)
         np.save(feafile, feas)
         np.save(tgtfile, tgts)
+    return keys, feas, tgts
+
+def read_data_sets(datafile, cv=None, skip=False):
+    keys, feas, tgts = base_data(datafile, cv, skip)
 
     point = int(len(keys) * .9)
 
@@ -144,4 +151,14 @@ def read_data_sets(datafile, cv=None, skip=False):
     test = DataSet(te_x, te_y)
     
     return Datasets(train=train, test=test)
+
+def read_predict_sets(datafile, cv=None, skip=False):
+    keys, feas, tgts = base_data(datafile, cv, skip, False)
+    # print( tgts.shape)
+    # ct = tgts.shape[0]
+    # print (ct)
+    # tgts = tgts.reshape([ct,])
+    
+    np.save("data/20.fe.2016.cmvn.shuf.tgt.npy", tgts)
+    return PredictSets(key=keys, fea=feas, tgt=tgts)
 
