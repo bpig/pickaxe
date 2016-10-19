@@ -26,7 +26,7 @@ display_step = 1
 n_hidden_1 = 256  # 1st layer number of features
 n_hidden_2 = 256  # 2nd layer number of features
 n_input = 784  # MNIST data input (img shape: 28*28)
-n_classes = 10  # MNIST total classes (0-9 digits)
+n_classes = 1  # MNIST total classes (0-9 digits)
 
 # tf Graph input
 x = tf.placeholder("float", [None, n_input])
@@ -88,7 +88,7 @@ with tf.Session() as sess:
     print("Optimization Finished!")
     
     # Test model
-    correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+    # correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
     # Calculate accuracy
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    print("Accuracy:", accuracy.eval({x: mnist.test.images, y: mnist.test.labels}))
+    # accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+    # print("Accuracy:", accuracy.eval({x: mnist.test.images, y: mnist.test.labels}))
