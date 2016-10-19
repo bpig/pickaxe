@@ -15,6 +15,8 @@ def getKv(filename):
         pos = l.find(",")
         key = l[:pos]
         value = l[pos + 1:].split(",")
+        # if value[0] < "20160000":
+        #     continue
         if value[9] == 'NULL':
             value[9] = "0.0"
         kv[key].append(value)

@@ -22,7 +22,9 @@ def loadFea(filename):
         if not l:
             continue
         pos = l.find(":")
-        # key = l[:pos]
+        key, ds = l[:pos].split("_")
+        if ds >= "20160800":
+            continue
         value = l[pos + 1:].split(",")
         tgt = tgtMap(float(value[-1]))
         value = np.asarray(value[:-1]).astype(np.float32)
@@ -32,23 +34,16 @@ def loadFea(filename):
         #     break
     
     print ct
-    # random.shuffle(a)
-    # a = a[:100000]
     point = int(len(a) * 0.9)
     train = a[:point]
     test = a[point:]
     
     train_data, train_tgt = zip(*train)
     test_data, test_tgt = zip(*test)
-    # datas = np.array(datas)
-    # tgts = np.array(tgts)
     return np.array(train_data), np.array(train_tgt), np.array(test_data), np.array(test_tgt)
 
-# data, target = loadFea("../data/fe_20150907.cmvn")
-# data, target, test_data, test_tgt = loadFea("../data/fe_20150907.cmvn")
 print time.ctime()
-# data, target, test_data, test_tgt = loadFea("data/fe_20150907.cmvn")
-data, target, test_data, test_tgt = loadFea("data/20.fe.2015.cmvn.shuf")
+data, target, test_data, test_tgt = loadFea("data/20.fe.2016.cmvn.shuf")
 print len(data[0])
 print time.ctime()
 
@@ -77,7 +72,7 @@ def my_model(features, target):
     #    features = layers.stack(features, layers.fully_connected, [512, 128, 8])
     
     # v3, 700, 0.750673, Train Accuracy: 0.939611, 1400, Train Accuracy: 0.960253, Test Accuracy: 0.746624
-    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8])
+    features = layers.stack(features, layers.fully_connected, [512, 128, 8])
     
     prediction, loss = (
         tf.contrib.learn.models.logistic_regression(features, target)
@@ -93,7 +88,7 @@ def my_model(features, target):
 # with tf.device('/gpu:0'):
 classifier = learn.Estimator(model_fn=my_model, model_dir="model/" + sys.argv[1])
 
-classifier.fit(data, target, steps=700)
+classifier.fit(data, target, steps=1000)
 
 print time.ctime()
 ct = len(test_data)
