@@ -16,10 +16,15 @@ def loadFile(fin):
         kv[key] = items
     return kv
 
-def gain(predict, stock, numStock, period):
-    ds = sorted(predict.keys(), key=lambda x: x[0])
+def gain(predict, stock, numStock, period, start):
+    ds = sorted(predict.keys(), key=lambda x: x)
     totalMoney = [0.5, 0.5]
-    updateMoney = [0, 0]
+    updateMoney = [0.5, 0.5]
+    if start not in ds:
+        print "start date is too late"
+        return -1, totalMoney
+    ss = ds.index(start)
+    ds = ds[ss:]
     for i in range(period):
         if i >= len(ds):
             return i-1, totalMoney
@@ -37,7 +42,9 @@ def gain(predict, stock, numStock, period):
             items = stock[key]
             if d not in items[0]:
                 continue
-            index = items[0].index(d)
+            index = items[0].index(d) - 1
+            if index < 1:
+                continue
             # 停盘 or 开盘涨停
             if items[15][index] == 1 or items[16][index] == 1:
                 continue
@@ -47,32 +54,35 @@ def gain(predict, stock, numStock, period):
             while nextDayIndex >= 0 and (items[15][nextDayIndex] == 1 or items[18][nextDayIndex] == 2):
                 nextDayIndex -= 1
             if nextDayIndex < 0:
-                return i, totalMoney
+                continue
             outPrice = float(items[8][nextDayIndex])
-            buy[ii] += str(key) + "_" + rec[1] + ","
+            buy[ii] += str(key) + "_" + rec[1] + "_" + rec[2] +","
             increase[ii] += outPrice / inPrice
             count[ii] += 1
         updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
         print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]), "buy " + str(count[ii]) + " stocks: " +buy[ii]
+        print d, "total start: " + str(sum(totalMoney)), "total end: " + str(sum(updateMoney))
         if count[ii] < numStock:
             print "no enough number of stocks to buy in"
         totalMoney[ii] = updateMoney[ii]
 
     return i, totalMoney
 
-def process(predictFile, stockFile, numStock, period):
+def process(predictFile, stockFile, numStock, period, start):
     stock = loadFile(stockFile)
     predict = {}
     for k, v in loadFile(predictFile).items():
         v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
-    i, money = gain(predict, stock, numStock, period)
+    i, money = gain(predict, stock, numStock, period, start)
     print "after " + str(i+1) + " days:"
     print "final: " + str(sum(money))
 
 if __name__ == "__main__":
-    predictFile = sys.argv[1]
-    stockFile = sys.argv[2]
-    numStock = int(sys.argv[3])
-    period = int(sys.argv[4])
-    process(predictFile, stockFile, numStock, period)
+    process("../data/2016.ans", "../data/2016.ft", 100, 40, "20160801")
+    #process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
+    # predictFile = sys.argv[1]
+    # stockFile = sys.argv[2]
+    # numStock = int(sys.argv[3])
+    # period = int(sys.argv[4])
+    # process(predictFile, stockFile, numStock, period)
