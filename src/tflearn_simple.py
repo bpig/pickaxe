@@ -58,20 +58,27 @@ def my_model(features, target):
     # with a on-value of 1 for each one-hot vector of length 3.
     
     target = tf.one_hot(target, 2, 1, 0)
-
-# sigmoid scala    
-#    features = layers.stack(features, layers.fully_connected, [2056, 1024, 1024, 512, 64, 8]) 0.647676
-#    features = layers.stack(features, layers.fully_connected, [800, 100, 10]) # f2  0.650175
-#    features = layers.stack(features, layers.fully_connected, [512, 256, 32, 8]) # f3  0.636182
-#    features = layers.stack(features, layers.fully_connected, [512, 32, 8]) # f4  0.651674
-#    features = layers.stack(features, layers.fully_connected, [512, 32, 8]) # f5 0.700150
-# cmvn scala
-#    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8]) # f6 0.691654
-# full
-#    features = layers.stack(features, layers.fully_connected, [512, 128, 8]) #f7 0.805802
-#    features = layers.stack(features, layers.fully_connected, [512, 128, 8]) #v2 1400, 0.805802, Train Accuracy: 0.914740,  700, 0.748649, Train Accuracy: 0.848748
-    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8]) #  v3, 700, 0.750673, Train Accuracy: 0.939611, 1400, Train Accuracy: 0.960253, Test Accuracy: 0.746624
-
+    
+    # sigmoid scala
+    #    features = layers.stack(features, layers.fully_connected, [2056, 1024, 1024, 512, 64, 8]) # 0.647676
+    #    features = layers.stack(features, layers.fully_connected, [800, 100, 10]) # f2  0.650175
+    #    features = layers.stack(features, layers.fully_connected, [512, 256, 32, 8]) # f3  0.636182
+    #    features = layers.stack(features, layers.fully_connected, [512, 32, 8]) # f4  0.651674
+    
+    # cmvn scala, 2w
+    #    features = layers.stack(features, layers.fully_connected, [512, 32, 8]) # f5 0.700150
+    # f6 0.691654
+    #    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8])
+    
+    # full
+    # f7 0.805802
+    #    features = layers.stack(features, layers.fully_connected, [512, 128, 8])
+    # v2 1400, 0.805802, Train Accuracy: 0.914740,  700, 0.748649, Train Accuracy: 0.848748
+    #    features = layers.stack(features, layers.fully_connected, [512, 128, 8])
+    
+    # v3, 700, 0.750673, Train Accuracy: 0.939611, 1400, Train Accuracy: 0.960253, Test Accuracy: 0.746624
+    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8])
+    
     prediction, loss = (
         tf.contrib.learn.models.logistic_regression(features, target)
     )
