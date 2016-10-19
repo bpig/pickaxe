@@ -17,7 +17,7 @@ def loadFea(filename):
     tgts = []
     a = []
     ct = [0] * 2
-    for l in open(filename):
+    for c, l in enumerate(open(filename)):
         l = l.strip()
         if not l:
             continue
@@ -28,9 +28,11 @@ def loadFea(filename):
         value = np.asarray(value[:-1]).astype(np.float32)
         a += [(value, tgt)]
         ct[tgt] += 1
+        # if c == 20000:
+        #     break
     
     print ct
-    random.shuffle(a)
+    # random.shuffle(a)
     # a = a[:100000]
     point = int(len(a) * 0.9)
     train = a[:point]
@@ -46,7 +48,8 @@ def loadFea(filename):
 # data, target, test_data, test_tgt = loadFea("../data/fe_20150907.cmvn")
 print time.ctime()
 # data, target, test_data, test_tgt = loadFea("data/fe_20150907.cmvn")
-data, target, test_data, test_tgt = loadFea("data/20.fe.2015.sigmoid")
+data, target, test_data, test_tgt = loadFea("data/20.fe.2015.cmvn.shuf")
+print len(data[0])
 print time.ctime()
 
 def my_model(features, target):
@@ -55,9 +58,20 @@ def my_model(features, target):
     # with a on-value of 1 for each one-hot vector of length 3.
     
     target = tf.one_hot(target, 2, 1, 0)
-    
-    features = layers.stack(features, layers.fully_connected, [800, 100, 10])
-    
+
+# sigmoid scala    
+#    features = layers.stack(features, layers.fully_connected, [2056, 1024, 1024, 512, 64, 8]) 0.647676
+#    features = layers.stack(features, layers.fully_connected, [800, 100, 10]) # f2  0.650175
+#    features = layers.stack(features, layers.fully_connected, [512, 256, 32, 8]) # f3  0.636182
+#    features = layers.stack(features, layers.fully_connected, [512, 32, 8]) # f4  0.651674
+#    features = layers.stack(features, layers.fully_connected, [512, 32, 8]) # f5 0.700150
+# cmvn scala
+#    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8]) # f6 0.691654
+# full
+#    features = layers.stack(features, layers.fully_connected, [512, 128, 8]) #f7 0.805802
+#    features = layers.stack(features, layers.fully_connected, [512, 128, 8]) #v2 1400, 0.805802, Train Accuracy: 0.914740,  700, 0.748649, Train Accuracy: 0.848748
+    features = layers.stack(features, layers.fully_connected, [512, 256, 256, 32, 8]) #  v3, 700, 0.750673, Train Accuracy: 0.939611, 1400, Train Accuracy: 0.960253, Test Accuracy: 0.746624
+
     prediction, loss = (
         tf.contrib.learn.models.logistic_regression(features, target)
     )
@@ -72,10 +86,17 @@ def my_model(features, target):
 # with tf.device('/gpu:0'):
 classifier = learn.Estimator(model_fn=my_model, model_dir="model/" + sys.argv[1])
 
-classifier.fit(data, target, steps=1500)
+classifier.fit(data, target, steps=700)
 
 print time.ctime()
+ct = len(test_data)
+
+y_predicted = [p['class'] for p in classifier.predict(data[:ct], as_iterable=True)]
+score = metrics.accuracy_score(target[:ct], y_predicted)
+
+print('Train Accuracy: {0:f}'.format(score))
+
 y_predicted = [p['class'] for p in classifier.predict(test_data, as_iterable=True)]
 score = metrics.accuracy_score(test_tgt, y_predicted)
 
-print('Accuracy: {0:f}'.format(score))
+print('Test Accuracy: {0:f}'.format(score))
