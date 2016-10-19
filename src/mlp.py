@@ -10,9 +10,9 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 from __future__ import print_function
 
 # Import MNIST data
-from tensorflow.examples.tutorials.mnist import input_data
+import mlp_feeder
 
-mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
+mnist = mlp_feeder.read_data_sets("/tmp/data/", one_hot=True)
 
 import tensorflow as tf
 
