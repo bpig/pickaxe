@@ -9,6 +9,9 @@ import tensorflow.contrib.learn.python.learn as learn
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
+    # m1 = 0.7363636363636363
+    # m2 = 1.3444444444444443
+    # ans = (tgt - m1) / (m2 - m1)
 def tgtMap(tgt):
     return 0 if tgt < 1.002 else 1
 
@@ -30,8 +33,8 @@ def loadFea(filename):
         value = np.asarray(value[:-1]).astype(np.float32)
         a += [(value, tgt)]
         ct[tgt] += 1
-        # if c == 20000:
-        #     break
+        if c == 20000:
+            break
     
     print ct
     point = int(len(a) * 0.9)

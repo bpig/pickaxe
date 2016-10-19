@@ -53,7 +53,7 @@ def my_model(features, target):
     return {'class': tf.argmax(prediction, 1), 'prob': prediction}, loss, train_op
 
 
-classifier = learn.Estimator(model_fn=my_model, model_dir="model/big_v2")
+classifier = learn.Estimator(model_fn=my_model, model_dir="model/2016_07_600")
 
 classifier.fit(values, tgts.astype(np.int), steps=0)
 
@@ -72,7 +72,7 @@ for c, p in enumerate(pp):
 
     #print keys[c], p['class'], p['prob'], tgts[c]
 
-fout = open("2016.ans", "w")
+fout = open("2016_89.ans", "w")
 for ds in sorted(ans.keys()):
     st = ans[ds]
     st = sorted(st, key=lambda x:x[1], reverse=True)
