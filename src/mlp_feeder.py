@@ -2,32 +2,14 @@
 # __author__ = "shuai.li(286287737@qq.com)"
 # __date__ = "2016/10/19"
 
-# Copyright 2016 The TensorFlow Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
-"""Functions for downloading and reading MNIST data."""
-
 from __future__ import absolute_import
 from __future__ import division
-from __future__ import print_function
 
 import gzip
 import os
 import collections
 import numpy as np
-from six.moves import xrange  # pylint: disable=redefined-builtin
+import time
 
 Datasets = collections.namedtuple('Datasets', ['train', 'test'])
 PredictSets = collections.namedtuple('PredictSets', ['key', 'fea', 'tgt'])
@@ -75,18 +57,6 @@ class DataSet(object):
             assert batch_size <= self._num_examples
         end = self._index_in_epoch
         return self._feas[start:end], self._tgts[start:end]
-
-def tgtMap(tgt):
-    m1 = 0.7363636363636363
-    m2 = 1.3444444444444443
-    ans = (tgt - m1) / (m2 - m1)
-    if ans < 0.0:
-        print(ans)
-        ans = 0.0
-    if ans > 1.0:
-        print(ans)
-        ans = 1.0
-    return ans
 
 def loadFea(filename, cv=None):
     keys = []
@@ -152,10 +122,5 @@ def read_data_sets(datafile, cv=None, skip=False, reshape=False):
 
 def read_predict_sets(datafile, cv=None, skip=False):
     keys, feas, tgts = base_data(datafile, cv, skip, False)
-    # print( tgts.shape)
-    # ct = tgts.shape[0]
-    # print (ct)
-    # tgts = tgts.reshape([ct,])
     
-    np.save("data/20.fe.2016.cmvn.shuf.tgt.npy", tgts)
     return PredictSets(key=keys, fea=feas, tgt=tgts)
