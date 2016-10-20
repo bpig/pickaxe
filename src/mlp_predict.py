@@ -6,17 +6,18 @@ import time
 from collections import defaultdict
 #mnist = mlp_feeder.read_data_sets("data/20.fe.2016.cmvn.shuf")
 print(time.ctime())
-mnist = mlp_feeder.read_predict_sets("data/20.fe.2016.cmvn.shuf", None)
+#mnist = mlp_feeder.read_predict_sets("data/20.fe.2016.cmvn.shuf", None)
+mnist = mlp_feeder.read_predict_sets("data/2015.test")
 print(time.ctime())
 
-model_path = "rr/2015"
+model_path = "r128_direct/2015"
 
 import tensorflow as tf
 
 # Network Parameters
-n_hidden_1 = 256  # 1st layer number of features
-n_hidden_2 = 256  # 2nd layer number of features
-n_hidden_3 = 8  # 3nd layer number of features
+n_hidden_1 = 128  # 1st layer number of features
+n_hidden_2 = 128  # 2nd layer number of features
+n_hidden_3 = 128  # 3nd layer number of features
 n_input = 1673  # MNIST data input (img shape: 28*28)
 n_classes = 1  # MNIST total classes (0-9 digits)
 
@@ -33,10 +34,10 @@ def multilayer_perceptron(x, weights, biases):
     layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
     layer_2 = tf.nn.relu(layer_2)
     # Hidden layer with RELU activation
-    # layer_3 = tf.add(tf.matmul(layer_2, weights['h3']), biases['b3'])
-    # layer_3 = tf.nn.relu(layer_3)
+    layer_3 = tf.add(tf.matmul(layer_2, weights['h3']), biases['b3'])
+    layer_3 = tf.nn.relu(layer_3)
     # Output layer with linear activation
-    out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
+    out_layer = tf.matmul(layer_3, weights['out']) + biases['out']
     return out_layer
 
 # Store layers weight & bias
@@ -44,7 +45,7 @@ weights = {
     'h1': tf.Variable(tf.random_normal([n_input, n_hidden_1])),
     'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
     'h3': tf.Variable(tf.random_normal([n_hidden_2, n_hidden_3])),
-    'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]))
+    'out': tf.Variable(tf.random_normal([n_hidden_3, n_classes]))
 }
 biases = {
     'b1': tf.Variable(tf.random_normal([n_hidden_1])),
@@ -63,7 +64,7 @@ init = tf.initialize_all_variables()
 saver = tf.train.Saver(max_to_keep=200)
 
 
-idx = 85
+idx = 6
 # Launch the graph
 with tf.Session() as sess:
     sess.run(init)
@@ -77,13 +78,14 @@ with tf.Session() as sess:
 
     pp = zip(mnist.key, predict, mnist.tgt)
     pp = sorted(pp, key=lambda x:x[1], reverse=True)
-    pp = filter(lambda x:x[1] <= 1.0 and x[1] >= 0.0, pp)
+
+#    pp = filter(lambda x:x[1] <= 1.35 and x[1] >= 0.735, pp)
 
     fout = open("hihihi.debug", "w")
     for p in pp:
         fout.write("%s,%.4f,%.4f\n" % p)
-    
-    pp = filter(lambda x:x[1] >= 0.52, pp)
+
+    pp = filter(lambda x:x[1] >= 1.002, pp)
 
     kv = defaultdict(list)
     for (key,prob,t) in pp:

@@ -21,6 +21,7 @@ def gain(predict, stock, numStock, period, start):
     totalMoney = [0.5, 0.5]
     updateMoney = [0.5, 0.5]
     if start not in ds:
+        print ds
         print "start date is too late"
         return -1, totalMoney
     ss = ds.index(start)
@@ -60,8 +61,12 @@ def gain(predict, stock, numStock, period, start):
             increase[ii] += outPrice / inPrice
             count[ii] += 1
         updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
-        print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]), "buy " + str(count[ii]) + " stocks: " +buy[ii]
-        print d, "total start: " + str(sum(totalMoney)), "total end: " + str(sum(updateMoney))
+        # print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]), "buy " + str(count[ii]) + " stocks: " +buy[ii]
+
+        lt = buy[ii].split(",")[-2]
+        bg = sum(totalMoney)
+        ed = sum(updateMoney)
+        print d, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg)
         if count[ii] < numStock:
             print "no enough number of stocks to buy in"
         totalMoney[ii] = updateMoney[ii]
@@ -79,10 +84,12 @@ def process(predictFile, stockFile, numStock, period, start):
     print "final: " + str(sum(money))
 
 if __name__ == "__main__":
-    process("../data/2016.ans", "../data/2016.ft", 100, 40, "20160801")
+    predictFile = sys.argv[1]
+    stockFile = "data/2016.ft"
+    numStock = int(sys.argv[2])
+    period = int(sys.argv[3])
+    start = sys.argv[4]
+
+    process(predictFile, stockFile, numStock, period, start)
     #process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
-    # predictFile = sys.argv[1]
-    # stockFile = sys.argv[2]
-    # numStock = int(sys.argv[3])
-    # period = int(sys.argv[4])
     # process(predictFile, stockFile, numStock, period)

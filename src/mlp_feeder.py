@@ -104,10 +104,10 @@ def loadFea(filename, cv=None, convert=True):
         # if ds >= "20160800":
         #     continue
         value = l[pos + 1:].split(",")
-        if convert:
-            tgt = tgtMap(float(value[-1]))
-        else:
-            tgt = float(value[-1])
+        # if convert:
+        #     # tgt = tgtMap(float(value[-1]))
+        # else:
+        tgt = float(value[-1])
         fea = np.asarray(value[:-1]).astype(np.float32)
 
         keys += [key]
