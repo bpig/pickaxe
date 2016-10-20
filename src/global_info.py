@@ -50,6 +50,7 @@ def process(fin, fout):
     for c, ds in enumerate(datas):
         gb[ds][14] = gb[ds][0] / gb[ds][1]
         if c == 0.0:
+            gb[ds][15] = 1.0
             continue
         gb[ds][15] = gb[ds][1] / gb[datas[c - 1]][1]
     
@@ -62,9 +63,9 @@ def process(fin, fout):
         fout.write(",".join(info) + "\n")
         
         # amount, shares * e, status-0, status-1, s-status-0, s-status-1, s-status-2,
-        #  0
+        #  0            1        2         3         4            5            6
         # wav-status-0, wav-status-1, wav-status-2, wav-status-3, e-status-0, e-status-1, e-status-2,
-        #   7
+        #   7                 8             9          10           11          12          13
         # amount / (shares * e), rate
         #       14                 15
         
