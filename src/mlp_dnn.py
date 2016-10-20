@@ -8,7 +8,7 @@ import sys
 print(time.ctime())
 mnist = mlp_feeder.read_data_sets("data/20.fe.2015.cmvn.shuf", None)
 print(time.ctime())
-model_path = "r128_direct/2015"
+model_path = "dnn/2015"
 
 mp = model_path.split("/")[0]
 if not os.path.exists(mp):
@@ -19,16 +19,16 @@ import tensorflow as tf
 # Parameters
 
 learning_rate = 0.001
-training_epochs = 30
-batch_size = 1
+training_epochs = 3
+batch_size = 128
 display_step = 1
 
 # Network Parameters
-n_hidden_1 = 128  # 1st layer number of features
+n_hidden_1 = 512  # 1st layer number of features
 n_hidden_2 = 128  # 2nd layer number of features
-n_hidden_3 = 128  # 3nd layer number of features
+n_hidden_3 = 8  # 3nd layer number of features
 n_input = 1673  # MNIST data input (img shape: 28*28)
-n_classes = 1  # MNIST total classes (0-9 digits)
+n_classes = 2  # MNIST total classes (0-9 digits)
 
 # tf Graph input
 x = tf.placeholder("float", [None, n_input])
@@ -67,8 +67,8 @@ biases = {
 pred = multilayer_perceptron(x, weights, biases)
 
 global_step = tf.Variable(0, name='global_step', trainable=False)
-#cost = tf.reduce_mean(tf.pow(pred - y, 2))
-cost = tf.reduce_mean(tf.abs(pred - y))
+
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
 
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(
     cost, global_step=global_step)
@@ -84,7 +84,7 @@ with tf.Session() as sess:
     if os.path.exists(model_path + suffix):
         saver.restore(sess, model_path + suffix)
         print("Model restored from file")
-
+    
     for epoch in range(training_epochs):
         avg_cost = 0.
         total_batch = int(mnist.train.num_examples / batch_size)
@@ -98,26 +98,26 @@ with tf.Session() as sess:
             avg_cost += c / total_batch
         # Display logs per epoch step
         if epoch % display_step == 0:
-            gs = sess.run(global_step)
-            print(gs)
+            # gs = sess.run(global_step)
             c = sess.run(cost, feed_dict={x: mnist.test.feas,
                                           y: mnist.test.tgts})
-            print(time.ctime(), "Epoch:", '%04d' % (epoch + 1), "cost=", "{:.5f}".format(avg_cost), "test_cost=%.5f" % c)
+            print(time.ctime(), "Epoch:", '%04d' % epoch,
+                  "cost=", "%.5f" % avg_cost,
+                  "test_cost=%.5f" % c)
             save_path = saver.save(sess, model_path + "." + str(epoch))
-
+    
     print("Optimization Finished!")
-
+    
     save_path = saver.save(sess, model_path)
     print("Model saved in file: %s" % save_path)
-
+    
     predict, cost = sess.run([pred, cost], feed_dict={x: mnist.test.feas,
                                                       y: mnist.test.tgts})
     print(cost)
     pp = zip(predict, mnist.test.tgts)
-    pp = sorted(pp, key=lambda x:x[0], reverse=True)
+    pp = sorted(pp, key=lambda x: x[0], reverse=True)
     fout = open("hihihi", "w")
     total = 0
     for c, p in enumerate(pp):
         total += p[1]
-        fout.write("%.4f,%.4f - %.4f\n" % (p[0], p[1], total / (c+1)))
-    
+        fout.write("%.4f,%.4f - %.4f\n" % (p[0], p[1], total / (c + 1)))

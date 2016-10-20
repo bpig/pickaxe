@@ -28,7 +28,7 @@ def gain(predict, stock, numStock, period, start):
     ds = ds[ss:]
     for i in range(period):
         if i >= len(ds):
-            return i-1, totalMoney
+            return i - 1, totalMoney
         d = ds[i]
         buy = ["", ""]
         increase = [0, 0]
@@ -57,12 +57,13 @@ def gain(predict, stock, numStock, period, start):
             if nextDayIndex < 0:
                 continue
             outPrice = float(items[8][nextDayIndex])
-            buy[ii] += str(key) + "_" + rec[1] + "_" + rec[2] +","
+            buy[ii] += str(key) + "_" + rec[1] + "_" + rec[2] + ","
             increase[ii] += outPrice / inPrice
             count[ii] += 1
         updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
-        # print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]), "buy " + str(count[ii]) + " stocks: " +buy[ii]
-
+        # print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]),
+        #  "buy " + str(count[ii]) + " stocks: " +buy[ii]
+        
         lt = buy[ii].split(",")[-2]
         bg = sum(totalMoney)
         ed = sum(updateMoney)
@@ -70,7 +71,7 @@ def gain(predict, stock, numStock, period, start):
         if count[ii] < numStock:
             print "no enough number of stocks to buy in"
         totalMoney[ii] = updateMoney[ii]
-
+    
     return i, totalMoney
 
 def process(predictFile, stockFile, numStock, period, start):
@@ -80,7 +81,7 @@ def process(predictFile, stockFile, numStock, period, start):
         v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
     i, money = gain(predict, stock, numStock, period, start)
-    print "after " + str(i+1) + " days:"
+    print "after " + str(i + 1) + " days:"
     print "final: " + str(sum(money))
 
 if __name__ == "__main__":
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     numStock = int(sys.argv[2])
     period = int(sys.argv[3])
     start = sys.argv[4]
-
+    
     process(predictFile, stockFile, numStock, period, start)
-    #process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
+    # process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
     # process(predictFile, stockFile, numStock, period)
