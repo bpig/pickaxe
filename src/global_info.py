@@ -59,7 +59,7 @@ def process(fin, fout):
         for i in range(2, 14):
             info[i] = int(info[i])
         info = [ds] + map(str, info)
-        fout.write(",".join(info))
+        fout.write(",".join(info) + "\n")
         
         # amount, shares * e, status-0, status-1, s-status-0, s-status-1, s-status-2,
         #  0
