@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from collections import Counter
-
+import time
 from common import *
 
 # 15
@@ -75,10 +75,12 @@ def getSt(fin):
     return kv, dates
 
 def dump(st, fout, ds):
+    ct = 0
     for items in st.items():
         if ds not in items[1][0]:
             continue
-        dumpOne(items, fout, ds)
+        ct += dumpOne(items, fout, ds)
+    print "valid %d", ct
 
 def daySpan(d1, d2):
     v1 = datetime.datetime(int(d1[:4]), int(d1[4:6]), int(d1[6:]))
@@ -118,19 +120,19 @@ def dumpOne(kv, fout, ds):
     
     index = values[0].index(ds)
     if index <= 1:
-        return
+        return 0
     
     # stock is stoped
     if values[15][index - 1] == 1 or values[15][index - 2] == 1:
-        return
+        return 0
     
     windows = [2, 3, 5, 7, 15, 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
     
     if len(values[0]) != max_win:
-        print "%s_%s, %d" % (key, ds, len(values[0]))
-        return
+        # print "%s_%s, %d" % (key, ds, len(values[0]))
+        return 0
     
     # today day fea
     for d in range(max_win):
@@ -153,6 +155,7 @@ def dumpOne(kv, fout, ds):
     feas += [tgt]
     values = map(str, feas)
     fout.write(key + "_" + ds + ":" + ",".join(values) + "\n")
+    return 1
 
 def process(fin, fout, ds):
     np.seterr(all='raise')
@@ -166,10 +169,10 @@ def process(fin, fout, ds):
 def genAll(fin, fout):
     st, dates = getSt(fin)
     fout = open(fout, "w")
-    dates = filter(lambda x: x >= "20160000", dates)
+    dates = filter(lambda x: x < "20160000", dates)
     total = len(dates)
     for c, ds in enumerate(sorted(dates)):
-        print ds, c, "/", total
+        print time.ctime(), ds, c, "/", total
         dump(st, fout, ds)
 
 if __name__ == "__main__":
