@@ -103,8 +103,10 @@ def base_data(datafile, cv=None, skip=False):
 def read_data_sets(datafile, cv=None, skip=False, reshape=False):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cv, skip)
-    tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
     ct = len(tgts)
+    print ct
+
+    tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
     point = int(len(keys) * .9)
