@@ -88,7 +88,7 @@ def tgtMap(tgt):
         ans = 1.0
     return ans
 
-def loadFea(filename, cv=None, convert=True):
+def loadFea(filename, cv=None):
     keys = []
     feas = []
     tgts = []
@@ -103,9 +103,6 @@ def loadFea(filename, cv=None, convert=True):
         # if ds >= "20160800":
         #     continue
         value = l[pos + 1:].split(",")
-        # if convert:
-        #     # tgt = tgtMap(float(value[-1]))
-        # else:
         tgt = float(value[-1])
         fea = np.asarray(value[:-1]).astype(np.float32)
         
@@ -115,11 +112,9 @@ def loadFea(filename, cv=None, convert=True):
         if cv and c == cv:
             break
     ct = len(tgts)
-    if convert:
-        return keys, np.asarray(feas), np.asarray(tgts).reshape([ct, 1])
     return keys, np.asarray(feas), np.asarray(tgts)
 
-def base_data(datafile, cv=None, skip=False, convert=True):
+def base_data(datafile, cv=None, skip=False):
     keyfile = datafile + ".key.npy"
     feafile = datafile + ".fea.npy"
     tgtfile = datafile + ".tgt.npy"
@@ -129,15 +124,19 @@ def base_data(datafile, cv=None, skip=False, convert=True):
         feas = np.load(feafile)
         tgts = np.load(tgtfile)
     else:
-        keys, feas, tgts = loadFea(datafile, cv, convert)
+        keys, feas, tgts = loadFea(datafile, cv)
         np.save(keyfile, keys)
         np.save(feafile, feas)
         np.save(tgtfile, tgts)
     return keys, feas, tgts
 
-def read_data_sets(datafile, cv=None, skip=False):
+def read_data_sets(datafile, cv=None, skip=False, reshape=False):
+    print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cv, skip)
-    
+    tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
+    ct = len(tgts)
+    if reshape:
+        tgts = tgts.reshape([ct, 1])
     point = int(len(keys) * .9)
     
     tr_x = feas[:point]
@@ -148,7 +147,7 @@ def read_data_sets(datafile, cv=None, skip=False):
     
     train = DataSet(tr_x, tr_y)
     test = DataSet(te_x, te_y)
-    
+    print time.ctime(), "finish load data"    
     return Datasets(train=train, test=test)
 
 def read_predict_sets(datafile, cv=None, skip=False):

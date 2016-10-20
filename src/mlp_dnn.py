@@ -18,9 +18,9 @@ import tensorflow as tf
 
 # Parameters
 
-learning_rate = 0.001
-training_epochs = 3
-batch_size = 128
+learning_rate = 0.1
+training_epochs = 300
+batch_size = 256
 display_step = 1
 
 # Network Parameters
@@ -64,6 +64,11 @@ biases = {
 }
 
 # Construct model
+
+    # prediction, loss = (
+    #     tf.contrib.learn.models.logistic_regression(features, target)
+    # )
+
 pred = multilayer_perceptron(x, weights, biases)
 
 global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -73,14 +78,17 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y))
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(
     cost, global_step=global_step)
 
+correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+
 # Initializing the variables
 init = tf.initialize_all_variables()
-saver = tf.train.Saver(max_to_keep=200)
+saver = tf.train.Saver(max_to_keep=2000)
 
 # Launch the graph
 with tf.Session() as sess:
     sess.run(init)
-    suffix = ".15"
+    suffix = ".25"
     if os.path.exists(model_path + suffix):
         saver.restore(sess, model_path + suffix)
         print("Model restored from file")
@@ -101,9 +109,11 @@ with tf.Session() as sess:
             # gs = sess.run(global_step)
             c = sess.run(cost, feed_dict={x: mnist.test.feas,
                                           y: mnist.test.tgts})
+            acc = accuracy.eval({x: mnist.test.feas, y: mnist.test.tgts})
             print(time.ctime(), "Epoch:", '%04d' % epoch,
                   "cost=", "%.5f" % avg_cost,
-                  "test_cost=%.5f" % c)
+                  "test_cost=%.5f" % c,
+                  "accuracy:", acc)
             save_path = saver.save(sess, model_path + "." + str(epoch))
     
     print("Optimization Finished!")
@@ -111,13 +121,16 @@ with tf.Session() as sess:
     save_path = saver.save(sess, model_path)
     print("Model saved in file: %s" % save_path)
     
-    predict, cost = sess.run([pred, cost], feed_dict={x: mnist.test.feas,
-                                                      y: mnist.test.tgts})
-    print(cost)
-    pp = zip(predict, mnist.test.tgts)
-    pp = sorted(pp, key=lambda x: x[0], reverse=True)
-    fout = open("hihihi", "w")
-    total = 0
-    for c, p in enumerate(pp):
-        total += p[1]
-        fout.write("%.4f,%.4f - %.4f\n" % (p[0], p[1], total / (c + 1)))
+    # cost = sess.run(cost, feed_dict={x: mnist.test.feas,
+    #                                  y: mnist.test.tgts})
+    # print(cost)
+    # print("Accuracy:", accuracy.eval({x: mnist.test.feas, y: mnist.test.tgts}))
+
+    # pp = zip(predict, mnist.test.tgts)
+    # print(pp[0])
+    # pp = sorted(pp, key=lambda x: x[0][1], reverse=True)
+    # fout = open("hihihi", "w")
+    # total = 0
+    # for c, p in enumerate(pp):
+    #     total += p[1]
+    #     fout.write("%.4f,%.4f - %.4f\n" % (p[0], p[1], total / (c + 1)))
