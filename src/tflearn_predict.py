@@ -9,7 +9,7 @@ from tflearn_simple import my_model
 if __name__ == "__main__":
     predSet = read_predict_sets("data/20.fe.2016.cmvn.shuf")
 
-    model_dir = "model/3y"
+    model_dir = "model/" + sys.argv[1]
 
     classifier = learn.Estimator(model_fn=my_model, model_dir=model_dir)
 

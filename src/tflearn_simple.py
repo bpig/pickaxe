@@ -14,7 +14,11 @@ def my_model(features, target):
     target = tf.one_hot(target, 2, 1, 0)
     
     features = layers.stack(features, layers.fully_connected, [512, 128, 8])
-    
+
+    features = layers.dropout(features, keep_prob=0.5)
+
+    features = layers.layer_norm(features)
+
     prediction, loss = tf.contrib.learn.models.logistic_regression(features, target)
     
     train_op = tf.contrib.layers.optimize_loss(
@@ -23,26 +27,33 @@ def my_model(features, target):
     
     return {'class': tf.argmax(prediction, 1), 'prob': prediction}, loss, train_op
 
-# with tf.device('/gpu:0'):
-
 if __name__ == "__main__":
     tf.logging.set_verbosity(tf.logging.INFO)
 
     data = read_data_sets("data/20.fe.cmvn.shuf", None)
-    classifier = learn.Estimator(model_fn=my_model, model_dir="model/" + sys.argv[1])
+
+    config = learn.estimators.run_config.RunConfig(
+        log_device_placement=False, save_summary_steps=100,
+        save_checkpoints_secs=600, keep_checkpoint_max=2000)
+
+    classifier = learn.Estimator(
+        config=config, model_fn=my_model, model_dir="model/" + sys.argv[1])
 
     batch_step = 3
     batch_size = int(data.train.num_examples / batch_step)
+
     for epoch in range(100):
         for i in range(batch_step):
             batch_x, batch_y = data.train.next_batch(batch_size)
-            classifier.partial_fit(batch_x, batch_y)
-            #classifier.fit(batch_x, batch_y, steps=50)
+            #classifier.partial_fit(batch_x, batch_y)
+            classifier.fit(batch_x, batch_y, steps=50) #, batch_size=256)
+            print time.ctime(), "batch_step", i
     
         te_acc = pred(classifier, data.test.feas, data.test.tgts)
         ct = data.test.num_examples
         tr_acc = pred(classifier, data.train.feas[:ct], data.train.tgts[:ct])
-        print time.ctime(), "finish epoch %d, train acc %.6f, test acc %.6f" % (epoch, tr_acc, te_acc)
+        print time.ctime(), "finish epoch %d, train acc %.6f, test acc %.6f" \
+            % (epoch, tr_acc, te_acc)
 
 
 
