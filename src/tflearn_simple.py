@@ -1,23 +1,13 @@
+from common import *
 from sklearn import metrics
-import numpy as np
-import random
-import time
-import sys
 import tensorflow as tf
 import tensorflow.contrib.layers.python.layers as layers
 import tensorflow.contrib.learn.python.learn as learn
 from mlp_feeder import read_data_sets
-import logging
 
-tf.logging.set_verbosity(tf.logging.INFO)
-
-#data = read_data_sets("data/20.fe.2015.cmvn.shuf", None)
-data = read_data_sets("data/20.fe.cmvn.shuf", None)
-
-def pred(classifier, feas, tgts, msg):
+def pred(classifier, feas, tgts):
     y_predicted = [p['class'] for p in classifier.predict(feas, as_iterable=True)]
-    score = metrics.accuracy_score(tgts, y_predicted)
-    print time.ctime(), '%s acc: %.6f'% (msg, score)
+    return metrics.accuracy_score(tgts, y_predicted)
 
 def my_model(features, target):
     """DNN with three hidden layers, and dropout of 0.1 probability."""
@@ -35,20 +25,25 @@ def my_model(features, target):
 
 # with tf.device('/gpu:0'):
 
-classifier = learn.Estimator(model_fn=my_model, model_dir="model/" + sys.argv[1])
+if __name__ == "__main__":
+    tf.logging.set_verbosity(tf.logging.INFO)
 
-batch_size = int(data.train.num_examples / 10)
-for epoch in range(100):
-     for i in range(10):
-        batch_x, batch_y = data.train.next_batch(batch_size)
-        # classifier.partial_fit(batch_x, batch_y)
-        classifier.fit(batch_x, batch_y, steps=1)
+    data = read_data_sets("data/20.fe.cmvn.shuf", None)
+    classifier = learn.Estimator(model_fn=my_model, model_dir="model/" + sys.argv[1])
+
+    batch_step = 3
+    batch_size = int(data.train.num_examples / batch_step)
+    for epoch in range(100):
+        for i in range(batch_step):
+            batch_x, batch_y = data.train.next_batch(batch_size)
+            classifier.partial_fit(batch_x, batch_y)
+            #classifier.fit(batch_x, batch_y, steps=50)
     
-    print time.ctime(), "finish epoch %d" % epoch
+        te_acc = pred(classifier, data.test.feas, data.test.tgts)
+        ct = data.test.num_examples
+        tr_acc = pred(classifier, data.train.feas[:ct], data.train.tgts[:ct])
+        print time.ctime(), "finish epoch %d, train acc %.6f, test acc %.6f" % (epoch, tr_acc, te_acc)
 
-    pred(classifier, data.test.feas, data.test.tgts, "test")
-    ct = data.test.num_examples
-    pred(classifier, data.train.feas[:ct], data.train.tgts[:ct], "train")
 
 
 

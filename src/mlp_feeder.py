@@ -123,6 +123,7 @@ def read_data_sets(datafile, cv=None, skip=False, reshape=False):
     return Datasets(train=train, test=test)
 
 def read_predict_sets(datafile, cv=None, skip=False):
-    keys, feas, tgts = base_data(datafile, cv, skip, False)
-    
+    print time.ctime(), "begin load data"
+    keys, feas, tgts = base_data(datafile, cv, skip)
+    print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

@@ -89,7 +89,10 @@ if __name__ == "__main__":
     stockFile = "data/2016.ft"
     numStock = int(sys.argv[2])
     period = int(sys.argv[3])
-    start = sys.argv[4]
+    if len(sys.argv) == 5:
+        start = sys.argv[4]
+    else:
+        start = "20160104"
     
     process(predictFile, stockFile, numStock, period, start)
     # process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
