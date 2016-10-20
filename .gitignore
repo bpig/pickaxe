@@ -4,3 +4,4 @@ base/*
 src/test/small*
 *.pyc
 model*
+ans*

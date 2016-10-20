@@ -1,0 +1,25 @@
+[1000, 200, 200, 10],   0.548414,  adam0.03,   m22
+
+[1000, 200, 200, 10],   0.766817,  adam0.001,   m0.001
+
+[1000, 400, 400, 100, 10],  adam0.001,   m0.001_dl
+
+[800, 100, 10],  0.767712   adam0.001 sigmoid_scala   sig_norm_v0
+
+
+wide_n_deep
+wide accuracy: 0.834654, auc: 0.87855
+deep accuracy: 0.794054, auc: 0.794068
+mix  accuracy: 0.837049, auc: 0.884232
+
+iter 2000
+wide loss: 0.348847, auc: 0.885538, accuracy: 0.839076
+deep loss = 0.447509, auc = 0.891313, accuracy = 0.834777
+mix  loss: 0.320935, auc: 0.904883, accuracy: 0.855414
+
+
+
+estimator.py  688  return direct
+
+<tf.Tensor 'one_hot:0' shape=(?, 2) dtype=int32>
+
