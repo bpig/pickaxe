@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import datetime
 import numpy as np
 
-def getData():
-    ls = map(str.strip, open("rate"))
+def getData(filename):
+    ls = map(str.strip, open(filename))
     ls = filter(lambda x: x, ls)
     kv = map(lambda x: x.split()[:2], ls)[:-27]
     return zip(*kv)
@@ -26,23 +26,37 @@ def trans2date(s):
     d = int(s[6:])
     return datetime.datetime(y, m, d)
 
-if __name__ == '__main__':
-    k, v = getData()
+def filterByYahoo(k, v, dt):
     vv = []
     kk = []
-    dt = getSS()
     for i in range(len(k)):
         if k[i] in dt:
             vv += [v[i]]
             kk += [k[i]]
-    s = [float(dt[_]) for _ in kk]
+    
+    return kk, vv
+
+def getYahoo(dt, k):
+    s = [float(dt[_]) for _ in k]
     s0 = s[0]
     s = map(lambda x: x / s0, s)
-    print s0, s[-1]
-    kk = map(trans2date, kk)
-    print len(s), len(kk)
-    plt.plot_date(kk, vv, "m-")
-    plt.plot_date(kk, s, "-")
+    return s
+
+if __name__ == '__main__':
+    k, v = getData("rate")
+    k1, v1 = getData("rate.153y")
+    
+    dt = getSS()
+    k, v = filterByYahoo(k, v, dt)
+    k1, v1 = filterByYahoo(k1, v1, dt)
+    assert len(k) == len(k1)
+    s = getYahoo(dt, k)
+    
+    k = map(trans2date, k)
+    
+    plt.plot_date(k, v, "-")
+    plt.plot_date(k, v1, "-")
+    plt.plot_date(k, s, "-")
     plt.show()
     # axes.plot_date(dates, yList, 'm-', marker='.', linewidth=1)
     # axes.xaxis.set_major_formatter(DateFormatter('%Y-%m-%d'))
