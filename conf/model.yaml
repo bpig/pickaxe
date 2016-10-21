@@ -7,4 +7,14 @@ v0:
   epoch: 4
   pdata: 15.2016.fe.cmvn
   pout: 2016_v0
+
+v1:
+  data: 15.fe.cmvn
+  net: [512, 512, 512]
+  keep_prob: 0.2
+  model: v1
+  batch_step: 3
+  epoch: 4
+  pdata: 15.2016.fe.cmvn
+  pout: 2016_v1
   
