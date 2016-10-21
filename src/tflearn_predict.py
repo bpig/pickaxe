@@ -2,16 +2,21 @@ from common import *
 from sklearn import metrics
 import tensorflow as tf
 from mlp_feeder import read_predict_sets
-from tflearn_simple import my_model
+from tflearn_simple import kernel
 from jsq_estimator import JSQestimator
 
 if __name__ == "__main__":
-    # predSet = read_predict_sets("data/20.fe.2016.cmvn.shuf")
-    predSet = read_predict_sets("data/15.2016.fe.cmvn")
+    with open("conf/model.yaml") as fin:
+        cfg = yaml.load(fin)[sys.argv[1]]
 
-    model_dir = "model/" + sys.argv[1]
+    datafile = "data/" + cfg["pdata"]
+    predSet = read_predict_sets(datafile)
 
-    classifier = JSQestimator(model_fn=my_model, model_dir=model_dir)
+    model_dir = "model/" + cfg["model"]
+
+    net = cfg["net"]
+    keep_prob = cfg["keep_prob"]
+    classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
 
     classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
 
@@ -27,7 +32,8 @@ if __name__ == "__main__":
         tgt = predSet.tgt[c]
         ans[date] += [(key, prob, tgt)]
 
-    fout = open("2016_b.ans", "w")
+    fout = "ans/" + cfg["pout"]
+    fout = open(fout, "w")
     for ds in sorted(ans.keys()):
         st = ans[ds]
         st = sorted(st, key=lambda x:x[1], reverse=True)

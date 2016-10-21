@@ -1,0 +1,10 @@
+v0:
+  data: 15.fe.cmvn
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v0
+  batch_step: 6
+  epoch: 4
+  pdata: 15.2016.fe.cmvn
+  pout: 2016_v0
+  

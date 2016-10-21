@@ -9,28 +9,9 @@ import datetime
 import random
 import time
 import sys
+import yaml
 import logging
 from collections import defaultdict
 from collections import namedtuple
 #from scipy import stats
-#import yaml
 
-
-
-Fea = namedtuple("Fea", ["key", "value", "tgt"])
-
-def loadFea(filename, shuffle=False):
-    datas = []
-    for l in open(filename):
-        l = l.strip()
-        if not l:
-            continue
-        pos = l.find(":")
-        key = l[:pos]
-        value = l[pos + 1:].split(",")
-        tgt = value[-1]
-        value = np.asarray(value[:-1]).astype(np.float32)
-        datas.append(Fea(key, value, tgt))
-    if shuffle:
-        random.shuffle(datas)
-    return datas
