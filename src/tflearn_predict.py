@@ -1,10 +1,9 @@
 from common import *
 from sklearn import metrics
 import tensorflow as tf
-import tensorflow.contrib.layers.python.layers as layers
-import tensorflow.contrib.learn.python.learn as learn
 from mlp_feeder import read_predict_sets
 from tflearn_simple import my_model
+from jsq_estimator import JSQestimator
 
 if __name__ == "__main__":
     # predSet = read_predict_sets("data/20.fe.2016.cmvn.shuf")
@@ -12,7 +11,7 @@ if __name__ == "__main__":
 
     model_dir = "model/" + sys.argv[1]
 
-    classifier = learn.Estimator(model_fn=my_model, model_dir=model_dir)
+    classifier = JSQestimator(model_fn=my_model, model_dir=model_dir)
 
     classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
 
