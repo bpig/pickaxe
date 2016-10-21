@@ -18,3 +18,13 @@ v1:
   pdata: 15.2016.fe.cmvn
   pout: 2016_v1
   
+v2:
+  data: 15.fe.cmvn
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: 15_3y_2048
+  batch_step: 6
+  epoch: 4
+  pdata: 15.2016.fe.cmvn
+  pout: 2016_v0
+

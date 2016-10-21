@@ -88,7 +88,7 @@ if __name__ == "__main__":
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
 
-    pfile = cfg["pout"]
+    pfile = "ans/" + cfg["pout"]
 
     stockFile = "data/2016.ft"
     try:
