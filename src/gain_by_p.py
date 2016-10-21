@@ -85,15 +85,29 @@ def process(predictFile, stockFile, numStock, period, start):
     print "final: " + str(sum(money))
 
 if __name__ == "__main__":
-    predictFile = sys.argv[1]
+    with open("conf/model.yaml") as fin:
+        cfg = yaml.load(fin)[sys.argv[1]]
+
+    pfile = cfg["pout"]
+
     stockFile = "data/2016.ft"
-    numStock = int(sys.argv[2])
-    period = int(sys.argv[3])
-    if len(sys.argv) == 5:
-        start = sys.argv[4]
-    else:
+    try:
+        numStock = 50
+        numStock = int(sys.argv[2])
+    except:
+        pass
+    try:
+        period = 200
+        period = int(sys.argv[3])
+    except:
+        pass
+    try:
         start = "20160104"
+        start = sys.argv[4]
+    except:
+        pass
     
-    process(predictFile, stockFile, numStock, period, start)
+    process(pfile, stockFile, numStock, period, start)
+
     # process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
-    # process(predictFile, stockFile, numStock, period)
+
