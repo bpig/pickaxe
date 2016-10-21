@@ -54,8 +54,8 @@ if __name__ == '__main__':
     
     k = map(trans2date, k)
     
+    plt.plot_date(k, v1, "m-")
     plt.plot_date(k, v, "-")
-    plt.plot_date(k, v1, "-")
     plt.plot_date(k, s, "-")
     plt.show()
     # axes.plot_date(dates, yList, 'm-', marker='.', linewidth=1)
