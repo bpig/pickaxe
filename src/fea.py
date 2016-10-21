@@ -56,6 +56,29 @@ from common import *
 # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
 #     11,     12,     13,     14,     15,       16,         17,       18,     19
 
+
+
+
+# gb:
+# amount, shares * e, status-0, status-1, s-status-0, s-status-1, s-status-2,
+#  0            1        2         3         4            5            6
+# wav-status-0, wav-status-1, wav-status-2, wav-status-3, e-status-0, e-status-1, e-status-2,
+#   7                 8             9          10           11          12          13
+# amount / (shares * e), rate
+#       14                 15
+
+def getGb(fin):
+    gb = {}
+    for l in open(fin):
+        l = l.strip()
+        if not l:
+            continue
+        pos = l.find(",")
+        ds = l[:pos]
+        values = l[pos + 1:].split(",")
+        gb[ds] = values
+    return gb
+
 def getSt(fin):
     dates = set()
     kv = {}
@@ -74,12 +97,12 @@ def getSt(fin):
         kv[key] = items
     return kv, dates
 
-def dump(st, fout, ds):
+def dump(st, gb, fout, ds):
     ct = 0
     for items in st.items():
         if ds not in items[1][0]:
             continue
-        ct += dumpOne(items, fout, ds)
+        ct += dumpOne(items, gb, fout, ds)
     return ct
 
 def daySpan(d1, d2):
@@ -117,7 +140,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def dumpOne(kv, fout, ds):
+def dumpOne(kv, gb, fout, ds):
     feas = []
     key, values = kv
     
@@ -141,6 +164,25 @@ def dumpOne(kv, fout, ds):
     for d in range(max_win):
         feas += [values[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(values[15][d], values[16][d], values[17][d], values[18][d])
+        #key    20160304,
+        #0  amount        3000.0,
+        #1  shares * e    30300.0,
+        #2  status-0      1,
+        #3  status-1      0,
+        #4  s-status-0    1,
+        #5  s-status-1    0,
+        #6  s-status-2    0,
+        #7  wav-status-0  1,
+        #8  wav-status-1  0,
+        #9  wav-status-2  0,
+        #10 wav-status-3  0,
+        #11 e-status-0    1,
+        #12 e-status-1    0,
+        #13 e-status-2    0,
+        #14 #0/#1         0.0990099009901,
+        #15 rate          1.0
+        gbFea = gb[values[0][d]]
+        feas += gbFea + [values[3][d]/float(gbFea[0]), values[10][d] * values[8][d]/float(gbFea[1])]
     
     tgt = values[-1][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
@@ -160,31 +202,33 @@ def dumpOne(kv, fout, ds):
     fout.write(key + "_" + ds + ":" + ",".join(values) + "\n")
     return 1
 
-def process(fin, fout, ds):
+def process(fin, gbfin, fout, ds):
     np.seterr(all='raise')
     st, dates = getSt(fin)
+    gb = getGb(gbfin)
     if ds not in dates:
         print "%s not work day" % ds
         return
     fout = open(fout + "_" + ds, "w")
-    dump(st, fout, ds)
+    dump(st, gb, fout, ds)
 
-def genAll(fin, fout):
+def genAll(fin, gbfin, fout):
     st, dates = getSt(fin)
+    gb = getGb(gbfin)
     fout = open(fout, "w")
     dates = filter(lambda x: x >= "20160000", dates)
     total = len(dates)
     for c, ds in enumerate(sorted(dates)):
-        ct = dump(st, fout, ds)
+        ct = dump(st, gb, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
-
 
 if __name__ == "__main__":
     fin = sys.argv[1]
-    fout = sys.argv[2]
+    gbfin = sys.argv[2]
+    fout = sys.argv[3]
     # ds = sys.argv[3]
     # process(fin, fout, ds)
-    genAll(fin, fout)
+    genAll(fin, gbfin, fout)
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
     #       % (fout + ".tmp", fout)
     # os.system(cmd)
