@@ -80,7 +80,7 @@ def dump(st, fout, ds):
         if ds not in items[1][0]:
             continue
         ct += dumpOne(items, fout, ds)
-    print "valid %d", ct
+    return ct
 
 def daySpan(d1, d2):
     v1 = datetime.datetime(int(d1[:4]), int(d1[4:6]), int(d1[6:]))
@@ -110,6 +110,9 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr2[int(sstatus)] = 1
     arr3 = [0] * 4
     arr3[int(wavstatus)] = 1
+    if int(wavstatus) == 3:
+        arr3[2] = 1
+        arr3[3] = 1
     arr4 = [0] * 3
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
@@ -126,7 +129,7 @@ def dumpOne(kv, fout, ds):
     if values[15][index - 1] == 1 or values[15][index - 2] == 1:
         return 0
     
-    windows = [2, 3, 5, 7, 15, 30, 60]
+    windows = [2, 3, 5, 7, 15]  #, 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
     
@@ -169,11 +172,12 @@ def process(fin, fout, ds):
 def genAll(fin, fout):
     st, dates = getSt(fin)
     fout = open(fout, "w")
-    dates = filter(lambda x: x < "20160000", dates)
+    dates = filter(lambda x: x >= "20160000", dates)
     total = len(dates)
     for c, ds in enumerate(sorted(dates)):
-        print time.ctime(), ds, c, "/", total
-        dump(st, fout, ds)
+        ct = dump(st, fout, ds)
+        print time.ctime(), ds, c, "/", total, ct
+
 
 if __name__ == "__main__":
     fin = sys.argv[1]

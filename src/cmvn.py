@@ -46,8 +46,10 @@ def process(fin, foutName):
 
 if __name__ == '__main__':
     fin = sys.argv[1]
-    process(fin, fin + ".cmvn")
+    process(fin, fin + ".tmp")
+
     cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
-          % (fin + ".cmvn", fin + ".cmvn.shuf")
+          % (fin + ".tmp", fin + ".cmvn")
     os.system(cmd)
+    os.system("rm -rf %s.tmp" % fin)
     

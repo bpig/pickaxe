@@ -13,11 +13,11 @@ def my_model(features, target):
     """DNN with three hidden layers, and dropout of 0.1 probability."""
     target = tf.one_hot(target, 2, 1, 0)
     
-    features = layers.stack(features, layers.fully_connected, [512, 128, 8])
+    features = layers.stack(features, layers.fully_connected, [512, 512, 512])
 
-    features = layers.dropout(features, keep_prob=0.5)
+    features = layers.dropout(features, keep_prob=0.2)
 
-    features = layers.layer_norm(features)
+    # features = layers.layer_norm(features)
 
     prediction, loss = tf.contrib.learn.models.logistic_regression(features, target)
     
@@ -30,7 +30,8 @@ def my_model(features, target):
 if __name__ == "__main__":
     tf.logging.set_verbosity(tf.logging.INFO)
 
-    data = read_data_sets("data/20.fe.cmvn.shuf", None)
+    #data = read_data_sets("data/20.fe.cmvn.shuf", None)
+    data = read_data_sets("data/15.fe.cmvn", None)
 
     config = learn.estimators.run_config.RunConfig(
         log_device_placement=False, save_summary_steps=100,
@@ -42,11 +43,11 @@ if __name__ == "__main__":
     batch_step = 3
     batch_size = int(data.train.num_examples / batch_step)
 
-    for epoch in range(100):
-        for i in range(batch_step):
+    for epoch in range(1):
+        for i in range(int(batch_step)):
             batch_x, batch_y = data.train.next_batch(batch_size)
             #classifier.partial_fit(batch_x, batch_y)
-            classifier.fit(batch_x, batch_y, steps=50) #, batch_size=256)
+            classifier.fit(batch_x, batch_y, steps=100)
             print time.ctime(), "batch_step", i
     
         te_acc = pred(classifier, data.test.feas, data.test.tgts)

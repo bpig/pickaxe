@@ -7,7 +7,8 @@ from mlp_feeder import read_predict_sets
 from tflearn_simple import my_model
 
 if __name__ == "__main__":
-    predSet = read_predict_sets("data/20.fe.2016.cmvn.shuf")
+    # predSet = read_predict_sets("data/20.fe.2016.cmvn.shuf")
+    predSet = read_predict_sets("data/15.2016.fe.cmvn")
 
     model_dir = "model/" + sys.argv[1]
 
