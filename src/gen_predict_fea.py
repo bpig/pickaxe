@@ -3,9 +3,9 @@
 # __date__ = "2016/10/23"
 from common import *
 import wget
-import time
 import os
-import sys
+import format as ft
+import fea
 
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
@@ -93,7 +93,7 @@ def downloadByDs(ds):
 # "NET_ASSETS_TODAY","NET_CASH_FLOWS_OPER_ACT_TTM","NET_CASH_FLOWS_OPER_ACT_LYR","OPER_REV_TTM","OPER_REV_LYR","NET_INCR_CASH_CASH_EQU_TTM","NET_INCR_CASH_CASH_EQU_LYR","UP_DOWN_LIMIT_STATUS","LOWEST_HIGHEST_STATUS","OPDATE","OPMODE"
 
 
-def process(dates):
+def genCsv(dates):
     dates = sorted(dates, reverse=True)
     outfile = dates[0] + ".csv"
     fout = open(outfile, "w")
@@ -109,6 +109,7 @@ def process(dates):
             record = [k, v[1]] + v[10: 18] + [indicatorValue[18], indicatorValue[25]]
             outStr = ",".join(record) + "\n"
             fout.write(outStr)
+    return outfile, dates[0]
 
 def transformOne(filename, table, ct):
     keys = set()
@@ -139,4 +140,8 @@ if __name__ == "__main__":
     os.chdir("data/predict")
     dates = download()
     print dates
-    process(dates)
+    csvfile, ds = genCsv(dates)
+    ftfile = ds + ".ft"
+    ft.process(csvfile, ftfile)
+    feafile = ds + ".fea"
+    fea.process(ftfile, None, feafile, None)
