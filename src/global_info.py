@@ -48,7 +48,7 @@ def process(fin, fout):
                 ans[13] += 1
     
     for c, ds in enumerate(datas):
-        gb[ds][14] = gb[ds][0] / gb[ds][1]
+        gb[ds][14] = gb[ds][0] / (gb[ds][1])
         if c == 0.0:
             gb[ds][15] = 1.0
             continue

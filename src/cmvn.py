@@ -37,9 +37,9 @@ def process(fin, foutName):
     data = loadData(fin)
     value = [fea.value for fea in data]
     mu, delta = globalCal(value)
-    np.save(fin+".mu.npy", mu)
-    np.save(fin+".delta.npy", delta)
-    sys.exit(1)
+    np.save(fin + ".mu.npy", mu)
+    np.save(fin + ".delta.npy", delta)
+
     fout = open(foutName, "w")
     for fea in data:
         v = (fea.value - mu) / delta
