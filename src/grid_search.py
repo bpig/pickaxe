@@ -25,7 +25,7 @@ def train(data, net, keep_prob):
     print "small example:", bs, data.test.num_examples
 
     batch_x, batch_y = data.train.next_batch(bs)
-    for i in range(10):
+    for i in range(8):
         classifier.fit(batch_x, batch_y, steps=100)
     
         te_acc = pred(classifier, data.test.feas[:bs], data.test.tgts[:bs])
@@ -38,7 +38,8 @@ def train(data, net, keep_prob):
 if __name__ == "__main__":
     tf.logging.set_verbosity(tf.logging.INFO)
     model = sys.argv[1]
-    net = sys.argv[2]
+    #net = sys.argv[2]
+    net = "net"
 
     with open("conf/model.yaml") as fin:
         model_cfg = yaml.load(fin)[model]
