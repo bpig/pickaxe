@@ -7,7 +7,6 @@ import time
 import os
 import sys
 
-
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
@@ -26,7 +25,7 @@ def download():
             dates += [ds]
         now = prev
     return dates
-            
+
 def wc(ds):
     f = "price_" + ds + ".csv"
     ff = "derivativeindicator_" + ds + ".csv"
@@ -46,39 +45,40 @@ def downloadByDs(ds):
     files = os.listdir(".")
     if ff not in files:
         url = tmpl % ("derivativeindicator", ds)
+        print url
         wget.download(url)
     if f not in files:
         url = tmpl % ("price", ds)
+        print url
         wget.download(url)
 
-
-#price.S_INFO_WINDCODE, price.TRADE_DT, price.S_DQ_PCTCHANGE, price.S_DQ_VOLUME, price.S_DQ_AMOUNT, price.S_DQ_ADJPRECLOSE, price.S_DQ_ADJOPEN, price.S_DQ_ADJHIGH, price.S_DQ_ADJLOW, price.S_DQ_ADJCLOSE, big.S_DQ_FREETURNOVER, big.FREE_SHARES_TODAY
+# price.S_INFO_WINDCODE, price.TRADE_DT, price.S_DQ_PCTCHANGE, price.S_DQ_VOLUME, price.S_DQ_AMOUNT, price.S_DQ_ADJPRECLOSE, price.S_DQ_ADJOPEN, price.S_DQ_ADJHIGH, price.S_DQ_ADJLOW, price.S_DQ_ADJCLOSE, big.S_DQ_FREETURNOVER, big.FREE_SHARES_TODAY
 #                 code,             dt,                 rate,            volumn,            amount,                     pe,                  s,               high,               low,                   e,              turnover,                shares
 
 # price
-#0   "OBJECT_ID",
-#1   "TRADE_DT",
-#2   "S_INFO_WINDCODE",
-#3   "CRNCY_CODE",
-#4   "S_DQ_PRECLOSE",
-#5   "S_DQ_OPEN",
-#6   "S_DQ_HIGH",
-#7   "S_DQ_LOW",
-#8   "S_DQ_CLOSE",
-#9   "S_DQ_CHANGE",
-#10  "S_DQ_PCTCHANGE",
-#11  "S_DQ_VOLUME",
-#12  "S_DQ_AMOUNT",
-#13  "S_DQ_ADJPRECLOSE",
-#14  "S_DQ_ADJOPEN",
-#15  "S_DQ_ADJHIGH",
-#16  "S_DQ_ADJLOW",
-#17  "S_DQ_ADJCLOSE",
-#18  "S_DQ_ADJFACTOR",
-#19  "S_DQ_AVGPRICE",
-#20  "S_DQ_TRADESTATUS",
-#21  "OPDATE",
-#22  "OPMODE"
+# 0   "OBJECT_ID",
+# 1   "TRADE_DT",
+# 2   "S_INFO_WINDCODE",
+# 3   "CRNCY_CODE",
+# 4   "S_DQ_PRECLOSE",
+# 5   "S_DQ_OPEN",
+# 6   "S_DQ_HIGH",
+# 7   "S_DQ_LOW",
+# 8   "S_DQ_CLOSE",
+# 9   "S_DQ_CHANGE",
+# 10  "S_DQ_PCTCHANGE",
+# 11  "S_DQ_VOLUME",
+# 12  "S_DQ_AMOUNT",
+# 13  "S_DQ_ADJPRECLOSE",
+# 14  "S_DQ_ADJOPEN",
+# 15  "S_DQ_ADJHIGH",
+# 16  "S_DQ_ADJLOW",
+# 17  "S_DQ_ADJCLOSE",
+# 18  "S_DQ_ADJFACTOR",
+# 19  "S_DQ_AVGPRICE",
+# 20  "S_DQ_TRADESTATUS",
+# 21  "OPDATE",
+# 22  "OPMODE"
 
 # "OBJECT_ID","S_INFO_WINDCODE","TRADE_DT","CRNCY_CODE","S_VAL_MV","S_DQ_MV","S_PQ_HIGH_52W_",
 #           0,                1,         2,           3,         4,        5,               6,
@@ -98,7 +98,7 @@ def process(dates):
     outfile = dates[0] + ".csv"
     fout = open(outfile, "w")
     for ds in dates:
-        pricefile = "price_"+ ds + ".csv"
+        pricefile = "price_" + ds + ".csv"
         bigfile = "derivativeindicator_" + ds + ".csv"
         indicator = transformOne(bigfile, "big", 39)
         price = transformOne(pricefile, "price", 23)
@@ -109,7 +109,7 @@ def process(dates):
             record = [k, v[1]] + v[10: 18] + [indicatorValue[18], indicatorValue[25]]
             outStr = ",".join(record) + "\n"
             fout.write(outStr)
-            
+
 def transformOne(filename, table, ct):
     keys = set()
     kv = {}
