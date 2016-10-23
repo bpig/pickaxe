@@ -6,28 +6,8 @@ from common import *
 import fea
 import global_info
 
-class Consumer(multiprocessing.Process):
-    def __init__(self, task_queue, result_queue):
-        multiprocessing.Process.__init__(self)
-        self.task_queue = task_queue
-        self.result_queue = result_queue
-    
-    def run(self):
-        proc_name = self.name
-        while True:
-            next_task = self.task_queue.get()
-            if next_task is None:
-                # Poison pill means shutdown
-                print '%s: Exiting' % proc_name
-                self.task_queue.task_done()
-                break
-            print '%s: %s' % (proc_name, next_task)
-            answer = next_task()
-            self.task_queue.task_done()
-            self.result_queue.put(answer)
-        return
-
-def dump2(st, gb, ds):
+def dump2(args):
+    st, gb, ds = args
     ans = []
     for items in st.items():
         if ds not in items[1][0]:
@@ -37,45 +17,24 @@ def dump2(st, gb, ds):
             ans += [content]
     return ans
 
-class Task(object):
-    def __init__(self, kv, gb, ds):
-        self.kv = kv
-        self.gb = gb
-        self.ds = ds
-    
-    def __call__(self):
-        content = dump2(self.kv, self.gb, self.ds)
-        return content
-    
-    def __str__(self):
-        return self.ds
-
 def genAll2(dates, st, gb, fout):
+    def startProcess():
+        print 'Starting', multiprocessing.current_process().name
+    
+    inputs = [(st, gb, ds) for ds in dates]
+    
+    pool_size = 32
+    pool = multiprocessing.Pool(processes=pool_size, initializer=startProcess)
+    pool_outputs = pool.map(dump2, inputs)
+    print time.ctime(), "wait multi process"
+    pool.close()  # no more tasks
+    pool.join()  # wrap up current tasks
+    print time.ctime(), "finish multi process"
+    
     fout = open(fout, "w")
     total = len(dates)
     
-    tasks = multiprocessing.JoinableQueue()
-    results = multiprocessing.Queue()
-    
-    # Start consumers
-    num_consumers = multiprocessing.cpu_count()
-    print 'Creating %d consumers' % num_consumers
-    consumers = [Consumer(tasks, results) for _ in range(num_consumers)]
-    for w in consumers:
-        w.start()
-    
-    for ds in sorted(dates):
-        tasks.put(Task(st, gb, ds))
-    
-    for i in range(num_consumers):
-        tasks.put(None)
-    
-    print time.ctime(), "wait multi process"
-    tasks.join()
-    print time.ctime(), "finish multi process"
-    
-    while total:
-        result = results.get()
+    for result in pool_outputs:
         for l in result:
             fout.write(l)
         total -= 1
