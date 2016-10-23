@@ -243,9 +243,10 @@ if __name__ == "__main__":
     fout1 = "data/" + cfg["train"]
     fout2 = "data/" + cfg["test"]
 
-    if sys.argv[2] == "train":
-        filter_func = lambda x: x < "20160000"
-    else:
+    if sys.argv[2] == "test":
         filter_func = lambda x: x >= "20160000"
+        genAll(fin, gbfin, fout2, filter_func)
+    else:
+        filter_func = lambda x: x < "20160000"
+        genAll(fin, gbfin, fout1, filter_func)
 
-    genAll(fin, gbfin, fout2, filter_func)

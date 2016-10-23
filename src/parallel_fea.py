@@ -8,26 +8,27 @@ import global_info
 import copy
 
 def dump2(args):
-    st, gb, ds = args
+    st, gb, ds, fout, lock = args
     st = copy.copy(st)
     gb = copy.copy(gb)
-    ans = []
-    print "start ---"
+    print "start --- ds"
     for items in st.items():
         if ds not in items[1][0]:
             continue
         content = fea.genOne(items, gb, ds)
         if content:
-            ans += [content]
-    print "finish ---"
-    return ans
+            with lock:
+                fout.write(content)
+    print "finish --- ds"
 
 def genAll2(dates, st, gb, fout):
     def startProcess():
         print 'Starting', multiprocessing.current_process().name
-    
-    inputs = [(st, gb, ds) for ds in dates]
-    
+
+    fout = open(fout, "w")
+    lock = multiprocessing.Lock()    
+    inputs = [(st, gb, ds, fout, lock) for ds in dates]
+
     pool_size = 16
     pool = multiprocessing.Pool(processes=pool_size, initializer=startProcess)
     pool_outputs = pool.map(dump2, inputs)
@@ -35,15 +36,6 @@ def genAll2(dates, st, gb, fout):
     pool.close()  # no more tasks
     pool.join()  # wrap up current tasks
     print time.ctime(), "finish multi process"
-    
-    fout = open(fout, "w")
-    total = len(dates)
-    
-    for result in pool_outputs:
-        for l in result:
-            fout.write(l)
-        total -= 1
-    print time.ctime(), "finsh dump"
 
 def genTrainAndTest(fin, gbfin, fout1, fout2):
     st, dates = fea.getSt(fin)
@@ -68,6 +60,4 @@ if __name__ == '__main__':
         gbfin = None
     fout1 = "data/" + cfg["train"]
     fout2 = "data/ " + cfg["test"]
-    # ds = sys.argv[3]
-    # process(fin, fout, ds)
     genTrainAndTest(fin, gbfin, fout1, fout2)
