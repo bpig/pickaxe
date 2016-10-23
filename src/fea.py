@@ -173,6 +173,9 @@ def genOne(kv, gb, ds, predict=False):
     
     # today day fea
     for d in range(max_win):
+        if d == 0 and gb:
+            gbFea = gb[values[0][d]]
+            feas += gbFea + [values[3][d] / float(gbFea[0]), values[10][d] * values[8][d] / float(gbFea[1])]
         feas += [values[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(values[15][d], values[16][d], values[17][d], values[18][d])
         # key    20160304,
@@ -192,9 +195,7 @@ def genOne(kv, gb, ds, predict=False):
         # 13 e-status-2    0,
         # 14 #0/#1         0.0990099009901,
         # 15 rate          1.0
-        if gb:
-            gbFea = gb[values[0][d]]
-            feas += gbFea + [values[3][d] / float(gbFea[0]), values[10][d] * values[8][d] / float(gbFea[1])]
+        
     
     # win fea
     for window in windows:
