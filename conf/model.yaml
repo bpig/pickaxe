@@ -1,30 +1,50 @@
 v0:
-  data: 15.fe.cmvn
+  data: 2013/15/fe
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v0
   batch_step: 6
   epoch: 4
-  pdata: 15.2016.fe.cmvn
+  pdata: 2013/15/2016.fe
   pout: 2016_v0
 
 v1:
-  data: 15.fe.cmvn
+  data: 2013/15/fe
   net: [512, 512, 512]
   keep_prob: 0.2
   model: v1
   batch_step: 3
   epoch: 4
-  pdata: 15.2016.fe.cmvn
+  pdata: 2013/15/2016.fe
   pout: 2016_v1
   
 v2:
-  data: 15.fe.cmvn
+  data: 2013/15/fe
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: 15_3y_2048
   batch_step: 6
   epoch: 4
-  pdata: 15.2016.fe.cmvn
-  pout: 2016_v0
+  pdata: 2013/15/2016.fe
+  pout: 2016_v2
+
+v3:
+  data: 2013/60/fe
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v3
+  batch_step: 6
+  epoch: 3
+  pdata: 2013/60/fe.2016
+  pout: 2016_v3
+
+v4:
+  data: 2010/15/fe
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v4
+  batch_step: 6
+  epoch: 3
+  pdata: 2010/15/fe.2016
+  pout: 2016_v4
 

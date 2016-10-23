@@ -1,3 +1,11 @@
-fin: 2016.ft
-fout: 2016.nt
-win: 60
+f0:
+  raw: 2013/2013.cc
+  data: 2013/2013.ft
+  gb: 2013/2013.gb
+  train: 2013/15g/fe
+  test: 2013/15g/2016.fe
+
+f1:
+  raw: 2010/2010.cc
+  data: 2010/2010.ft
+  

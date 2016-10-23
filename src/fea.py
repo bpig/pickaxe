@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
-from collections import Counter
-import time
+
 from common import *
+import global_info
 
 # 15
 # states
@@ -68,6 +68,8 @@ from common import *
 #       14                 15
 
 def getGb(fin):
+    if not fin:
+        return None
     gb = {}
     for l in open(fin):
         l = l.strip()
@@ -181,8 +183,9 @@ def dumpOne(kv, gb, fout, ds):
         #13 e-status-2    0,
         #14 #0/#1         0.0990099009901,
         #15 rate          1.0
-        gbFea = gb[values[0][d]]
-        feas += gbFea + [values[3][d]/float(gbFea[0]), values[10][d] * values[8][d]/float(gbFea[1])]
+        if gb:
+            gbFea = gb[values[0][d]]
+            feas += gbFea + [values[3][d]/float(gbFea[0]), values[10][d] * values[8][d]/float(gbFea[1])]
     
     tgt = values[-1][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
@@ -212,25 +215,36 @@ def process(fin, gbfin, fout, ds):
     fout = open(fout + "_" + ds, "w")
     dump(st, gb, fout, ds)
 
-def genAll(fin, gbfin, fout):
-    st, dates = getSt(fin)
-    gb = getGb(gbfin)
+def genAll(dates, st, gb, fout):
     fout = open(fout, "w")
-    dates = filter(lambda x: x >= "20160000", dates)
     total = len(dates)
     for c, ds in enumerate(sorted(dates)):
         ct = dump(st, gb, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
 
+def genTrainAndTest(fin, gbfin, fout1, fout2):
+    st, dates = getSt(fin)
+    gb = getGb(gbfin)
+    d1 = filter(lambda x: x < "20160000", dates)
+    d2 = filter(lambda x: x >= "20160000", dates)
+    genAll(d1, st, gb, fout1)
+    genAll(d2, st, gb, fout2)
+
 if __name__ == "__main__":
-    fin = sys.argv[1]
-    gbfin = sys.argv[2]
-    fout = sys.argv[3]
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[sys.argv[1]]
+
+    fin = "data/" + cfg["data"]
+    if "gb" in cfg:
+        gbfin = "data/" + cfg["gb"]
+        if not os.path.exists(gbfin):
+            print "gen gb info"
+            global_info.process(fin, gbfin)
+            print "finish gb info"
+    else:
+        gbfin = None
+    fout1 = "data/" + cfg["train"]
+    fout2 = "data/ " + cfg["test"]
     # ds = sys.argv[3]
     # process(fin, fout, ds)
-    genAll(fin, gbfin, fout)
-    # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
-    #       % (fout + ".tmp", fout)
-    # os.system(cmd)
-    # cmd = "wc -l %s" % fout
-    # os.system(cmd)
+    genTrainAndTest(fin, gbfin, fout1, fout2)

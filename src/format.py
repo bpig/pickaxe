@@ -14,11 +14,8 @@ def getKv(filename):
     for l in getline(filename):
         pos = l.find(",")
         key = l[:pos]
-        value = l[pos + 1:].split(",")
-        # if value[0] < "20160000":
-        #     continue
-        if value[9] == 'NULL':
-            value[9] = "0.0"
+        value = l[pos + 1:].replace("NULL", "0.0")
+        value = value.split(",")
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10
@@ -95,6 +92,11 @@ def process(fin, fout):
     dump(kv, fout)
 
 if __name__ == "__main__":
-    fin = sys.argv[1]
-    fout = sys.argv[2]
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[sys.argv[1]]
+    
+    # fin = sys.argv[1]
+    # fout = sys.argv[2]
+    fin = "data/" + cfg["raw"]
+    fout = "data/" + cfg["data"]
     process(fin, fout)

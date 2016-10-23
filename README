@@ -17,9 +17,5 @@ wide loss: 0.348847, auc: 0.885538, accuracy: 0.839076
 deep loss = 0.447509, auc = 0.891313, accuracy = 0.834777
 mix  loss: 0.320935, auc: 0.904883, accuracy: 0.855414
 
-
-
-estimator.py  688  return direct
-
 <tf.Tensor 'one_hot:0' shape=(?, 2) dtype=int32>
 
