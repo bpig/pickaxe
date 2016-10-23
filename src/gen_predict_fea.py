@@ -10,9 +10,10 @@ import fea
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
-def download():
+def download(today):
     now = datetime.datetime.now()
-    count = 0
+    if today:
+        now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
     print now.year, now.month, now.day
     dates = []
     while len(dates) < 15:
@@ -138,7 +139,11 @@ def transformOne(filename, table, ct):
 
 if __name__ == "__main__":
     os.chdir("data/predict")
-    dates = download()
+    if len(sys.argv) > 0:
+        today = sys.argv[0]
+    else:
+        today = None
+    dates = download(today)
     print dates
     csvfile, ds = genCsv(dates)
     ftfile = ds + ".ft"
