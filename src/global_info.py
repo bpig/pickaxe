@@ -3,10 +3,10 @@
 # __date__ = "2016/10/20"
 
 from common import *
-from fea import getSt
+import fea
 
 def process(fin, fout):
-    kv, datas = getSt(fin)
+    kv, datas = fea.getSt(fin)
     datas = sorted(datas)
     
     gb = defaultdict(lambda: [0.0] * 16)

@@ -8,4 +8,13 @@ f0:
 f1:
   raw: 2010/2010.cc
   data: 2010/2010.ft
+  train: 2010/15/fe
+  test: 2010/15/2016.fe
+
+f2:
+  raw: 2010/2010.cc
+  data: 2010/2010.ft
+  gb: 2010/2010.gb
+  train: 2010/15g/fe
+  test: 2010/15g/2016.fe
   

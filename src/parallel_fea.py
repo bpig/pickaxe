@@ -5,16 +5,21 @@ __date__ = "10/23/16"
 from common import *
 import fea
 import global_info
+import copy
 
 def dump2(args):
     st, gb, ds = args
+    st = copy.copy(st)
+    gb = copy.copy(gb)
     ans = []
+    print "start ---"
     for items in st.items():
         if ds not in items[1][0]:
             continue
         content = fea.genOne(items, gb, ds)
         if content:
             ans += [content]
+    print "finish ---"
     return ans
 
 def genAll2(dates, st, gb, fout):
@@ -23,7 +28,7 @@ def genAll2(dates, st, gb, fout):
     
     inputs = [(st, gb, ds) for ds in dates]
     
-    pool_size = 32
+    pool_size = 16
     pool = multiprocessing.Pool(processes=pool_size, initializer=startProcess)
     pool_outputs = pool.map(dump2, inputs)
     print time.ctime(), "wait multi process"

@@ -217,17 +217,35 @@ def process(fin, gbfin, fout, ds):
     fout = open(fout + "_" + ds, "w")
     dump(st, gb, fout, ds)
 
-def genAll(dates, st, gb, fout):
+def genAll(fin, gbfin, fout, filter_func):
+    st, dates = getSt(fin)
+    gb = getGb(gbfin)
     fout = open(fout, "w")
+    dates = filter(filter_func, dates)
     total = len(dates)
     for c, ds in enumerate(sorted(dates)):
         ct = dump(st, gb, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
 
 if __name__ == "__main__":
-    fin = sys.argv[1]
-    gbfin = sys.argv[2]
-    fout = sys.argv[3]
-    # ds = sys.argv[3]
-    # process(fin, fout, ds)
-    genAll(fin, gbfin, fout)
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[sys.argv[1]]
+    
+    fin = "data/" + cfg["data"]
+    if "gb" in cfg:
+        gbfin = "data/" + cfg["gb"]
+        if not os.path.exists(gbfin):
+            print "gen gb info"
+            global_info.process(fin, gbfin)
+            print "finish gb info"
+    else:
+        gbfin = None
+    fout1 = "data/" + cfg["train"]
+    fout2 = "data/" + cfg["test"]
+
+    if sys.argv[2] == "train":
+        filter_func = lambda x: x < "20160000"
+    else:
+        filter_func = lambda x: x >= "20160000"
+
+    genAll(fin, gbfin, fout2, filter_func)
