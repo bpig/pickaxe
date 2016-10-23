@@ -13,36 +13,42 @@ def yesterday(dt, days=-1):
 
 def download():
     now = datetime.datetime.now()
+    count = 0
     print now.year, now.month, now.day
-    while True:
+    dates = []
+    while len(dates) < 15:
         prev = yesterday(now)
         print prev.year, prev.month, prev.day
         ds = str(prev.year) + "-" + str(prev.month) + "-" + str(prev.day)
         downloadByDs(ds)
         if wc(ds):
-            break
-        else:
-            now = prev
-    return ds
+            dates += [ds]
+        now = prev
+    return dates
             
 def wc(ds):
     f = "price_" + ds + ".csv"
+    ff = "derivativeindicator_" + ds + ".csv"
     if not os.path.isfile(f):
         return False
     lf = len(open(f).readlines())
     if lf <= 10:
         os.remove(f)
+        os.remove(ff)
         return False
     return True
 
 def downloadByDs(ds):
     tmpl = "http://60.191.48.94:8000/download/%s_%s.csv"
-    print time.ctime()
-    url = tmpl % ("derivativeindicator", ds)
-    wget.download(url)
-    url = tmpl % ("price", ds)
-    wget.download(url)
-    print time.ctime()
+    f = "price_" + ds + ".csv"
+    ff = "derivativeindicator_" + ds + ".csv"
+    files = os.listdir(".")
+    if ff not in files:
+        url = tmpl % ("derivativeindicator", ds)
+        wget.download(url)
+    if f not in files:
+        url = tmpl % ("price", ds)
+        wget.download(url)
 
 
 #price.S_INFO_WINDCODE, price.TRADE_DT, price.S_DQ_PCTCHANGE, price.S_DQ_VOLUME, price.S_DQ_AMOUNT, price.S_DQ_ADJPRECLOSE, price.S_DQ_ADJOPEN, price.S_DQ_ADJHIGH, price.S_DQ_ADJLOW, price.S_DQ_ADJCLOSE, big.S_DQ_FREETURNOVER, big.FREE_SHARES_TODAY
@@ -86,37 +92,36 @@ def downloadByDs(ds):
 # "NET_ASSETS_TODAY","NET_CASH_FLOWS_OPER_ACT_TTM","NET_CASH_FLOWS_OPER_ACT_LYR","OPER_REV_TTM","OPER_REV_LYR","NET_INCR_CASH_CASH_EQU_TTM","NET_INCR_CASH_CASH_EQU_LYR","UP_DOWN_LIMIT_STATUS","LOWEST_HIGHEST_STATUS","OPDATE","OPMODE"
 
 
-def process(ds):
-    outfile = ds + ".csv"
-    pricefile = "price_"+ ds + ".csv"
-    bigfile = "derivativeindicator_" + ds + ".csv"
+def process(dates):
+    dates = sorted(dates, reverse=True)
+    outfile = dates[0] + ".csv"
     fout = open(outfile, "w")
-    indicator = {}
-    price = {}
-    indicator = transformOne(bigfile, "big", 39)
-    price = transformOne(pricefile, "price", 23)
-    for k, v in price.items():
-        if k not in indicator.keys():
-            continue
-        indicatorValue = indicator[k]
-        record = [k, v[1]] + v[10: 18] + [indicatorValue[18], indicatorValue[25]]
-        outStr = ",".join(record) + "\n"
-        fout.write(outStr)
+    for ds in dates:
+        pricefile = "price_"+ ds + ".csv"
+        bigfile = "derivativeindicator_" + ds + ".csv"
+        indicator = transformOne(bigfile, "big", 39)
+        price = transformOne(pricefile, "price", 23)
+        for k, v in price.items():
+            if k not in indicator.keys():
+                continue
+            indicatorValue = indicator[k]
+            record = [k, v[1]] + v[10: 18] + [indicatorValue[18], indicatorValue[25]]
+            outStr = ",".join(record) + "\n"
+            fout.write(outStr)
             
-
 def transformOne(filename, table, ct):
     keys = set()
-    dict = {}
+    kv = {}
     for l in open(filename).read().replace('"', '').split("\n"):
         if not l:
             continue
         if "OBJECT" in l:
-            ans = l
             continue
         items = l.split(",")
         items = map(lambda s: s.strip(), items)
         if items[0] in keys:
             print "dup", l
+            continue
         keys.add(items[0])
         assert len(items) == ct, str(len(items)) + ":" + l
         for i in range(len(items)):
@@ -124,13 +129,13 @@ def transformOne(filename, table, ct):
                 items[i] = "NULL"
         if table == "price":
             items[-3] = "NULL"
-            dict[items[2]] = items
+            kv[items[2]] = items
         else:
-            dict[items[1]] = items
-    return dict
+            kv[items[1]] = items
+    return kv
 
 if __name__ == "__main__":
     os.chdir("../data/predict")
-    ds = download()
-    print ds
-    process(ds)
+    dates = download()
+    print dates
+    process(dates)

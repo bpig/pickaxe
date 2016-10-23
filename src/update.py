@@ -52,6 +52,7 @@ def transformOne(filename, table, ct):
         items = map(lambda s: s.strip(), items)
         if items[0] in keys:
             print "dup", l
+            continue
         keys.add(items[0])
         assert len(items) == ct, str(len(items)) + ":" + l
         idx = [0, 1, 2, 3, -2, -1]
