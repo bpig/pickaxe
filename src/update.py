@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 # __author__ = "shuai.li(286287737@qq.com)"
 # __date__ = "2016/8/10"
+from common import *
 import wget
-import time
-import os
-import sys
+
+def yesterday(dt, days=-1):
+    return dt + datetime.timedelta(days=days)
 
 def download():
     tmpl = "http://60.191.48.94:8000/download/%s_2016-10-%02d.csv"
-    for i in range(11, 12):
+    for i in range(12, 13):
         print time.ctime(), i
         url = tmpl % ("derivativeindicator", i)
         wget.download(url)
@@ -66,5 +67,11 @@ def transformOne(filename, table, ct):
     return ans
 
 if __name__ == '__main__':
-    os.chdir("../data/mfcc")
+    os.chdir("../data/inc")
+    # now = datetime.datetime.now()
+    # print now.year, now.month, now.day
+    # yesterday = yesterday(now)
+    # print yesterday.year, yesterday.month, yesterday.day
+    # download()
+    # wc()
     transform()

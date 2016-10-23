@@ -46,17 +46,20 @@ if __name__ == '__main__':
     k, v = getData("rate")
     k1, v1 = getData("rate.153y")
     k2, v2 = getData("rate.901")
+    k3, v3 = getData("rate.top3.v2601")
     
     dt = getSS()
     k, v = filterByYahoo(k, v, dt)
     k1, v1 = filterByYahoo(k1, v1, dt)
     k2, v2 = filterByYahoo(k2, v2, dt)
+    k3, v3 = filterByYahoo(k3, v3, dt)
     assert len(k) == len(k1)
     s = getYahoo(dt, k)
     
     k = map(trans2date, k)
     
-    plt.plot_date(k, v2, "r-")
+    plt.plot_date(k, v3, "r-")
+    plt.plot_date(k, v2, "-")
     plt.plot_date(k, v1, "-")
     plt.plot_date(k, v, "-")
     plt.plot_date(k, s, "-")

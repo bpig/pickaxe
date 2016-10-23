@@ -104,7 +104,10 @@ def dump(st, gb, fout, ds):
     for items in st.items():
         if ds not in items[1][0]:
             continue
-        ct += dumpOne(items, gb, fout, ds)
+        content = genOne(items, gb, ds)
+        if content:
+            fout.write(content)
+            ct += 1
     return ct
 
 def daySpan(d1, d2):
@@ -142,50 +145,50 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def dumpOne(kv, gb, fout, ds):
+def genOne(kv, gb, ds):
     feas = []
     key, values = kv
     
     index = values[0].index(ds)
     if index <= 1:
-        return 0
+        return ""
     
     # stock is stoped
     if values[15][index - 1] == 1 or values[15][index - 2] == 1:
-        return 0
+        return ""
     
-    windows = [2, 3, 5, 7, 15]  #, 30, 60]
+    windows = [2, 3, 5, 7, 15]  # , 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
     
     if len(values[0]) != max_win:
         # print "%s_%s, %d" % (key, ds, len(values[0]))
-        return 0
+        return ""
     
     # today day fea
     for d in range(max_win):
         feas += [values[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(values[15][d], values[16][d], values[17][d], values[18][d])
-        #key    20160304,
-        #0  amount        3000.0,
-        #1  shares * e    30300.0,
-        #2  status-0      1,
-        #3  status-1      0,
-        #4  s-status-0    1,
-        #5  s-status-1    0,
-        #6  s-status-2    0,
-        #7  wav-status-0  1,
-        #8  wav-status-1  0,
-        #9  wav-status-2  0,
-        #10 wav-status-3  0,
-        #11 e-status-0    1,
-        #12 e-status-1    0,
-        #13 e-status-2    0,
-        #14 #0/#1         0.0990099009901,
-        #15 rate          1.0
+        # key    20160304,
+        # 0  amount        3000.0,
+        # 1  shares * e    30300.0,
+        # 2  status-0      1,
+        # 3  status-1      0,
+        # 4  s-status-0    1,
+        # 5  s-status-1    0,
+        # 6  s-status-2    0,
+        # 7  wav-status-0  1,
+        # 8  wav-status-1  0,
+        # 9  wav-status-2  0,
+        # 10 wav-status-3  0,
+        # 11 e-status-0    1,
+        # 12 e-status-1    0,
+        # 13 e-status-2    0,
+        # 14 #0/#1         0.0990099009901,
+        # 15 rate          1.0
         if gb:
             gbFea = gb[values[0][d]]
-            feas += gbFea + [values[3][d]/float(gbFea[0]), values[10][d] * values[8][d]/float(gbFea[1])]
+            feas += gbFea + [values[3][d] / float(gbFea[0]), values[10][d] * values[8][d] / float(gbFea[1])]
     
     tgt = values[-1][0]
     assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
@@ -202,8 +205,7 @@ def dumpOne(kv, gb, fout, ds):
         feas += fea
     feas += [tgt]
     values = map(str, feas)
-    fout.write(key + "_" + ds + ":" + ",".join(values) + "\n")
-    return 1
+    return key + "_" + ds + ":" + ",".join(values) + "\n"
 
 def process(fin, gbfin, fout, ds):
     np.seterr(all='raise')
@@ -222,29 +224,10 @@ def genAll(dates, st, gb, fout):
         ct = dump(st, gb, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
 
-def genTrainAndTest(fin, gbfin, fout1, fout2):
-    st, dates = getSt(fin)
-    gb = getGb(gbfin)
-    d1 = filter(lambda x: x < "20160000", dates)
-    d2 = filter(lambda x: x >= "20160000", dates)
-    genAll(d1, st, gb, fout1)
-    genAll(d2, st, gb, fout2)
-
 if __name__ == "__main__":
-    with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
-
-    fin = "data/" + cfg["data"]
-    if "gb" in cfg:
-        gbfin = "data/" + cfg["gb"]
-        if not os.path.exists(gbfin):
-            print "gen gb info"
-            global_info.process(fin, gbfin)
-            print "finish gb info"
-    else:
-        gbfin = None
-    fout1 = "data/" + cfg["train"]
-    fout2 = "data/ " + cfg["test"]
+    fin = sys.argv[1]
+    gbfin = sys.argv[2]
+    fout = sys.argv[3]
     # ds = sys.argv[3]
     # process(fin, fout, ds)
-    genTrainAndTest(fin, gbfin, fout1, fout2)
+    genAll(fin, gbfin, fout)
