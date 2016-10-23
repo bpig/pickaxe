@@ -136,7 +136,7 @@ def transformOne(filename, table, ct):
     return kv
 
 if __name__ == "__main__":
-    os.chdir("../data/predict")
+    os.chdir("data/predict")
     dates = download()
     print dates
     process(dates)

@@ -33,13 +33,25 @@ def globalCal(data):
     delta += 1
     return mu, delta
 
-def process(fin, foutName):
-    data = loadData(fin)
-    value = [fea.value for fea in data]
+def calMuDelta(value):
     mu, delta = globalCal(value)
     np.save(fin + ".mu.npy", mu)
     np.save(fin + ".delta.npy", delta)
+    return mu, delta
 
+def loadMuDelta(fin):
+    mu = np.load(fin + ".mu.npy")
+    delta = np.load(fin + ".delta.npy")    
+    return mu, delta
+
+def process(fin, foutName, predict=False):
+    data = loadData(fin)
+    value = [fea.value for fea in data]
+    if predict:
+        mu, delta = loadMuDelta("data/predict/fe")
+    else:
+        mu, delta = calMuDelta(value)
+    
     fout = open(foutName, "w")
     for fea in data:
         v = (fea.value - mu) / delta
@@ -49,6 +61,11 @@ def process(fin, foutName):
 if __name__ == '__main__':
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
+
+    if "predict" in cfg:
+        fin = "data/" + cfg["predict"]
+        process(fin, fin + ".cmvn", True)
+        sys.exit(0)
 
     fin = sys.argv[2]
     fin = "data/" + cfg[fin]

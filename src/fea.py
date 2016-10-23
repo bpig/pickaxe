@@ -97,14 +97,14 @@ def getSt(fin):
             items[i] = map(float, items[i])
         # items = map(np.array, items)
         kv[key] = items
-    return kv, dates
+    return kv, sorted(list(dates))
 
-def dump(st, gb, fout, ds):
+def dump(st, gb, fout, ds, predict=False):
     ct = 0
     for items in st.items():
         if ds not in items[1][0]:
             continue
-        content = genOne(items, gb, ds)
+        content = genOne(items, gb, ds, predict)
         if content:
             fout.write(content)
             ct += 1
@@ -145,17 +145,23 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def genOne(kv, gb, ds):
+def genOne(kv, gb, ds, predict=False):
     feas = []
     key, values = kv
     
     index = values[0].index(ds)
-    if index <= 1:
-        return ""
     
-    # stock is stoped
-    if values[15][index - 1] == 1 or values[15][index - 2] == 1:
-        return ""
+    if not predict:
+        if index <= 1:
+            return ""
+    
+        # stock is stoped
+        if values[15][index - 1] == 1 or values[15][index - 2] == 1:
+            return ""
+    else:
+        if index != 0:
+            print "index %s of %s must 0" % (ds, key)
+            return ""
     
     windows = [2, 3, 5, 7, 15]  # , 30, 60]
     max_win = windows[-1]
@@ -190,8 +196,6 @@ def genOne(kv, gb, ds):
             gbFea = gb[values[0][d]]
             feas += gbFea + [values[3][d] / float(gbFea[0]), values[10][d] * values[8][d] / float(gbFea[1])]
     
-    tgt = values[-1][0]
-    assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
     # win fea
     for window in windows:
         fea = []
@@ -203,19 +207,27 @@ def genOne(kv, gb, ds):
         fea += genStatus(items[15:19])
         fea += [span, gain]
         feas += fea
-    feas += [tgt]
+
+    if not predict:
+        tgt = values[-1][0]
+        assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
+        feas += [tgt]
     values = map(str, feas)
     return key + "_" + ds + ":" + ",".join(values) + "\n"
 
-def process(fin, gbfin, fout, ds):
+def process(fin, gbfin, fout, ds=None):
     np.seterr(all='raise')
     st, dates = getSt(fin)
     gb = getGb(gbfin)
-    if ds not in dates:
+    if not ds:
+        ds = dates[-1]
+        print "process ds %s" % ds
+    elif ds not in dates:
         print "%s not work day" % ds
         return
-    fout = open(fout + "_" + ds, "w")
-    dump(st, gb, fout, ds)
+    fout = open(fout, "w")
+    ct = dump(st, gb, fout, ds, True)
+    print time.ctime(), ds, ct
 
 def genAll(fin, gbfin, fout, filter_func):
     st, dates = getSt(fin)
@@ -223,7 +235,7 @@ def genAll(fin, gbfin, fout, filter_func):
     fout = open(fout, "w")
     dates = filter(filter_func, dates)
     total = len(dates)
-    for c, ds in enumerate(sorted(dates)):
+    for c, ds in enumerate(dates):
         ct = dump(st, gb, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
 
@@ -240,6 +252,12 @@ if __name__ == "__main__":
             print "finish gb info"
     else:
         gbfin = None
+        
+    if "predict" in cfg:
+        fout = "data/" + cfg["predict"]
+        process(fin, gbfin, fout)
+        sys.exit(0)
+
     fout1 = "data/" + cfg["train"]
     fout2 = "data/" + cfg["test"]
 
