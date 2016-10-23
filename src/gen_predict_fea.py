@@ -18,8 +18,9 @@ def download():
     dates = []
     while len(dates) < 15:
         prev = yesterday(now)
-        print prev.year, prev.month, prev.day
-        ds = str(prev.year) + "-" + str(prev.month) + "-" + str(prev.day)
+        mode = "%04d-%02d-%02d"
+        ds = mode % (prev.year, prev.month, prev.day)
+        print ds
         downloadByDs(ds)
         if wc(ds):
             dates += [ds]
