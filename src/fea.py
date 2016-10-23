@@ -244,9 +244,9 @@ if __name__ == "__main__":
     fout2 = "data/" + cfg["test"]
 
     if sys.argv[2] == "test":
-        filter_func = lambda x: x >= "20160000"
+        filter_func = lambda x: x >= "20160000" 
         genAll(fin, gbfin, fout2, filter_func)
     else:
-        filter_func = lambda x: x < "20160000"
+        filter_func = lambda x: x < "20160000" and x >= "20060000"
         genAll(fin, gbfin, fout1, filter_func)
 

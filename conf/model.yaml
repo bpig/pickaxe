@@ -58,3 +58,13 @@ v5:
   pdata: 2013/15g/2016.fe.cmvn
   pout: 2016_v5
 
+v6:
+  data: 2013/15g/fe.cmvn
+  net: [256, 256, 256]
+  keep_prob: 0.4
+  model: v6
+  batch_step: 6
+  epoch: 1
+  pdata: 2013/15g/2016.fe.cmvn
+  pout: 2016_v6
+

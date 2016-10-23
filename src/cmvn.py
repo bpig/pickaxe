@@ -39,6 +39,7 @@ def process(fin, foutName):
     mu, delta = globalCal(value)
     np.save(fin+".mu.npy", mu)
     np.save(fin+".delta.npy", delta)
+    sys.exit(1)
     fout = open(foutName, "w")
     for fea in data:
         v = (fea.value - mu) / delta
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         cfg = yaml.load(fin)[sys.argv[1]]
 
     fin = sys.argv[2]
-    fin = cfg[fin]
+    fin = "data/" + cfg[fin]
     process(fin, fin + ".tmp")
 
     cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
