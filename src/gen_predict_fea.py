@@ -10,17 +10,11 @@ import fea
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
-<<<<<<< HEAD
-def download():
-    #now = datetime.datetime.now()
-    now = datetime.datetime(2016, 10, 20)
-    count = 0
-=======
 def download(today):
-    now = datetime.datetime.now()
     if today:
         now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
->>>>>>> e49119cc8c3aca5389acc8fa21582832fe5444d7
+    else:
+        now = datetime.datetime.now()
     print now.year, now.month, now.day
     dates = []
     while len(dates) < 15:
@@ -50,6 +44,7 @@ def downloadByDs(ds):
     tmpl = "http://60.191.48.94:8000/download/%s_%s.csv"
     f = "price_" + ds + ".csv"
     ff = "derivativeindicator_" + ds + ".csv"
+    os.chdir("cache")
     files = os.listdir(".")
     if ff not in files:
         url = tmpl % ("derivativeindicator", ds)
@@ -59,6 +54,7 @@ def downloadByDs(ds):
         url = tmpl % ("price", ds)
         print url
         wget.download(url)
+    os.chdir("..")
 
 # price.S_INFO_WINDCODE, price.TRADE_DT, price.S_DQ_PCTCHANGE, price.S_DQ_VOLUME, price.S_DQ_AMOUNT, price.S_DQ_ADJPRECLOSE, price.S_DQ_ADJOPEN, price.S_DQ_ADJHIGH, price.S_DQ_ADJLOW, price.S_DQ_ADJCLOSE, big.S_DQ_FREETURNOVER, big.FREE_SHARES_TODAY
 #                 code,             dt,                 rate,            volumn,            amount,                     pe,                  s,               high,               low,                   e,              turnover,                shares

@@ -70,7 +70,7 @@ def pdNormalize(fin, foutName):
         v = map(str, v)
         fout.write(fea.key + ":" + ",".join(v) + ",0.0\n")
 
-def process(fin, foutName):
+def process(fin):
     data = loadData(fin)
     value = [fea.value for fea in data]
     if "2016" not in fin:
@@ -81,11 +81,29 @@ def process(fin, foutName):
         print "using %s fe.mu, fe.delta" % dname
         mu, delta = loadMuDelta(dname + "/fe")
 
-    fout = open(foutName, "w")
+    keyfile = fin + ".key.npy"
+    feafile = fin + ".fea.npy"
+    tgtfile = fin + ".tgt.npy"
+
+    keys = np.asarray([fea.key for fea in data])
+
+    feas = []
     for fea in data:
         v = (fea.value - mu) / delta
-        v = map(str, v)
-        fout.write(fea.key + ":" + ",".join(v) + "," + fea.tgt + "\n")
+        feas += [v]
+    feas = np.asarray(feas)
+
+    tgts = np.asarray([fea.tgt for fea in data])
+
+    perm = np.arange(len(keys))
+    np.random.shuffle(perm)
+    keys = keys[perm]
+    feas = feas[perm]
+    tgts = tgts[perm]
+
+    np.save(keyfile, keys)
+    np.save(feafile, feas)
+    np.save(tgtfile, tgts)
 
 if __name__ == '__main__':
     with open("conf/fea.yaml") as fin:
@@ -98,10 +116,10 @@ if __name__ == '__main__':
 
     fin = sys.argv[2]
     fin = "data/" + cfg[fin]
-    process(fin, fin + ".tmp")
+    process(fin)
 
-    cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
-          % (fin + ".tmp", fin + ".cmvn")
-    os.system(cmd)
-    os.system("rm -rf %s.tmp" % fin)
+    # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
+    #       % (fin + ".tmp", fin + ".cmvn")
+    # os.system(cmd)
+    # os.system("rm -rf %s.tmp" % fin)
     
