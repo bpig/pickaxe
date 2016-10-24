@@ -73,13 +73,9 @@ def pdNormalize(fin, foutName):
 def process(fin):
     data = loadData(fin)
     value = [fea.value for fea in data]
-    if "2016" not in fin:
-        print "cal fe.mu, fe.delta"
-        mu, delta = calMuDelta(value)
-    else:
-        dname = fin[:fin.rfind("/")]
-        print "using %s fe.mu, fe.delta" % dname
-        mu, delta = loadMuDelta(dname + "/fe")
+
+    print time.ctime(), "cal fe.mu, fe.delta"
+    mu, delta = calMuDelta(value)
 
     keyfile = fin + ".key.npy"
     feafile = fin + ".fea.npy"

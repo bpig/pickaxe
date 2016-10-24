@@ -88,10 +88,12 @@ def base_data(datafile, cache=True):
     tgtfile = datafile + ".tgt.npy"
     
     if cache and os.path.exists(keyfile):
+        print "using cached"
         keys = np.load(keyfile)
         feas = np.load(feafile)
         tgts = np.load(tgtfile)
     else:
+        print "no cache", keyfile
         keys, feas, tgts = loadFea(datafile)
         np.save(keyfile, keys)
         np.save(feafile, feas)
@@ -122,8 +124,6 @@ def read_data_sets(datafile, cache=True, reshape=False):
 
 def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
-    if not cache:
-        print "no cache"
     keys, feas, tgts = base_data(datafile, cache)
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

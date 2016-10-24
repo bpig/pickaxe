@@ -26,8 +26,9 @@ v2:
   batch_step: 6
   epoch: 4
   #pdata: 2013/15/2016.fe.cmvn
-  pdata: 2010/15/2016.fe.cmvn
-  pout: 2016_v2
+  pdata: 2013/15.bak/2016.fe.cmvn
+  #pout: 2016_v2
+  pout: 2016_v2.bak
 
 p2:
   data: 2013/15/fe.cmvn
@@ -62,11 +63,11 @@ v4:
 
 v5:
   data: 2010/15g/fe.cmvn
-  dcache: False
+  # dcache: False
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v5
-  batch_step: 6
+  batch_step: 12
   epoch: 1
   pdata: 2010/15g/2016.fe.cmvn
   pout: 2016_v5
