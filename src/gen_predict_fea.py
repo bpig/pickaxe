@@ -10,7 +10,7 @@ import fea
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
-def download(today):
+def download(today=None):
     if today:
         now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
     else:
@@ -29,8 +29,8 @@ def download(today):
     return dates
 
 def wc(ds):
-    f = "price_" + ds + ".csv"
-    ff = "derivativeindicator_" + ds + ".csv"
+    f = "cache/price_" + ds + ".csv"
+    ff = "cache/derivativeindicator_" + ds + ".csv"
     if not os.path.isfile(f):
         return False
     lf = len(open(f).readlines())
@@ -99,11 +99,10 @@ def downloadByDs(ds):
 
 def genCsv(dates):
     dates = sorted(dates, reverse=True)
-    outfile = dates[0] + ".csv"
-    fout = open(outfile, "w")
+    fout = open("today.csv", "w")
     for ds in dates:
-        pricefile = "price_" + ds + ".csv"
-        bigfile = "derivativeindicator_" + ds + ".csv"
+        pricefile = "cache/price_" + ds + ".csv"
+        bigfile = "cache/derivativeindicator_" + ds + ".csv"
         indicator = transformOne(bigfile, "big", 39)
         price = transformOne(pricefile, "price", 23)
         for k, v in price.items():
@@ -113,7 +112,7 @@ def genCsv(dates):
             record = [k, v[1]] + v[10: 18] + [indicatorValue[18], indicatorValue[25]]
             outStr = ",".join(record) + "\n"
             fout.write(outStr)
-    return outfile, dates[0]
+    return dates[0]
 
 def transformOne(filename, table, ct):
     keys = set()
@@ -141,15 +140,14 @@ def transformOne(filename, table, ct):
     return kv
 
 if __name__ == "__main__":
-    os.chdir("data/predict")
-    if len(sys.argv) > 0:
-        today = sys.argv[0]
+    os.chdir("../data/predict")
+    print sys.argv
+    if len(sys.argv) == 2:
+        today = sys.argv[1]
     else:
         today = None
     dates = download(today)
     print dates
-    csvfile, ds = genCsv(dates)
-    ftfile = ds + ".ft"
-    ft.process(csvfile, ftfile)
-    feafile = ds + ".fea"
-    fea.process(ftfile, None, feafile, None)
+    genCsv(dates)
+    ft.process("today.csv", "today.ft")
+    fea.process("today.ft", None, "today.fe")
