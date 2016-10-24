@@ -125,6 +125,7 @@ def read_data_sets(datafile, cache=True, reshape=False):
 def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
+    tgts = tgts.astype(np.float)
     print "dim", len(feas[0])
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)
