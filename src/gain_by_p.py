@@ -60,6 +60,9 @@ def gain(predict, stock, numStock, period, start):
             buy[ii] += str(key) + "_" + rec[1] + "_" + rec[2] + ","
             increase[ii] += outPrice / inPrice
             count[ii] += 1
+        # print d, len(predict[d]), totalMoney[ii], count[ii], increase[ii]
+        # if count[ii] == 0:
+        #     continue
         updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
         # print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]),
         #  "buy " + str(count[ii]) + " stocks: " +buy[ii]
@@ -90,19 +93,20 @@ if __name__ == "__main__":
 
     pfile = "ans/" + cfg["pout"]
 
-    stockFile = "data/2016.ft"
+    stockFile = "data/2016.ft.2"
     try:
         numStock = 50
         numStock = int(sys.argv[2])
     except:
         pass
     try:
-        period = 200
+        period = 230
         period = int(sys.argv[3])
     except:
         pass
     try:
         start = "20160104"
+        #start = "20161010"
         start = sys.argv[4]
     except:
         pass

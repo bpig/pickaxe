@@ -27,7 +27,7 @@ f3:
 fall:
   raw: all/all.cc
   data: all/all.ft
-  gb: all/all.gb
+  #gb: all/all.gb
   train: all/15/fe
   test: all/15/2016.fe
 

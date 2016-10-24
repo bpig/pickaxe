@@ -14,8 +14,13 @@ def getKv(filename):
     for l in getline(filename):
         pos = l.find(",")
         key = l[:pos]
+
         value = l[pos + 1:].replace("NULL", "0.0")
         value = value.split(",")
+        # ds = value[0]
+        # if ds < "20160000":
+        #     continue        
+
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10

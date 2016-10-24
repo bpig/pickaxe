@@ -10,7 +10,10 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[sys.argv[1]]
 
     datafile = "data/" + cfg["pdata"]
-    predSet = read_predict_sets(datafile)
+    if "pcache" in cfg and cfg["pcache"] == False:
+        predSet = read_predict_sets(datafile, None, True)
+    else:
+        predSet = read_predict_sets(datafile)
 
     model_dir = "model/" + cfg["model"]
 

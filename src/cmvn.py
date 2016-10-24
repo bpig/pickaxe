@@ -5,6 +5,7 @@ __date__ = "10/16/16"
 from common import *
 
 Fea = namedtuple("Fea", ["key", "value", "tgt"])
+Pd = namedtuple("Fea", ["key", "value"])
 
 def loadData(filename):
     datas = []
@@ -18,6 +19,19 @@ def loadData(filename):
         tgt = value[-1]
         value = np.asarray(value[:-1]).astype(np.float32)
         datas.append(Fea(key, value, tgt))
+    return datas
+
+def loadData2(filename):
+    datas = []
+    for l in open(filename):
+        l = l.strip()
+        if not l:
+            continue
+        pos = l.find(":")
+        key = l[:pos]
+        value = l[pos + 1:].split(",")
+        value = np.asarray(value).astype(np.float32)
+        datas.append(Pd(key, value))
     return datas
 
 def globalCal(data):
@@ -44,14 +58,21 @@ def loadMuDelta(fin):
     delta = np.load(fin + ".delta.npy")    
     return mu, delta
 
-def process(fin, foutName, predict=False):
+def pdNormalize(fin, foutName):
+    data = loadData2(fin)
+    mu, delta = loadMuDelta("data/predict/2016.fe")    
+
+    fout = open(foutName, "w")
+    for fea in data:
+        v = (fea.value - mu) / delta
+        v = map(str, v)
+        fout.write(fea.key + ":" + ",".join(v) + ",0.0\n")
+
+def process(fin, foutName):
     data = loadData(fin)
     value = [fea.value for fea in data]
-    if predict:
-        mu, delta = loadMuDelta("data/predict/fe")
-    else:
-        mu, delta = calMuDelta(value)
-    
+    mu, delta = calMuDelta(value)
+
     fout = open(foutName, "w")
     for fea in data:
         v = (fea.value - mu) / delta
@@ -64,7 +85,7 @@ if __name__ == '__main__':
 
     if "predict" in cfg:
         fin = "data/" + cfg["predict"]
-        process(fin, fin + ".cmvn", True)
+        pdNormalize(fin, fin + ".cmvn")
         sys.exit(0)
 
     fin = sys.argv[2]

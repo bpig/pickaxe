@@ -11,7 +11,8 @@ def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
 def download():
-    now = datetime.datetime.now()
+    #now = datetime.datetime.now()
+    now = datetime.datetime(2016, 10, 20)
     count = 0
     print now.year, now.month, now.day
     dates = []
