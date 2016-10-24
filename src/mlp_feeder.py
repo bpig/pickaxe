@@ -104,8 +104,8 @@ def read_data_sets(datafile, cache=True, reshape=False):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
     ct = len(tgts)
-    print ct
-    print "dim", len(feas[0]), tgts.dtype
+    tgts = tgts.astype(np.float)
+    print "total", ct, "dim", len(feas[0]), tgts.dtype
     tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
