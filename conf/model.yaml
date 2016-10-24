@@ -31,14 +31,10 @@ v2:
   pout: 2016_v2.bak
 
 p2:
-  data: 2013/15/fe.cmvn
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: 15_3y_2048
-  batch_step: 6
-  epoch: 4
   pdata: predict/today.fe.cmvn
-  pcache: False
   pout: 2016_p2
 
 v3:

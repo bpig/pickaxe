@@ -6,6 +6,7 @@ import wget
 import os
 import format as ft
 import fea
+import cmvn
 
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
@@ -18,14 +19,13 @@ def download(today=None):
     print now.year, now.month, now.day
     dates = []
     while len(dates) < 15:
-        prev = yesterday(now)
         mode = "%04d-%02d-%02d"
-        ds = mode % (prev.year, prev.month, prev.day)
+        ds = mode % (now.year, now.month, now.day)
         print ds
         downloadByDs(ds)
         if wc(ds):
             dates += [ds]
-        now = prev
+        now = yesterday(now)
     return dates
 
 def wc(ds):
@@ -140,7 +140,7 @@ def transformOne(filename, table, ct):
     return kv
 
 if __name__ == "__main__":
-    os.chdir("../data/predict")
+    os.chdir("data/predict")
     print sys.argv
     if len(sys.argv) == 2:
         today = sys.argv[1]
@@ -151,3 +151,4 @@ if __name__ == "__main__":
     genCsv(dates)
     ft.process("today.csv", "today.ft")
     fea.process("today.ft", None, "today.fe")
+    cmvn.pdNormalize("today.fe")

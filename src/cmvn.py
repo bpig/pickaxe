@@ -62,15 +62,26 @@ def loadMuDelta(fin):
     delta = np.load(fin + ".delta.npy")    
     return mu, delta
 
-def pdNormalize(fin, foutName):
+def pdNormalize(fin):
     data = loadData2(fin)
-    mu, delta = loadMuDelta("data/predict/2016.fe")    
+    mu, delta = loadMuDelta("2016.fe")
 
-    fout = open(foutName, "w")
+    keyfile = fin + ".key.npy"
+    feafile = fin + ".fea.npy"
+    tgtfile = fin + ".tgt.npy"
+
+    keys = np.asarray([fea.key for fea in data])
+
+    feas = []
     for fea in data:
         v = (fea.value - mu) / delta
-        v = map(str, v)
-        fout.write(fea.key + ":" + ",".join(v) + ",0.0\n")
+        feas += [v]
+    feas = np.asarray(feas)
+    tgts = np.array([1.0] * len(keys))
+
+    np.save(keyfile, keys)
+    np.save(feafile, feas)
+    np.save(tgtfile, tgts)
 
 def process(fin):
     data = loadData(fin)
