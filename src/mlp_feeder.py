@@ -69,7 +69,7 @@ def loadFea(filename):
             continue
         pos = l.find(":")
         key = l[:pos]
-        k, ds = key.split("_")
+        # k, ds = key.split("_")
         # if ds >= "20160800":
         #     continue
         value = l[pos + 1:].split(",")
@@ -105,7 +105,7 @@ def read_data_sets(datafile, cache=True, reshape=False):
     keys, feas, tgts = base_data(datafile, cache)
     ct = len(tgts)
     print ct
-
+    print "dim", len(feas[0]), tgts.dtype
     tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
@@ -125,5 +125,6 @@ def read_data_sets(datafile, cache=True, reshape=False):
 def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
+    print "dim", len(feas[0])
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

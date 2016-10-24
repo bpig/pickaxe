@@ -92,3 +92,14 @@ vall:
   epoch: 1
   pdata: all/15/2016.fe
   pout: 2016_vall
+
+gb:
+  data: gb/train.gb
+  net: [64, 64]
+  keep_prob: 0.3
+  model: vall
+  batch_step: 1
+  epoch: 1
+  pdata: gb/2016.gb
+  # pcache: False
+  pout: 2016_gb

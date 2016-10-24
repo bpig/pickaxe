@@ -17,7 +17,7 @@ def loadData(filename):
         pos = l.find(":")
         key = l[:pos]
         value = l[pos + 1:].split(",")
-        tgt = value[-1]
+        tgt = float(value[-1])
         value = np.asarray(value[:-1]).astype(np.float32)
         datas.append(Fea(key, value, tgt))
     print time.ctime(), "finish load data"
@@ -53,6 +53,8 @@ def calMuDelta(value):
     mu, delta = globalCal(value)
     np.save(fin + ".mu.npy", mu)
     np.save(fin + ".delta.npy", delta)
+    # print mu
+    # print delta
     return mu, delta
 
 def loadMuDelta(fin):

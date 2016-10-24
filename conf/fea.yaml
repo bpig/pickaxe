@@ -41,7 +41,9 @@ today:
   data: predict/today.ft
   predict: predict/today.fe
 
-
+gb:
+  train: gb/train.gb
+  test: gb/2016.gb
         
 
   

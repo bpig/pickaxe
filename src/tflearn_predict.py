@@ -10,8 +10,8 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[sys.argv[1]]
 
     datafile = "data/" + cfg["pdata"]
-    if "pcache" in cfg and cfg["pcache"] == False:
-        predSet = read_predict_sets(datafile, None, True)
+    if "pcache" in cfg:
+        predSet = read_predict_sets(datafile, cfg["pcache"])
     else:
         predSet = read_predict_sets(datafile)
 
@@ -31,7 +31,11 @@ if __name__ == "__main__":
         if p['class'] == 0:
             continue
         prob = p['prob'][1]
-        key, date = predSet.key[c].split("_")
+        if "_" in predSet.key[c]:
+            key, date = predSet.key[c].split("_")
+        else:
+            date = predSet.key[c]
+            key = "gb"
         tgt = predSet.tgt[c]
         ans[date] += [(key, prob, tgt)]
 
