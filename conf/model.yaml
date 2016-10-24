@@ -82,3 +82,13 @@ v6:
   pdata: 2013/15g/2016.fe.cmvn
   pout: 2016_v6
 
+vall:
+  data: all/15/fe
+  # dcache: False
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: vall
+  batch_step: 32
+  epoch: 1
+  pdata: all/15/2016.fe
+  pout: 2016_vall
