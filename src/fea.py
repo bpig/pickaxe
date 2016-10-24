@@ -154,7 +154,7 @@ def genOne(kv, gb, ds, predict=False):
     if not predict:
         if index <= 1:
             return ""
-    
+        
         # stock is stoped
         if values[15][index - 1] == 1 or values[15][index - 2] == 1:
             return ""
@@ -195,7 +195,6 @@ def genOne(kv, gb, ds, predict=False):
         # 13 e-status-2    0,
         # 14 #0/#1         0.0990099009901,
         # 15 rate          1.0
-        
     
     # win fea
     for window in windows:
@@ -208,7 +207,7 @@ def genOne(kv, gb, ds, predict=False):
         fea += genStatus(items[15:19])
         fea += [span, gain]
         feas += fea
-
+    
     if not predict:
         tgt = values[-1][0]
         assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
@@ -253,19 +252,18 @@ if __name__ == "__main__":
             print "finish gb info"
     else:
         gbfin = None
-        
+    
     if "predict" in cfg:
         fout = "data/" + cfg["predict"]
         process(fin, gbfin, fout)
         sys.exit(0)
-
+    
     fout1 = "data/" + cfg["train"]
     fout2 = "data/" + cfg["test"]
-
+    
     if sys.argv[2] == "test":
-        filter_func = lambda x: x >= "20160000" 
+        filter_func = lambda x: x >= "20160000"
         genAll(fin, gbfin, fout2, filter_func)
     else:
         filter_func = lambda x: x < "20160000" and x >= "20060000"
         genAll(fin, gbfin, fout1, filter_func)
-
