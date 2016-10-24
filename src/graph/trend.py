@@ -44,9 +44,9 @@ def getYahoo(dt, k):
 
 if __name__ == '__main__':
     k, v = getData("rate")
-    k1, v1 = getData("rate.153y")
+    k1, v1 = getData("rate.v2601")
     k2, v2 = getData("rate.901")
-    k3, v3 = getData("rate.top3.v2601")
+    k3, v3 = getData("rate.v41200")
     
     dt = getSS()
     k, v = filterByYahoo(k, v, dt)

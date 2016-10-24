@@ -10,7 +10,7 @@ def trans(s):
     return datetime.datetime(y, m, d)
 
 if __name__ == '__main__':
-    lt = map(str.strip, open("2016.gb"))
+    lt = map(str.strip, open("06.gb"))
     lt = filter(len, lt)
     lt = map(lambda x: x.split(","), lt)
     lt = zip(*lt)
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     t0 = lt[2][0]
     lt[2] = map(lambda x: x / t0, lt[2])
     
-    plt.plot_date(ds, lt[13], "-r")
-    plt.plot_date(ds, lt[14], "-b")
+    plt.plot_date(ds, lt[1], "-r")
+    # plt.plot_date(ds, lt[14], "-b")
     # plt.plot_date(ds, lt[-1], "-g")
     plt.show()
