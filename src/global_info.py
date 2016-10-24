@@ -7,16 +7,10 @@ import fea
 
 def process(fin, fout):
     kv, datas = fea.getSt(fin)
-    datas = sorted(datas)
-    
     gb = defaultdict(lambda: [0.0] * 16)
-    
+    datas = filter(lambda x: x >= "20060000", datas)
     for (key, st) in kv.items():
         for i, ds in enumerate(st[0]):
-            print ds,type(ds)
-            sys.exit(1)
-            if ds <= "20060000":
-                continue
             ans = gb[ds]
             ans[0] += st[3][i]
             ans[1] += st[10][i] * st[8][i]
@@ -53,7 +47,7 @@ def process(fin, fout):
     
     for c, ds in enumerate(datas):
         if gb[ds][1] == 0:
-            print ds
+            print ds, gb[ds]
             continue
         gb[ds][14] = gb[ds][0] / (gb[ds][1])
         if c == 0.0:
