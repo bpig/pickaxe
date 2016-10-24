@@ -55,9 +55,9 @@ v4:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v4
-  batch_step: 6
-  epoch: 3
-  pdata: 2010/15/fe.2016.cmvn
+  batch_step: 12
+  epoch: 1
+  pdata: 2010/15/2016.fe.cmvn
   pout: 2016_v4
 
 v5:
