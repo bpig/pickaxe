@@ -61,13 +61,14 @@ v4:
   pout: 2016_v4
 
 v5:
-  data: 2013/15g/fe.cmvn
+  data: 2010/15g/fe.cmvn
+  dcache: False
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v5
   batch_step: 6
   epoch: 1
-  pdata: 2013/15g/2016.fe.cmvn
+  pdata: 2010/15g/2016.fe.cmvn
   pout: 2016_v5
 
 v6:

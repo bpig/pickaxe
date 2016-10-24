@@ -8,6 +8,7 @@ Fea = namedtuple("Fea", ["key", "value", "tgt"])
 Pd = namedtuple("Fea", ["key", "value"])
 
 def loadData(filename):
+    print time.ctime(), "begin load data"
     datas = []
     for l in open(filename):
         l = l.strip()
@@ -19,6 +20,7 @@ def loadData(filename):
         tgt = value[-1]
         value = np.asarray(value[:-1]).astype(np.float32)
         datas.append(Fea(key, value, tgt))
+    print time.ctime(), "finish load data"
     return datas
 
 def loadData2(filename):
@@ -71,7 +73,13 @@ def pdNormalize(fin, foutName):
 def process(fin, foutName):
     data = loadData(fin)
     value = [fea.value for fea in data]
-    mu, delta = calMuDelta(value)
+    if "2016" not in fin:
+        print "cal fe.mu, fe.delta"
+        mu, delta = calMuDelta(value)
+    else:
+        dname = fin[:fin.rfind("/")]
+        print "using %s fe.mu, fe.delta" % dname
+        mu, delta = loadMuDelta(dname + "/fe")
 
     fout = open(foutName, "w")
     for fea in data:

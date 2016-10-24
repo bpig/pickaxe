@@ -36,7 +36,10 @@ if __name__ == "__main__":
         print key, ":", cfg[key]
 
     datafile = "data/" + cfg["data"]
-    data = read_data_sets(datafile)
+    if "dcache" in cfg:
+        data = read_data_sets(datafile, cfg["dcache"])
+    else:
+        data = read_data_sets(datafile)
 
     config = learn.estimators.run_config.RunConfig(
         log_device_placement=False, save_summary_steps=100,

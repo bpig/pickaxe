@@ -58,7 +58,7 @@ class DataSet(object):
         end = self._index_in_epoch
         return self._feas[start:end], self._tgts[start:end]
 
-def loadFea(filename, cv=None):
+def loadFea(filename):
     keys = []
     feas = []
     tgts = []
@@ -79,30 +79,28 @@ def loadFea(filename, cv=None):
         keys += [key]
         feas += [fea]
         tgts += [tgt]
-        if cv and c == cv:
-            break
     ct = len(tgts)
     return keys, np.asarray(feas), np.asarray(tgts)
 
-def base_data(datafile, cv=None, skip=False):
+def base_data(datafile, cache=True):
     keyfile = datafile + ".key.npy"
     feafile = datafile + ".fea.npy"
     tgtfile = datafile + ".tgt.npy"
     
-    if not skip and os.path.exists(keyfile):
+    if cache and os.path.exists(keyfile):
         keys = np.load(keyfile)
         feas = np.load(feafile)
         tgts = np.load(tgtfile)
     else:
-        keys, feas, tgts = loadFea(datafile, cv)
+        keys, feas, tgts = loadFea(datafile)
         np.save(keyfile, keys)
         np.save(feafile, feas)
         np.save(tgtfile, tgts)
     return keys, feas, tgts
 
-def read_data_sets(datafile, cv=None, skip=False, reshape=False):
+def read_data_sets(datafile, cache=True, reshape=False):
     print time.ctime(), "begin load data"
-    keys, feas, tgts = base_data(datafile, cv, skip)
+    keys, feas, tgts = base_data(datafile, cache)
     ct = len(tgts)
     print ct
 
@@ -122,10 +120,10 @@ def read_data_sets(datafile, cv=None, skip=False, reshape=False):
     print time.ctime(), "finish load data"    
     return Datasets(train=train, test=test)
 
-def read_predict_sets(datafile, cv=None, skip=False):
+def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
-    if skip:
+    if not cache:
         print "no cache"
-    keys, feas, tgts = base_data(datafile, cv, skip)
+    keys, feas, tgts = base_data(datafile, cache)
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)
