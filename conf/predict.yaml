@@ -1,0 +1,9 @@
+f0:
+  input: test/small_1.predict,test/small_2.predict
+  weights: 1,1
+  output: test/small_combined.predict
+
+f1:
+  input: test/2016_v2,test/2016_v6
+  weights: 1.8,1.6
+  output: test/2016_v2_v6
