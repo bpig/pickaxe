@@ -16,7 +16,9 @@ def loadFile(fin):
         kv[key] = items
     return kv
 
-def gain(predict, stock, numStock, period, start):
+def gain(predict, stock, numStock, period, start, gbfile):
+    if gbfile:
+        gbds = loadFile(gbfile).keys()
     ds = sorted(predict.keys(), key=lambda x: x)
     totalMoney = [0.5, 0.5]
     updateMoney = [0.5, 0.5]
@@ -30,6 +32,9 @@ def gain(predict, stock, numStock, period, start):
         if i >= len(ds):
             return i - 1, totalMoney
         d = ds[i]
+        if gbfile and d not in gbds:
+            print d, " stop said gb"
+            continue
         buy = ["", ""]
         increase = [0, 0]
         count = [0, 0]
@@ -77,13 +82,13 @@ def gain(predict, stock, numStock, period, start):
     
     return i, totalMoney
 
-def process(predictFile, stockFile, numStock, period, start):
+def process(predictFile, stockFile, numStock, period, start, gbfile):
     stock = loadFile(stockFile)
     predict = {}
     for k, v in loadFile(predictFile).items():
         v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
-    i, money = gain(predict, stock, numStock, period, start)
+    i, money = gain(predict, stock, numStock, period, start, gbfile)
     print "after " + str(i + 1) + " days:"
     print "final: " + str(sum(money))
 
@@ -110,8 +115,8 @@ if __name__ == "__main__":
         start = sys.argv[4]
     except:
         pass
-    
-    process(pfile, stockFile, numStock, period, start)
+
+    process(pfile, stockFile, numStock, period, start, None)
 
     # process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
 

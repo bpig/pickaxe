@@ -4,4 +4,4 @@ import src.gain_by_p as gain
 
 class TestProcess(TestCase):
     def test_process(self):
-        gain.process("small.predict", "small.ft", 1, 1)
+        gain.process("2016.ans", "2016.ft", 50, 90, "20160104", "2016_gb")
