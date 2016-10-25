@@ -110,8 +110,8 @@ w1:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: w1
-  batch_step: 6
-  epoch: 4
+  batch_step: 24
+  epoch: 1
   pdata: 2010/20/2016.fe
   pout: 2016_w1
   
