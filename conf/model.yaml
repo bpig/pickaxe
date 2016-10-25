@@ -89,6 +89,16 @@ vall:
   pdata: all/15/2016.fe
   pout: 2016_vall
 
+vall2:
+  data: all/15/fe
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: vall2
+  batch_step: 16
+  epoch: 1
+  pdata: all/15/2016.fe
+  pout: 2016_vall2
+
 test:
   #pout: 2016_v2
   pout: 2016_v2_v4

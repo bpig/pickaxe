@@ -104,7 +104,8 @@ def read_data_sets(datafile, cache=True, reshape=False):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
     ct = len(tgts)
-    tgts = tgts.astype(np.float)
+    tgts = tgts.astype(np.float32)
+    feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype
     tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
     if reshape:
@@ -125,8 +126,8 @@ def read_data_sets(datafile, cache=True, reshape=False):
 def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
-    tgts = tgts.astype(np.float)
-    print tgts[:10]
+    tgts = tgts.astype(np.float32)
+    feas = feas.astype(np.float32)
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

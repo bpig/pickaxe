@@ -77,7 +77,7 @@ def pdNormalize(fin):
         v = (fea.value - mu) / delta
         feas += [v]
     feas = np.asarray(feas).astype(np.float32)
-    tgts = np.array([0.0] * len(keys))
+    tgts = np.array([0.0] * len(keys)).astype(np.float32)
 
     np.save(keyfile, keys)
     np.save(feafile, feas)
@@ -100,9 +100,9 @@ def process(fin):
     for fea in data:
         v = (fea.value - mu) / delta
         feas += [v]
-    feas = np.asarray(feas)
+    feas = np.asarray(feas).astype(np.float32)
 
-    tgts = np.asarray([fea.tgt for fea in data])
+    tgts = np.asarray([fea.tgt for fea in data]).astype(np.float32)
 
     perm = np.arange(len(keys))
     np.random.shuffle(perm)
