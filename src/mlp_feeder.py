@@ -126,6 +126,7 @@ def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
     tgts = tgts.astype(np.float)
-    print "dim", len(feas[0])
+    print tgts[:10]
+    print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

@@ -21,6 +21,7 @@ if __name__ == "__main__":
     keep_prob = cfg["keep_prob"]
     classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
 
+    print predSet.fea.dtype
     classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
 
     pp = classifier.predict(predSet.fea, as_iterable=True)

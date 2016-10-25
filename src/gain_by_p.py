@@ -57,7 +57,7 @@ def gain(predict, stock, numStock, period, start):
             if nextDayIndex < 0:
                 continue
             outPrice = float(items[8][nextDayIndex])
-            buy[ii] += str(key) + "_" + rec[1] + "_" + rec[2] + ","
+            buy[ii] += str(key) + "_" + rec[1] + "," # + "_" + rec[2] + ","
             increase[ii] += outPrice / inPrice
             count[ii] += 1
         # print d, len(predict[d]), totalMoney[ii], count[ii], increase[ii]

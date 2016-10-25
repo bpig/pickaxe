@@ -45,5 +45,10 @@ gb:
   train: gb/train.gb
   test: gb/2016.gb
         
+w1:
+  raw: 2010/2010.cc
+  data: 2010/2010.ft
+  train: 2010/20/fe
+  test: 2010/20/2016.fe
 
   

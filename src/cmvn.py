@@ -76,8 +76,8 @@ def pdNormalize(fin):
     for fea in data:
         v = (fea.value - mu) / delta
         feas += [v]
-    feas = np.asarray(feas)
-    tgts = np.array([1.0] * len(keys))
+    feas = np.asarray(feas).astype(np.float32)
+    tgts = np.array([0.0] * len(keys))
 
     np.save(keyfile, keys)
     np.save(feafile, feas)

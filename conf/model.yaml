@@ -34,7 +34,7 @@ p2:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: 15_3y_2048
-  pdata: predict/today.fe.cmvn
+  pdata: predict/today.fe
   pout: 2016_p2
 
 v3:
@@ -89,6 +89,11 @@ vall:
   pdata: all/15/2016.fe
   pout: 2016_vall
 
+test:
+  #pout: 2016_v2
+  pout: 2016_v2_v4
+  #pout: 2016_v2_v6
+
 gb:
   data: gb/train.gb
   net: [64, 64]
@@ -99,3 +104,14 @@ gb:
   pdata: gb/2016.gb
   # pcache: False
   pout: 2016_gb
+
+w1:
+  data: 2010/20/fe
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: w1
+  batch_step: 6
+  epoch: 4
+  pdata: 2010/20/2016.fe
+  pout: 2016_w1
+  
