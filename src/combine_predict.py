@@ -3,8 +3,9 @@ from collections import Counter
 
 from common import *
 
-def loadFile(fins):
+def loadFile(fins, weights):
     kv = {}
+    weights = map(lambda x: float(x), weights)
     for i in range(len(fins)):
         for l in open(fins[i].strip()):
             l = l.strip()
@@ -14,40 +15,37 @@ def loadFile(fins):
             ds = l[:pos]
             items = l[pos + 1:].split(",")
             items = map(lambda x: x.split("_"), items)
-            for item in items:
-                key = ds + "_" + item[0]
-                if key in kv.keys():
-                    kv[key][i] = item[1]
-                else:
-                    kv[key] = [0] * len(fins)
-                    kv[key][i] = item[1]
+            items = map(lambda x: [x[0], float(x[1]) * weights[i]], items)
+            if ds in kv.keys():
+                kv[ds] += [items]
+            else:
+                kv[ds] = [items]
     return kv
 
-def combine(predictions, weights, fout):
+def combine(predictions, fout):
     fout = open(fout, "w")
     cb = {}
     for k, v in predictions.items():
-        v = np.array(v, float)
-        weights = np.array(weights, float)
-        cval = (v * weights).sum()
-        segs = k.split("_")
-        ds = segs[0]
-        code = segs[1]
-        if ds in cb.keys():
-            cb[ds] += [[code, cval]]
-        else:
-            cb[ds] = [[code, cval]]
-
-    for k, v in cb.items():
-        v = sorted(v, key=lambda x: x[1], reverse=True)
-        v = map(lambda x: x[0]+"_"+str(x[1]), v)
-        fout.write(k + "," + ",".join(v) + "\n")
+        kv = {}
+        for items in v:
+            for item in items:
+                code = item[0]
+                if code in kv.keys():
+                    kv[code] += item[1]
+                else:
+                    kv[code] = item[1]
+        cw = []
+        for c, w in kv.items():
+            cw += [[c, w]]
+        cw = sorted(cw, key=lambda x: x[1], reverse=True)
+        cw = map(lambda x: x[0] + "_" + str(x[1]), cw)
+        fout.write(k + "," + ",".join(cw) + "\n")
 
 if __name__ == "__main__":
     with open("../conf/predict.yaml") as fin:
-        cfg = yaml.load(fin)["f1"]
+        cfg = yaml.load(fin)["f2"]
     fins = cfg["input"].split(",")
     weights = cfg["weights"].split(",")
     fout = cfg["output"]
-    predictions = loadFile(fins)
-    combine(predictions, weights, fout)
+    predictions = loadFile(fins, weights)
+    combine(predictions, fout)
