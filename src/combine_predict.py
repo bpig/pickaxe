@@ -43,7 +43,7 @@ def combine(predictions, fout):
 
 if __name__ == "__main__":
     with open("conf/predict.yaml") as fin:
-        cfg = yaml.load(fin)["f0"]
+        cfg = yaml.load(fin)[sys.argv[1]]
     fins = cfg["input"].split(",")
     weights = cfg["weights"].split(",")
     fout = cfg["output"]

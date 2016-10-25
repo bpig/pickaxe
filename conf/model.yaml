@@ -28,7 +28,7 @@ v2:
   #pdata: 2013/15/2016.fe.cmvn
   pdata: 2013/15.bak/2016.fe.cmvn
   #pout: 2016_v2
-  pout: 2016_v2.bak
+  pout: 2016_v2
 
 p2:
   net: [2048, 1024, 1024]
@@ -115,7 +115,7 @@ gb:
   # pcache: False
   pout: 2016_gb
 
-w1:
+w1: # e2, 1.5
   data: 2010/20/fe
   net: [2048, 1024, 1024]
   keep_prob: 0.3
@@ -124,4 +124,16 @@ w1:
   epoch: 1
   pdata: 2010/20/2016.fe
   pout: 2016_w1
+
+w10:
+  data: 2010/10/fe
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: w10
+  batch_step: 10
+  epoch: 1
+  pdata: 2010/10/2016.fe
+  pout: 2016_w10
   
+comb:
+  pout: 2016_comb        

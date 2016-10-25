@@ -1,7 +1,7 @@
 f0:
-  input: ans/2016_vall.2,ans/2016_vall.1 
+  input: ans/2016_v2,ans/2016_v4
   weights: 1,1
-  output: ans/2016_vall
+  output: ans/2016_comb
 
 f1:
   input: test/2016_v2,test/2016_v6

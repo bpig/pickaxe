@@ -41,7 +41,8 @@ def wc(ds):
     return True
 
 def downloadByDs(ds):
-    tmpl = "http://60.191.48.94:8000/download/%s_%s.csv"
+    #tmpl = "http://60.191.48.94:8000/download/%s_%s.csv"
+    tmpl = "http://61.130.4.98:8000/download/%s_%s.csv"
     f = "price_" + ds + ".csv"
     ff = "derivativeindicator_" + ds + ".csv"
     os.chdir("cache")
