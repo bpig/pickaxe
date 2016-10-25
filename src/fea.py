@@ -164,7 +164,8 @@ def genOne(kv, gb, ds, predict=False):
             return ""
     
     #windows = [2, 3, 5, 7, 15]  # , 30, 60]
-    windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
+    #windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
+    windows = [2, 3, 5, 7, 10]  # , 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
     
