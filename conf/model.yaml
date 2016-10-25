@@ -137,3 +137,10 @@ w10:
   
 comb:
   pout: 2016_comb        
+
+p4:
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v4
+  pdata: predict/today.fe
+  pout: 2016_p4

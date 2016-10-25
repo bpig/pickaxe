@@ -3,12 +3,13 @@ f0:
   weights: 1,1
   output: ans/2016_comb
 
-f1:
-  input: test/2016_v2,test/2016_v6
-  weights: 1.8,1.6
-  output: test/2016_v2_v6
+p0:
+  input: ans/2016_p2,ans/2016_p4
+  weights: 1,1
+  output: ans/2016_pc
 
 f2:
   input: test/2016_v2,test/2016_v4
   weights: 1.71,2.08
   output: test/2016_v2_v4
+
