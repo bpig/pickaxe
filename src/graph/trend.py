@@ -45,7 +45,7 @@ def getYahoo(dt, k):
 if __name__ == '__main__':
     k, v = getData("rate")
     k1, v1 = getData("rate.v2601")
-    k2, v2 = getData("rate.901")
+    k2, v2 = getData("rate.c24")
     k3, v3 = getData("rate.v41200")
     
     dt = getSS()

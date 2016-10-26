@@ -8,7 +8,7 @@ from jsq_estimator import JSQestimator
 if __name__ == "__main__":
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
-
+    
     if len(sys.argv) == 3:
         datafile = "data/" + cfg["tdata"]
         fout = "ans/" + cfg["tout"]
