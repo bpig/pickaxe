@@ -145,8 +145,35 @@ p4:
   pdata: predict/today.fe
   pout: 2016_p4
 
+v1501:
+  data: 2010/15/fe.cmvn
+  division: 1.01
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1501
+  batch_step: 10
+  epoch: 1
+  pdata: 2010/15/2016.fe.cmvn
+  pout: v1501
+  tdata: predict/today.fe
+  tout: td_v1501
+
+v1502:
+  data: 2010/15/fe.cmvn
+  division: 1.02
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1502
+  batch_step: 10
+  epoch: 1
+  pdata: 2010/15/2016.fe.cmvn
+  pout: v1502
+  tdata: predict/today.fe
+  tout: td_v1502
+
 v1503:
   data: 2010/15/fe.cmvn
+  division: 1.03
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v1503

@@ -100,14 +100,14 @@ def base_data(datafile, cache=True):
         np.save(tgtfile, tgts)
     return keys, feas, tgts
 
-def read_data_sets(datafile, cache=True, reshape=False):
+def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
-    print "total", ct, "dim", len(feas[0]), tgts.dtype
-    tgts = np.asarray(map(lambda x: 0 if x < 1.03 else 1, tgts))
+    print "total", ct, "dim", len(feas[0]), tgts.dtype, "division", division
+    tgts = np.asarray(map(lambda x: 0 if x < division else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
     point = int(len(keys) * .9)

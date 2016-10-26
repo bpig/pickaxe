@@ -22,7 +22,7 @@ def download(today=None):
         mode = "%04d-%02d-%02d"
         ds = mode % (now.year, now.month, now.day)
         print ds
-        downloadByDs(ds)
+        #downloadByDs(ds)
         if wc(ds):
             dates += [ds]
         now = yesterday(now)

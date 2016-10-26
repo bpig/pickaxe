@@ -36,10 +36,13 @@ if __name__ == "__main__":
         print key, ":", cfg[key]
 
     datafile = "data/" + cfg["data"]
+    division = 1.002
+    if "division" in cfg:
+        division = cfg["division"]
     if "dcache" in cfg:
-        data = read_data_sets(datafile, cfg["dcache"])
+        data = read_data_sets(datafile, division, cfg["dcache"])
     else:
-        data = read_data_sets(datafile)
+        data = read_data_sets(datafile, division)
 
     config = learn.estimators.run_config.RunConfig(
         log_device_placement=False, save_summary_steps=100,
