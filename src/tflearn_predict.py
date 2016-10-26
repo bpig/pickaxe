@@ -9,7 +9,12 @@ if __name__ == "__main__":
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
 
-    datafile = "data/" + cfg["pdata"]
+    if len(sys.argv) == 3:
+        datafile = "data/" + cfg["tdata"]
+        fout = "ans/" + cfg["tout"]
+    else:
+        datafile = "data/" + cfg["pdata"]
+        fout = "ans/" + cfg["pout"]
     if "pcache" in cfg:
         predSet = read_predict_sets(datafile, cfg["pcache"])
     else:
@@ -40,7 +45,7 @@ if __name__ == "__main__":
         tgt = predSet.tgt[c]
         ans[date] += [(key, prob, tgt)]
 
-    fout = "ans/" + cfg["pout"]
+
     fout = open(fout, "w")
     for ds in sorted(ans.keys()):
         st = ans[ds]

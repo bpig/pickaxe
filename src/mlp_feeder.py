@@ -107,7 +107,7 @@ def read_data_sets(datafile, cache=True, reshape=False):
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype
-    tgts = np.asarray(map(lambda x: 0 if x < 1.002 else 1, tgts))
+    tgts = np.asarray(map(lambda x: 0 if x < 1.03 else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
     point = int(len(keys) * .9)
