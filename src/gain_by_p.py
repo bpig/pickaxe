@@ -83,9 +83,10 @@ def gain(predict, stock, numStock, period, start, gbfile):
         if count[ii] < numStock:
             # print "no enough number of stocks to buy in"
             lack = "lack(%d)" % count[ii]
-        print d, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, lack
 
         totalMoney[ii] = updateMoney[ii]
+        total = sum(totalMoney)
+        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, lack
     
     return i, totalMoney
 
