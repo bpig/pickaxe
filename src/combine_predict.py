@@ -15,7 +15,7 @@ def loadFile(fins, weights):
             ds = l[:pos]
             items = l[pos + 1:].split(",")
             items = map(lambda x: x.split("_"), items)
-            items = map(lambda x: [x[0], float(x[1]) * weights[i]], items)
+            items = map(lambda x: [x[0], float(x[1]) * weights[i], x[2]], items)
             if ds in kv.keys():
                 kv[ds] += [items]
             else:
@@ -29,16 +29,19 @@ def combine(predictions, fout):
         kv = {}
         for items in v:
             for item in items:
-                code = item[0]
+                code = item[0] + "_" + item[2]
                 if code in kv.keys():
                     kv[code] += item[1]
                 else:
                     kv[code] = item[1]
         cw = []
         for c, w in kv.items():
-            cw += [[c, w]]
+            segs = c.split("_")
+            code = segs[0]
+            prob = segs[1]
+            cw += [[code, w, prob]]
         cw = sorted(cw, key=lambda x: x[1], reverse=True)
-        cw = map(lambda x: x[0] + "_" + str(x[1]), cw)
+        cw = map(lambda x: x[0] + "_" + str(x[1]) + "_" + x[2], cw)
         fout.write(k + "," + ",".join(cw) + "\n")
 
 if __name__ == "__main__":

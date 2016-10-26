@@ -13,3 +13,8 @@ f2:
   weights: 1.71,2.08
   output: test/2016_v2_v4
 
+test:
+  input: test/small_1.predict,test/small_2.predict
+  weights: 1,1
+  output: test/small_1_2.predict
+
