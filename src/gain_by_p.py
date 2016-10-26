@@ -39,6 +39,8 @@ def gain(predict, stock, numStock, period, start, gbfile):
         increase = [0, 0]
         count = [0, 0]
         ii = i % 2;
+        nobuy = 0
+        nosell = 0
         for rec in predict[d]:
             if count[ii] == numStock:
                 break
@@ -51,14 +53,17 @@ def gain(predict, stock, numStock, period, start, gbfile):
             index = items[0].index(d) - 1
             if index < 1:
                 continue
-            # 停盘 or 开盘涨停
-            if items[15][index] == 1 or items[16][index] == 1:
+            # stop or +10 high
+            if items[15][index] == '1' or items[16][index] == '1':
+                nobuy += 1
                 continue
             inPrice = float(items[5][index])
             nextDayIndex = index - 1
-            # 停盘 or 收盘跌停
-            while nextDayIndex >= 0 and (items[15][nextDayIndex] == 1 or items[18][nextDayIndex] == 2):
+            # stop or -10 low
+            while nextDayIndex >= 0 and \
+                  (items[15][nextDayIndex] == '1' or items[18][nextDayIndex] == '2'):
                 nextDayIndex -= 1
+                nosell += 1
             if nextDayIndex < 0:
                 continue
             outPrice = float(items[8][nextDayIndex])
@@ -66,18 +71,20 @@ def gain(predict, stock, numStock, period, start, gbfile):
             increase[ii] += outPrice / inPrice
             count[ii] += 1
         # print d, len(predict[d]), totalMoney[ii], count[ii], increase[ii]
-        # if count[ii] == 0:
-        #     continue
-        updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
+        if count[ii] != 0:
+            updateMoney[ii] = (increase[ii] / count[ii] - 0.0015) * totalMoney[ii]
         # print d, "start: " + str(totalMoney[ii]), "end: " + str(updateMoney[ii]),
         #  "buy " + str(count[ii]) + " stocks: " +buy[ii]
         
-        lt = buy[ii].split(",")[-2]
-        bg = sum(totalMoney)
-        ed = sum(updateMoney)
-        print d, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg)
+            lt = buy[ii].split(",")[-2]
+        bg = totalMoney[ii]
+        ed = updateMoney[ii]
+        lack = ""
         if count[ii] < numStock:
-            print "no enough number of stocks to buy in"
+            # print "no enough number of stocks to buy in"
+            lack = "lack(%d)" % count[ii]
+        print d, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, lack
+
         totalMoney[ii] = updateMoney[ii]
     
     return i, totalMoney
