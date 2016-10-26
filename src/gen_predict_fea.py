@@ -12,6 +12,12 @@ def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
 def download(today=None):
+    checkpoint = "no_data_checkpoint"
+    try:
+        noData = set([_.strip() for _ in open(checkpoint)])
+    except:
+        noData = set()
+    fout = open(checkpoint, "a")
     if today:
         now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
     else:
@@ -21,10 +27,15 @@ def download(today=None):
     while len(dates) < 15:
         mode = "%04d-%02d-%02d"
         ds = mode % (now.year, now.month, now.day)
-        print ds
-        #downloadByDs(ds)
+        if ds in noData:
+            now = yesterday(now)
+            continue
+        print "valid", ds
+        downloadByDs(ds)
         if wc(ds):
             dates += [ds]
+        else:
+            fout.write(ds + "\n")
         now = yesterday(now)
     return dates
 
