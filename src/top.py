@@ -19,7 +19,7 @@ if __name__ == "__main__":
     else:
         ct = 5
     
-    fin = "ans/" + cfg["pout"]
+    fin = "ans/" + cfg["tout"]
     l = next(open(fin))
     key, items = parseLine(l)
     

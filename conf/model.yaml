@@ -138,6 +138,9 @@ w10:
 comb:
   pout: 2016_comb        
 
+pc:
+  tout: 2016_pc
+
 p4:
   net: [2048, 1024, 1024]
   keep_prob: 0.3

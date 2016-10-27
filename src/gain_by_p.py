@@ -67,7 +67,8 @@ def gain(predict, stock, numStock, period, start, gbfile):
             if nextDayIndex < 0:
                 continue
             outPrice = float(items[8][nextDayIndex])
-            buy[ii] += str(key) + "_" + rec[1] + "," # + "_" + rec[2] + ","
+            #buy[ii] += str(key) + "_" + rec[1] + "_" + rec[2] + ","
+            buy[ii] += str(key) + "_" + rec[2] + ","
             increase[ii] += outPrice / inPrice
             count[ii] += 1
         # print d, len(predict[d]), totalMoney[ii], count[ii], increase[ii]
@@ -86,7 +87,7 @@ def gain(predict, stock, numStock, period, start, gbfile):
 
         totalMoney[ii] = updateMoney[ii]
         total = sum(totalMoney)
-        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, lack
+        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, lack #, buy[ii]
     
     return i, totalMoney
 
