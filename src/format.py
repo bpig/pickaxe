@@ -13,7 +13,7 @@ def getKv(filename, kv, uniq):
     for l in getline(filename):
         pos = l.find(",")
         key = l[:pos]
-
+        
         value = l[pos + 1:].replace("NULL", "0.0")
         value = value.split(",")
         # ds = value[0]
@@ -23,15 +23,14 @@ def getKv(filename, kv, uniq):
         if kid in uniq:
             continue
         uniq.add(kid)
-
+        
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
     #  -1    0    1      2       3     4  5    6    7   8      9        10
-
+    
     # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
     # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
     return kv, uniq
-
 
 def getStatus(rate):
     if rate <= 0.901:
@@ -77,24 +76,28 @@ def extend(key, v):
     return v
 
 def dump(kv, filename):
-    fout = open(filename, "w")
-    fdebug = open(filename + ".debug", "w")
-    
-    for k, v in kv.items():
+    # fout = open(filename, "w")
+    # fdebug = open(filename + ".debug", "w")
+    ct = len(kv)
+    ary = np.empty(ct, dtype=np.object)
+    for c, (k, v) in enumerate(kv.items()):
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
         v = extend(k, v)
         
         # for debug
-        d = zip(*v)
-        for l in d:
-            key = k + "_" + l[0]
-            value = ",".join(l[1:])
-            fdebug.write(key + "," + value + "\n")
+        # d = zip(*v)
+        # for l in d:
+        #     key = k + "_" + l[0]
+        #     value = ",".join(l[1:])
+        #     fdebug.write(key + "," + value + "\n")
         
         # normal output
-        v = map(lambda x: "_".join(x), v)
-        fout.write(k + "," + ",".join(v) + "\n")
+        # v = map(lambda x: "_".join(x), v)
+        
+        # fout.write(k + "," + ",".join(v) + "\n")
+        ary[c] = [k, v]
+    np.save(filename, ary)
 
 def mergeSmallCsv(kv, uniq):
     smallCsvDir = "data/predict/cache"

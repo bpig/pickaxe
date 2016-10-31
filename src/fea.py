@@ -56,9 +56,6 @@ import global_info
 # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
 #     11,     12,     13,     14,     15,       16,         17,       18,     19
 
-
-
-
 # gb:
 # amount, shares * e, status-0, status-1, s-status-0, s-status-1, s-status-2,
 #  0            1        2         3         4            5            6
@@ -154,7 +151,6 @@ def genOne(kv, gb, ds, predict=False):
     if not predict:
         if index <= 1:
             return ""
-        
         # stock is stoped
         if values[15][index - 1] == 1 or values[15][index - 2] == 1:
             return ""
@@ -164,8 +160,8 @@ def genOne(kv, gb, ds, predict=False):
             return ""
     
     windows = [2, 3, 5, 7, 15]  # , 30, 60]
-    #windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
-    #windows = [2, 3, 5, 7, 10]  # , 30, 60]
+    # windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
+    # windows = [2, 3, 5, 7, 10]  # , 30, 60]
     max_win = windows[-1]
     values = map(lambda x: x[index:index + max_win], values)
     
