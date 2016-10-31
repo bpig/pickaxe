@@ -76,10 +76,8 @@ def extend(key, v):
     return v
 
 def dump(kv, filename):
-    # fout = open(filename, "w")
+    fout = open(filename, "w")
     # fdebug = open(filename + ".debug", "w")
-    ct = len(kv)
-    ary = np.empty(ct, dtype=np.object)
     for c, (k, v) in enumerate(kv.items()):
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
@@ -93,11 +91,9 @@ def dump(kv, filename):
         #     fdebug.write(key + "," + value + "\n")
         
         # normal output
-        # v = map(lambda x: "_".join(x), v)
+        v = map(lambda x: "_".join(x), v)
         
-        # fout.write(k + "," + ",".join(v) + "\n")
-        ary[c] = [k, v]
-    np.save(filename, ary)
+        fout.write(k + "," + ",".join(v) + "\n")
 
 def mergeSmallCsv(kv, uniq):
     smallCsvDir = "data/predict/cache"

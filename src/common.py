@@ -6,6 +6,8 @@ import sys
 import os
 import numpy as np
 import math
+import csv
+import pandas as pd
 import datetime
 import random
 import time
@@ -17,3 +19,11 @@ from collections import namedtuple
 from collections import Counter
 import multiprocessing
 # from scipy import stats
+
+class TimeLog:
+    def __enter__(self, name=""):
+        self.t = time.time()
+        self.n = name
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print "%s %.2fs" % (self.n, time.time() - self.t)
