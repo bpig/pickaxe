@@ -17,10 +17,10 @@ if __name__ == "__main__":
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
     else:
-        ct = 5
+        ct = 50
     
     fin = "ans/" + cfg["tout"]
-    l = next(open(fin))
-    key, items = parseLine(l)
-    
-    print key, ",".join(map(str, items[:ct]))
+    for l in open(fin):
+        # l = next(open(fin))
+        key, items = parseLine(l)
+        print key, " ".join(map(str, items[:ct]))
