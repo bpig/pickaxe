@@ -9,8 +9,7 @@ def getline(filename):
             continue
         yield l
 
-def getKv(filename):
-    kv = defaultdict(list)
+def getKv(filename, kv, uniq):
     for l in getline(filename):
         pos = l.find(",")
         key = l[:pos]
@@ -20,6 +19,10 @@ def getKv(filename):
         # ds = value[0]
         # if ds < "20160000":
         #     continue        
+        kid = key + "_" + value[0]
+        if kid in uniq:
+            continue
+        uniq.add(kid)
 
         kv[key].append(value)
     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
@@ -27,7 +30,8 @@ def getKv(filename):
 
     # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
     # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
-    return kv
+    return kv, uniq
+
 
 def getStatus(rate):
     if rate <= 0.901:
@@ -92,8 +96,21 @@ def dump(kv, filename):
         v = map(lambda x: "_".join(x), v)
         fout.write(k + "," + ",".join(v) + "\n")
 
-def process(fin, fout):
-    kv = getKv(fin)
+def mergeSmallCsv(kv, uniq):
+    smallCsvDir = "data/predict/cache"
+    for d in os.listdir(smallCsvDir):
+        if len(d) > 12 or not d.endswith(".csv"):
+            continue
+        getKv(smallCsvDir + "/" + d, kv, uniq)
+        print d, len(kv), len(uniq)
+
+def process(fin, fout, merge=False):
+    kv = defaultdict(list)
+    uniq = set()
+    getKv(fin, kv, uniq)
+    print len(kv), len(uniq)
+    if merge:
+        mergeSmallCsv(kv, uniq)
     dump(kv, fout)
 
 if __name__ == "__main__":
@@ -104,4 +121,4 @@ if __name__ == "__main__":
     # fout = sys.argv[2]
     fin = "data/" + cfg["raw"]
     fout = "data/" + cfg["data"]
-    process(fin, fout)
+    process(fin, fout, True)

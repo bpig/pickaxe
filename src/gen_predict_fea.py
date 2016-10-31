@@ -11,17 +11,16 @@ import cmvn
 def yesterday(dt, days=-1):
     return dt + datetime.timedelta(days=days)
 
-def download(today=None):
+def download(today):
     checkpoint = "no_data_checkpoint"
     try:
         noData = set([_.strip() for _ in open(checkpoint)])
     except:
         noData = set()
     fout = open(checkpoint, "a")
-    if today:
-        now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
-    else:
-        now = datetime.datetime.now()
+
+    now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
+
     print now.year, now.month, now.day
     dates = []
     while len(dates) < 15:
@@ -52,7 +51,6 @@ def wc(ds):
     return True
 
 def downloadByDs(ds):
-    #tmpl = "http://60.191.48.94:8000/download/%s_%s.csv"
     tmpl = "http://61.130.4.98:8000/download/%s_%s.csv"
     f = "price_" + ds + ".csv"
     ff = "derivativeindicator_" + ds + ".csv"
@@ -153,14 +151,33 @@ def transformOne(filename, table, ct):
 
 if __name__ == "__main__":
     os.chdir("data/predict")
-    print sys.argv
-    if len(sys.argv) == 2:
-        today = sys.argv[1]
+
+    today = sys.argv[1]
+
+    csv = "cache/%s.csv" % today
+    if not os.path.exists(csv):
+        dates = download(today)
+        print dates
+        genCsv(dates)
+        os.system("cp today.csv %s" % csv)
     else:
-        today = None
-    dates = download(today)
-    print dates
-    genCsv(dates)
-    ft.process("today.csv", "today.ft")
-    fea.process("today.ft", None, "today.fe")
+        print "%s in cache" % csv
+        os.system("cp %s today.csv" % csv)
+
+    ftfile = "cache/%s.ft" % today
+    if not os.path.exists(ftfile):
+        ft.process("today.csv", "today.ft")
+        os.system("cp today.ft %s" % ftfile)
+    else:
+        print "%s in cache" % ftfile
+        os.system("cp %s today.ft" % ftfile)        
+
+    fe = "cache/%s.fe" % today
+    if not os.path.exists(fe):
+        fea.process("today.ft", None, "today.fe")
+        os.system("cp today.fe %s" % fe)
+    else:
+        print "%s in cache" % fe
+        os.system("cp %s today.fe" % fe)
+
     cmvn.pdNormalize("today.fe")
