@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     pfile = "ans/" + cfg["pout"]
 
-    stockFile = "data/2016.ft.2"
+    stockFile = "data/2010/2016.ft"
     try:
         numStock = 50
         numStock = int(sys.argv[2])

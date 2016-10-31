@@ -169,7 +169,7 @@ v1502:
   model: v1502
   batch_step: 10
   epoch: 1
-  pdata: 2010/15/2016.fe.cmvn
+  pdata: 2010/15/2016.fe
   pout: v1502
   tdata: predict/today.fe
   tout: td_v1502
@@ -195,7 +195,7 @@ v1504:
   model: v1504
   batch_step: 10
   epoch: 1
-  pdata: 2010/15/2016.fe.cmvn
+  pdata: 2010/15/2016.fe
   pout: v1504
   tdata: predict/today.fe
   tout: td_v1504
@@ -208,7 +208,7 @@ v1505:
   model: v1505
   batch_step: 10
   epoch: 1
-  pdata: 2010/15/2016.fe.cmvn
+  pdata: 2010/15/2016.fe
   pout: v1505
   tdata: predict/today.fe
   tout: td_v1505
@@ -221,7 +221,7 @@ v1506:
   model: v1506
   batch_step: 10
   epoch: 1
-  pdata: 2010/15/2016.fe.cmvn
+  pdata: 2010/15/2016.fe
   pout: v1506
   tdata: predict/today.fe
   tout: td_v1506

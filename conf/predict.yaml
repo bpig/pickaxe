@@ -1,7 +1,11 @@
 f0:
-  input: ans/2016_comb,ans/v1501
-  weights: 1,1
-  output: ans/2016_comb_t
+  input: 
+    - ans/v1503
+    - ans/v1501
+  weights: 
+    - 1.0
+    - 1.0
+  output: ans/2016_comb
 
 p0:
   input: ans/td_v1503,ans/td_v1501

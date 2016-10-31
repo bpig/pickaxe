@@ -123,11 +123,49 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     print time.ctime(), "finish load data"    
     return Datasets(train=train, test=test)
 
+def get_small_k_f_t(filename, uniq, k, f):
+    for l in open(filename):
+        l = l.strip()
+        if not l:
+            continue
+        pos1 = l.find(":")
+        key = l[:pos1]
+        if key in uniq:
+            continue
+
+        fea = l[pos1+1:].split(",")
+        k.append(key)
+        f.append(fea)
+
+def merge_small_predict(keys, feas, tgts):
+    uniq = set(keys)
+    small_fes = "data/predict/cache/"
+    
+    k = []
+    f = []
+
+    for d in os.listdir(small_fes):
+        if d > 11 and not d.endswith("fe"):
+            continue
+        print "load", small_fes + d
+        get_small_k_f_t(small_fes + d, uniq, k, f)
+    k = np.asarray(k)
+    f = np.asarray(f, dtype=np.float32)
+    t = np.ones(len(k), dtype=np.float32)
+    keys = np.concatenate((keys, k))
+    feas = np.concatenate((feas, f))
+    tgts = np.concatenate((tgts, t))
+    return keys, feas, tgts
+    
+
 def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile, cache)
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
+    
+    keys, feas, tgts = merge_small_predict(keys, feas, tgts)
+
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

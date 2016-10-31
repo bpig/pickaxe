@@ -1,6 +1,7 @@
 f1:
   raw: 2010/2010.cc
-  data: 2010/2010.ft
+  #data: 2010/2010.ft
+  data: 2010/2016.ft
   train: 2010/15/fe
   test: 2010/15/2016.fe
 
