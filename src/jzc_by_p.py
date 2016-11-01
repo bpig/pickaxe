@@ -95,7 +95,7 @@ def gain(predict, stock, numStock, period, start):
         total = sum(totalMoney)
         totalJzc = totalMoney[1 - ii] + jzc[ii]
         #print d, "%.8f" % total, "%.8f" % totalJzc
-        print ds[i+1], "%.8f" % totalJzc  #, "%.8f" % (totalJzc / yesterdayJzc)
+        print ds[i+1], "%.8f" % totalJzc, stCt  #, "%.8f" % (totalJzc / yesterdayJzc)
         yesterdayJzc = totalJzc
     #    print "%.8f" % bg, "->", "%.8f" % jzcEd, "->", "%.8f" % ed, "%.8f" % (ed / bg),
     #    print nobuy, nosell, lack #, buy[ii]

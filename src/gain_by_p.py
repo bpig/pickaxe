@@ -35,6 +35,7 @@ def gain(predict, stock, numStock, period, start):
         ii = i % 2;
         nobuy = 0
         nosell = 0
+        stop = 0
         for rec in predict[d]:
             if count[ii] == numStock:
                 break
@@ -46,12 +47,18 @@ def gain(predict, stock, numStock, period, start):
                 continue
             items = stock[key]
             if d not in items[0]:
+                pre_d = ds[i-1]
+                index = items[0].index(d)
+                if items[15][index] == '1':
+                    stop += 1
                 continue
             index = items[0].index(d) - 1
             if index < 1:
                 continue
             # stop or +10 high
             if items[15][index] == '1' or items[16][index] == '1':
+                if items[15][index] == '1':
+                    stop += 1
                 nobuy += 1
                 continue
             inPrice = float(items[5][index])
@@ -84,7 +91,7 @@ def gain(predict, stock, numStock, period, start):
 
         totalMoney[ii] = updateMoney[ii]
         total = sum(totalMoney)
-        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, stCt, lack #, buy[ii]
+        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, stCt, stop, lack #, buy[ii]
     
     return i, totalMoney
 
@@ -116,8 +123,8 @@ if __name__ == "__main__":
     except:
         pass
     try:
-        start = "20160104"
-        #start = "20161010"
+        # start = "20160104"
+        start = "20161010"
         start = sys.argv[4]
     except:
         pass
