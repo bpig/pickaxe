@@ -6,11 +6,11 @@ def getKv(filename, kv, uniq, stripHeader=False):
     reader = csv.reader(open(filename))
     if stripHeader:
         next(reader)
-
+    
     for row in reader:
         key = row[0]
         value = map(lambda x: "0.0" if x == "NULL" else x, row[1:])
-
+        
         kid = key + "_" + value[0]
         if kid in uniq:
             continue
@@ -29,7 +29,7 @@ def getKv(filename, kv, uniq, stripHeader=False):
 #         df = pd.read_csv(filename, header=None)
 #     else:
 #         df = pd.read_csv(filename)
-    
+
 #     df = df.fillna(0.0)
 #     for idx, row in df.iterrows():
 #         key = row[0]
@@ -39,11 +39,11 @@ def getKv(filename, kv, uniq, stripHeader=False):
 #         if kid in uniq:
 #             continue
 #         uniq.add(kid)
-        
+
 #         kv[key].append(value)
 #     # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
 #     #  -1    0    1      2       3     4  5    6    7   8      9        10
-    
+
 #     # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
 #     # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
 #     return kv, uniq
@@ -73,9 +73,9 @@ def extend(key, v):
     h_rate = v[6] / v[4]
     l_rate = v[7] / v[4]
     e_rate = v[8] / v[4]
-
+    
     status = (v[9] == 0.0).astype(int)
-
+    
     s_status = getStatus(s_rate)
     wav_status = getWavStatus(h_rate, l_rate)
     e_status = getStatus(e_rate)
@@ -85,30 +85,30 @@ def extend(key, v):
             continue
         if s_status[i] != 0 or e_status[i] != 0 or wav_status[i] != 0:
             print "strange %s_%s %d %d %d %d" % (key, v[0][i], status[i], s_status[i], wav_status[i], e_status[i])
-
+    
     buy = v[5].copy()
     buy[status == 1] = -1.0
     sell = v[8].copy()
     sell[status == 1] = -1.0
-
+    
     buy = np.concatenate(([-1.0], buy[:-1]))
     if len(buy) == 1:
         sell = np.concatenate(([-1.0], sell[:-2]))
     else:
         sell = np.concatenate(([-1.0, -1.0], sell[:-2]))
-
+    
     mark = np.logical_or(buy < 0, sell < 0)
     mark = np.logical_not(mark)
     tgt = np.empty(len(buy), dtype=float)
     tgt.fill(-1.0)
-
+    
     assert len(mark) == len(buy), "%s, %d, %d, %d" \
-        % (key, len(mark), len(buy), len(sell))
+                                  % (key, len(mark), len(buy), len(sell))
     assert len(mark) == len(sell)
     tgt[mark] = sell[mark] / buy[mark]
     
     v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, tgt]
-
+    
     return v
 
 def dump(kv, filename):
@@ -120,7 +120,7 @@ def dump(kv, filename):
         v = extend(k, v)
         
         v = np.asarray(v)
-        ary[c] = [k, v]
+        ary[c] = [k, v]  # k:stock, v: list of list
     np.save(filename, ary)
 
 def mergeSmallCsv(kv, uniq):

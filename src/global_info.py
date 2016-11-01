@@ -5,6 +5,23 @@
 from common import *
 import fea
 
+# key    20160304,
+# 0  amount        3000.0,
+# 1  shares * e    30300.0,
+# 2  status-0      1,
+# 3  status-1      0,
+# 4  s-status-0    1,
+# 5  s-status-1    0,
+# 6  s-status-2    0,
+# 7  wav-status-0  1,
+# 8  wav-status-1  0,
+# 9  wav-status-2  0,
+# 10 wav-status-3  0,
+# 11 e-status-0    1,
+# 12 e-status-1    0,
+# 13 e-status-2    0,
+# 14 #0/#1         0.0990099009901,
+# 15 rate          1.0
 def process(fin, fout):
     kv, datas = fea.getSt(fin)
     gb = defaultdict(lambda: [0.0] * 16)
