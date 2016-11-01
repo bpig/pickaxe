@@ -47,10 +47,10 @@ def gain(predict, stock, numStock, period, start):
                 continue
             items = stock[key]
             if d not in items[0]:
-                pre_d = ds[i-1]
-                index = items[0].index(d)
-                if items[15][index] == '1':
-                    stop += 1
+                # pre_d = ds[i-1]
+                # index = items[0].index(d)
+                # if items[15][index] == '1':
+                #     stop += 1
                 continue
             index = items[0].index(d) - 1
             if index < 1:
@@ -59,7 +59,8 @@ def gain(predict, stock, numStock, period, start):
             if items[15][index] == '1' or items[16][index] == '1':
                 if items[15][index] == '1':
                     stop += 1
-                nobuy += 1
+                else:
+                    nobuy += 1
                 continue
             inPrice = float(items[5][index])
             nextDayIndex = index - 1
@@ -67,7 +68,10 @@ def gain(predict, stock, numStock, period, start):
             while nextDayIndex >= 0 and \
                   (items[15][nextDayIndex] == '1' or items[18][nextDayIndex] == '2'):
                 nextDayIndex -= 1
-                nosell += 1
+                if items[15][nextDayIndex] == '1':
+                    stop += 1
+                else:
+                    nosell += 1
             if nextDayIndex < 0:
                 continue
             outPrice = float(items[8][nextDayIndex])
@@ -91,7 +95,7 @@ def gain(predict, stock, numStock, period, start):
 
         totalMoney[ii] = updateMoney[ii]
         total = sum(totalMoney)
-        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, stCt, stop, lack #, buy[ii]
+        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, stCt, stop, len(predict[d]), lack #, buy[ii]
     
     return i, totalMoney
 
@@ -123,8 +127,8 @@ if __name__ == "__main__":
     except:
         pass
     try:
-        # start = "20160104"
-        start = "20161010"
+        start = "20160104"
+        #start = "20161020"
         start = sys.argv[4]
     except:
         pass

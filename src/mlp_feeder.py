@@ -155,7 +155,7 @@ def merge_small_predict(keys, feas, tgts):
     f = np.asarray(f, dtype=np.float32)
     f = (f - mu) / delta
     t = np.ones(len(k), dtype=np.float32)
-    # return k, f, t
+    #return k, f, t
     keys = np.concatenate((keys, k))
     feas = np.concatenate((feas, f))
     tgts = np.concatenate((tgts, t))
@@ -168,10 +168,10 @@ def read_predict_sets(datafile, cache=True):
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
 
-    keys, feas, tgts = merge_small_predict(keys, feas, tgts)
+    # keys, feas, tgts = merge_small_predict(keys, feas, tgts)
 
-    tgts = tgts.astype(np.float32)
-    feas = feas.astype(np.float32)
+    # tgts = tgts.astype(np.float32)
+    # feas = feas.astype(np.float32)
 
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"

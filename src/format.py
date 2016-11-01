@@ -16,9 +16,9 @@ def getKv(filename, kv, uniq):
         
         value = l[pos + 1:].replace("NULL", "0.0")
         value = value.split(",")
-        # ds = value[0]
-        # if ds < "20160000":
-        #     continue        
+        ds = value[0]
+        if ds < "20160000":
+            continue        
         kid = key + "_" + value[0]
         if kid in uniq:
             continue

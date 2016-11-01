@@ -8,8 +8,12 @@ f0:
   output: ans/2016_comb
 
 p0:
-  input: ans/td_v1503,ans/td_v1501
-  weights: 1,1
+  input: 
+    - ans/td_v1503
+    - ans/td_v1501
+  weights: 
+    - 1.0
+    - 1.0
   output: ans/2016_pc
 
 f2:
