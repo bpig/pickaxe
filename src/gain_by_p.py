@@ -16,10 +16,9 @@ def loadFile(fin):
         kv[key] = items
     return kv
 
-def gain(predict, stock, numStock, period, start, gbfile):
-    if gbfile:
-        gbds = loadFile(gbfile).keys()
-    ds = sorted(predict.keys(), key=lambda x: x)
+def gain(predict, stock, numStock, period, start):
+    st2016 = set(map(str.strip, open("data/2016.st")))
+    ds = sorted(predict.keys())
     totalMoney = [0.5, 0.5]
     updateMoney = [0.5, 0.5]
     if start not in ds:
@@ -27,14 +26,9 @@ def gain(predict, stock, numStock, period, start, gbfile):
         print "start date is too late"
         return -1, totalMoney
     ss = ds.index(start)
-    ds = ds[ss:]
-    for i in range(period):
-        if i >= len(ds):
-            return i - 1, totalMoney
-        d = ds[i]
-        if gbfile and d not in gbds:
-            print d, " stop said gb"
-            continue
+    ds = ds[ss:ss+period]
+    for i, d in enumerate(ds):
+        stCt = 0
         buy = ["", ""]
         increase = [0, 0]
         count = [0, 0]
@@ -46,6 +40,9 @@ def gain(predict, stock, numStock, period, start, gbfile):
                 break
             key = rec[0]
             if key not in stock.keys():
+                continue
+            if key in st2016:
+                stCt += 1
                 continue
             items = stock[key]
             if d not in items[0]:
@@ -87,17 +84,17 @@ def gain(predict, stock, numStock, period, start, gbfile):
 
         totalMoney[ii] = updateMoney[ii]
         total = sum(totalMoney)
-        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, lack #, buy[ii]
+        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, "%.8f" % (ed / bg), nobuy, nosell, stCt, lack #, buy[ii]
     
     return i, totalMoney
 
-def process(predictFile, stockFile, numStock, period, start, gbfile):
+def process(predictFile, stockFile, numStock, period, start):
     stock = loadFile(stockFile)
     predict = {}
     for k, v in loadFile(predictFile).items():
         v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
-    i, money = gain(predict, stock, numStock, period, start, gbfile)
+    i, money = gain(predict, stock, numStock, period, start)
     print "after " + str(i + 1) + " days:"
     print "final: " + str(sum(money))
 
@@ -125,7 +122,7 @@ if __name__ == "__main__":
     except:
         pass
 
-    process(pfile, stockFile, numStock, period, start, None)
+    process(pfile, stockFile, numStock, period, start)
 
     # process("../data/2016.ans", "../data/2016.ft", 100, 180, "20160104")
 

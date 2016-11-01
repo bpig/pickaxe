@@ -16,10 +16,9 @@ def loadFile(fin):
         kv[key] = items
     return kv
 
-def gain(predict, stock, numStock, period, start, gbfile):
-    if gbfile:
-        gbds = loadFile(gbfile).keys()
-    ds = sorted(predict.keys(), key=lambda x: x)
+def gain(predict, stock, numStock, period, start):
+    st2016 = set(map(str.strip, open("data/2016.st")))
+    ds = sorted(predict.keys())
     totalMoney = [0.5, 0.5]
     updateMoney = [0.5, 0.5]
     jzc = [0.5, 0.5]
@@ -28,16 +27,11 @@ def gain(predict, stock, numStock, period, start, gbfile):
     if start not in ds:
         print ds
         print "start date is too late"
-        return -1, totalMoney
-    ss = ds.index(start)
-    ds = ds[ss:]
-    for i in range(period):
-        if i >= len(ds):
-            return i - 1, totalMoney
-        d = ds[i]
-        if gbfile and d not in gbds:
-            print d, " stop said gb"
-            continue
+        return -1, totalMoney, totalJzc
+    ss = ds.index(start) - 1
+    ds = ds[ss:ss + period+1]
+    for i,d in enumerate(ds[:-1]):
+        stCt = 0
         buy = ["", ""]
         increase = [0, 0]
         jzcInc = [0, 0]
@@ -50,6 +44,9 @@ def gain(predict, stock, numStock, period, start, gbfile):
                 break
             key = rec[0]
             if key not in stock.keys():
+                continue
+            if key in st2016:
+                stCt += 1
                 continue
             items = stock[key]
             if d not in items[0]:
@@ -98,49 +95,49 @@ def gain(predict, stock, numStock, period, start, gbfile):
         total = sum(totalMoney)
         totalJzc = totalMoney[1 - ii] + jzc[ii]
         #print d, "%.8f" % total, "%.8f" % totalJzc
-        print d, "%.8f" % totalJzc, "%.8f" % (totalJzc / yesterdayJzc)
+        print ds[i+1], "%.8f" % totalJzc  #, "%.8f" % (totalJzc / yesterdayJzc)
         yesterdayJzc = totalJzc
     #    print "%.8f" % bg, "->", "%.8f" % jzcEd, "->", "%.8f" % ed, "%.8f" % (ed / bg),
     #    print nobuy, nosell, lack #, buy[ii]
 
     return i, totalMoney, totalJzc
 
-def process(predictFile, stockFile, numStock, period, start, gbfile):
+def process(predictFile, stockFile, numStock, period, start):
     stock = loadFile(stockFile)
     predict = {}
     for k, v in loadFile(predictFile).items():
-        v = sorted(v, key=lambda x: float(x[1]), reverse=True)
+        v = sorted(v, key=lambda x: -float(x[1]))
         predict[k] = v
-    i, money, jzc = gain(predict, stock, numStock, period, start, gbfile)
+    i, money, jzc = gain(predict, stock, numStock, period, start)
     print "after " + str(i + 1) + " days:"
     print "final money: " + str(sum(money))
     print "final jzc: " + str(jzc)
 
 if __name__ == "__main__":
-    # with open("conf/model.yaml") as fin:
-    #     cfg = yaml.load(fin)[sys.argv[1]]
-    #
-    # pfile = "ans/" + cfg["pout"]
-    #
-    # stockFile = "data/2016.ft.2"
-    # try:
-    #     numStock = 50
-    #     numStock = int(sys.argv[2])
-    # except:
-    #     pass
-    # try:
-    #     period = 230
-    #     period = int(sys.argv[3])
-    # except:
-    #     pass
-    # try:
-    #     start = "20160104"
-    #     #start = "20161010"
-    #     start = sys.argv[4]
-    # except:
-    #     pass
+    with open("conf/model.yaml") as fin:
+        cfg = yaml.load(fin)[sys.argv[1]]
+    
+    pfile = "ans/" + cfg["pout"]
+    
+    stockFile = "data/2010/2016.ft"
+    try:
+        numStock = 50
+        numStock = int(sys.argv[2])
+    except:
+        pass
+    try:
+        period = 16
+        period = int(sys.argv[3])
+    except:
+        pass
+    try:
+        # start = "20160104"
+        start = "20161010"
+        start = sys.argv[4]
+    except:
+        pass
 
-    #process(pfile, stockFile, numStock, period, start, None)
+    process(pfile, stockFile, numStock, period, start)
 
-    process("test/2016.ans", "test/2016.ft", 100, 180, "20160104", None)
+    #process("test/2016.ans", "test/2016.ft", 100, 180, "20160104", None)
 

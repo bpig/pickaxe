@@ -73,6 +73,12 @@ def extend(key, v):
     h_rate = v[6] / v[4]
     l_rate = v[7] / v[4]
     e_rate = v[8] / v[4]
+
+    if e_rate[-1] > 1.20:
+        # print key, v[0][-1], e_rate[-1], len(e_rate)
+        work_day = np.arange(len(e_rate), 0, -1)
+    else:
+        work_day = np.arange(len(e_rate) + 120, 120, -1)
     
     status = (v[9] == 0.0).astype(int)
     
@@ -109,7 +115,7 @@ def extend(key, v):
     
     v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, tgt]
     
-    return v
+    return v, work_day
 
 def dump(kv, filename):
     ct = len(kv)
@@ -117,10 +123,9 @@ def dump(kv, filename):
     for c, (k, v) in enumerate(kv.items()):
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
-        v = extend(k, v)
-        
+        v, work_day = extend(k, v)
         v = np.asarray(v)
-        ary[c] = [k, v]  # k:stock, v: list of list
+        ary[c] = [k, v, work_day]  # k:stock, v: list of list
     np.save(filename, ary)
 
 def mergeSmallCsv(kv, uniq):
