@@ -9,7 +9,7 @@ Ft = collections.namedtuple(
     'Ft',
     ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',
      'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate',
-     'status', 's_status', 'wav_status', 'e_status', 'target'])
+     'status', 's_status', 'wav_status', 'e_status', 'tgt'])
 
 Ans = collections.namedtuple("Ans", ['code', 'prob', 'tgt'])
 

@@ -9,7 +9,7 @@ def filterByStop(ds, stock):
     def _inter(_):
         ft = stock[_.code]
         idx = ft.ds.index(ds)
-        return ft.status[idx] == 0
+        return ft.status[idx] == '0'
     
     return _inter
 
@@ -17,7 +17,8 @@ def filterByHighLine(ds, stock):
     def _inter(_):
         ft = stock[_.code]
         idx = ft.ds.index(ds)
-        return ft.high[idx] == ft.low[idx]
+        return not(ft.high[idx] == ft.low[idx] \
+                               and float(ft.e[idx]) > float(ft.pe[idx]))
     
     return _inter
 
@@ -30,15 +31,12 @@ def filterByNew(ds, aux):
     return _inter
 
 if __name__ == "__main__":
-    with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
-    
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
     else:
         ct = 50
     
-    fin = "ans/" + cfg["tout"]
+    fin = "ans/" + sys.argv[1]
     fout = open(fin + ".filter", "w")
     
     stock = getFt("data/2010/2016.ft")
@@ -46,12 +44,16 @@ if __name__ == "__main__":
     st2016 = set(map(str.strip, open("data/2016.st")))
     
     for ds, ans in getAns(fin):
-        bg = len(ans)
+        ct = [len(ans)]
         ans = filter(lambda _: _.code not in st2016, ans)
+        ct += [len(ans)]
         ans = filter(filterByStop(ds, stock), ans)
+        ct += [len(ans)]
         ans = filter(filterByHighLine(ds, stock), ans)
+        ct += [len(ans)]
         ans = filter(filterByNew(ds, aux), ans)
-        print ds, bg, "->", len(ans)
+        ct += [len(ans)]
+        print ds, ct
         
         ans = map(formatAns, ans)
         fout.write(ds + "," + ",".join(ans) + "\n")

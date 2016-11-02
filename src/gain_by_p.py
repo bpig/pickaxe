@@ -37,6 +37,8 @@ def gain(predict, stock, numStock, period, start):
         nosell = 0
         stop = 0
         for rec in predict[d]:
+            if len(predict[d]) < 1000:
+                break
             if count[ii] == numStock:
                 break
             key = rec[0]
@@ -47,10 +49,6 @@ def gain(predict, stock, numStock, period, start):
                 continue
             items = stock[key]
             if d not in items[0]:
-                # pre_d = ds[i-1]
-                # index = items[0].index(d)
-                # if items[15][index] == '1':
-                #     stop += 1
                 continue
             index = items[0].index(d) - 1
             if index < 1:
@@ -110,14 +108,11 @@ def process(predictFile, stockFile, numStock, period, start):
     print "final: " + str(sum(money))
 
 if __name__ == "__main__":
-    with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
-
-    pfile = "ans/" + cfg["pout"]
+    pfile = "ans/" + sys.argv[1]
 
     stockFile = "data/2010/2016.ft"
     try:
-        numStock = 50
+        numStock = 50 
         numStock = int(sys.argv[2])
     except:
         pass
