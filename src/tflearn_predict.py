@@ -19,21 +19,21 @@ if __name__ == "__main__":
         predSet = read_predict_sets(datafile, cfg["pcache"])
     else:
         predSet = read_predict_sets(datafile)
-
+    
     model_dir = "model/" + cfg["model"]
-
+    
     net = cfg["net"]
-    #keep_prob = cfg["keep_prob"]
+    # keep_prob = cfg["keep_prob"]
     keep_prob = 1.0
     classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
-
+    
     print predSet.fea.dtype
     classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
-
+    
     pp = classifier.predict(predSet.fea, as_iterable=True)
-
+    
     ans = defaultdict(list)
-
+    
     for c, p in enumerate(pp):
         if p['class'] == 0:
             continue
@@ -45,14 +45,11 @@ if __name__ == "__main__":
             key = "gb"
         tgt = predSet.tgt[c]
         ans[date] += [(key, prob, tgt)]
-
-
+    
     fout = open(fout, "w")
     for ds in sorted(ans.keys()):
         st = ans[ds]
-        st = sorted(st, key=lambda x:x[1], reverse=True)
-        st = map(lambda (x, y, z):(x, str(y), str(z)), st)
-        st = map(lambda x:"_".join(x), st)
+        st = sorted(st, key=lambda x: x[1], reverse=True)
+        st = map(lambda (x, y, z): (x, str(y), str(z)), st)
+        st = map(lambda x: "_".join(x), st)
         fout.write(ds + "," + ",".join(st) + "\n")
-
-

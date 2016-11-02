@@ -23,10 +23,9 @@ def process(predictFile, stockFile, outfile, date):
         predict[k] = v
     res = search(predict, stock, outfile, date)
 
-
 def search(predict, stock, outfile, date):
     fout = open(outfile, 'w')
-    ds = sorted(predict.keys(), key=lambda  x: x)
+    ds = sorted(predict.keys(), key=lambda x: x)
     if date:
         if date not in ds:
             print ds
@@ -51,7 +50,7 @@ def search(predict, stock, outfile, date):
                 if items[15][i] == '1' or items[16][i] == '1':
                     continue
                 es = float(items[8][i]) / float(items[5][i])
-                if  es > 1.0 and es < 1.03:
+                if es > 1.0 and es < 1.03:
                     positive += 1
                 elif es < 1:
                     positive -= 1
@@ -61,7 +60,7 @@ def search(predict, stock, outfile, date):
             res = sorted(res, key=lambda x: x[1], reverse=True)
             res = map(lambda x: x[0] + "_" + str(x[1]) + "_" + x[2], res)
             fout.write(d + "," + ",".join(res) + "\n")
-            
+
 if __name__ == "__main__":
     predictFile = "test/2016_comb"
     stockFile = "test/2016.ft.2"
