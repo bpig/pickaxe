@@ -43,7 +43,7 @@ if __name__ == "__main__":
     aux = getFt("data/2010/2016.ft.aux", Aux)
     st2016 = set(map(str.strip, open("data/2016.st")))
     
-    for ds, ans in getAns(fin):
+    for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
         ans = filter(lambda _: _.code not in st2016, ans)
         ct += [len(ans)]

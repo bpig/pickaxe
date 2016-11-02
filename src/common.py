@@ -14,6 +14,7 @@ import time
 import sys
 import yaml
 import logging
+from cStringIO import StringIO
 from collections import defaultdict
 from collections import namedtuple
 from collections import Counter
