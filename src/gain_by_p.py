@@ -72,7 +72,7 @@ def gain(predict, stock, numStock, ds):
     
     return i, sum(totalMoney)
 
-def process(predictFile, numStock, period, start):
+def process(predictFile, numStock, start, period):
     stock = getFt("data/2010/2016.ft")
     predict = dict(getAns(predictFile))
     
@@ -85,24 +85,12 @@ def process(predictFile, numStock, period, start):
     print "final: " + `money`
 
 if __name__ == "__main__":
-    pfile = "ans/" + sys.argv[1]
+    tgt = "ans/" + sys.argv[1]
+
+    args = [50, "20160104", 230]
+    la = len(sys.argv) - 2
+    args[:la] = sys.argv[2:]
+    numStock, start, period = args
     
-    try:
-        numStock = 50
-        numStock = int(sys.argv[2])
-    except:
-        pass
-    try:
-        start = "20160104"
-        # start = "20161020"
-        start = sys.argv[3]
-    except:
-        pass
-    try:
-        period = 230
-        period = int(sys.argv[4])
-    except:
-        pass
-    
-    process(pfile, numStock, period, start)
+    process(tgt, int(numStock), start, int(period))
 
