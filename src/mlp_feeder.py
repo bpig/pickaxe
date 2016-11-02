@@ -5,17 +5,11 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import gzip
-import os
-import collections
-import numpy as np
-import time
+from common import *
 import cmvn
 
 Datasets = collections.namedtuple('Datasets', ['train', 'test'])
 PredictSets = collections.namedtuple('PredictSets', ['key', 'fea', 'tgt'])
-
-from tensorflow.python.framework import dtypes
 
 class DataSet(object):
     def __init__(self, feas, tgts):
@@ -121,7 +115,7 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     
     train = DataSet(tr_x, tr_y)
     test = DataSet(te_x, te_y)
-    print time.ctime(), "finish load data"    
+    print time.ctime(), "finish load data"
     return Datasets(train=train, test=test)
 
 def get_small_k_f_t(filename, uniq, k, f):
@@ -133,7 +127,7 @@ def get_small_k_f_t(filename, uniq, k, f):
         key = l[:pos1]
         if key in uniq:
             continue
-        fea = l[pos1+1:].split(",")
+        fea = l[pos1 + 1:].split(",")
         k.append(key)
         f.append(fea)
 
@@ -142,7 +136,7 @@ def merge_small_predict(keys, feas, tgts):
     small_fes = "data/predict/cache/"
     
     mu, delta = cmvn.loadMuDelta("data/predict/2016.fe")
-
+    
     k = []
     f = []
     for d in os.listdir(small_fes):
@@ -155,24 +149,23 @@ def merge_small_predict(keys, feas, tgts):
     f = np.asarray(f, dtype=np.float32)
     f = (f - mu) / delta
     t = np.ones(len(k), dtype=np.float32)
-    #return k, f, t
+    # return k, f, t
     keys = np.concatenate((keys, k))
     feas = np.concatenate((feas, f))
     tgts = np.concatenate((tgts, t))
     return keys, feas, tgts
-    
 
 def read_predict_sets(datafile, cache=True):
     print time.ctime(), "begin load data", datafile
     keys, feas, tgts = base_data(datafile, cache)
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
-
+    
     # keys, feas, tgts = merge_small_predict(keys, feas, tgts)
-
+    
     # tgts = tgts.astype(np.float32)
     # feas = feas.astype(np.float32)
-
+    
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

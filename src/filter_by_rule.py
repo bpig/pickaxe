@@ -1,20 +1,10 @@
-# -*- coding: utf-8 -*-
-# __author__ = "shuai.li(286287737@qq.com)"
-# __date__ = "2016/10/26"
+# -*- coding:utf-8 -*-
+__author__ = "shuai.li(286287737@qq.com)"
+__date__ = "11/2/16"
+
 from common import *
 
-def loadFile(fin):
-    kv = {}
-    for l in open(fin):
-        l = l.strip()
-        if not l:
-            continue
-        pos = l.find(",")
-        key = l[:pos]
-        items = l[pos + 1:].split(",")
-        items = map(lambda x: x.split("_"), items)
-        kv[key] = items
-    return kv
+
 
 def parseLine(l):
     l = l.strip()

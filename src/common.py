@@ -18,6 +18,8 @@ from collections import defaultdict
 from collections import namedtuple
 from collections import Counter
 import multiprocessing
+import collections
+import time
 # from scipy import stats
 
 class TimeLog:
