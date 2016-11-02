@@ -5,8 +5,7 @@ from common import *
 from data_loader import getFt, getAns
 
 def gain(predict, stock, numStock, ds):
-    totalMoney = [0.5, 0.5]
-    updateMoney = [0.5, 0.5]
+    money = [0.5, 0.5]
     
     for i, d in enumerate(ds):
         buy = StringIO()
@@ -56,21 +55,19 @@ def gain(predict, stock, numStock, ds):
             increase += outPrice / inPrice
             count += 1
         
+        bg = money[ii]
         if count != 0:
-            updateMoney[ii] = (increase / count - 0.0015) * totalMoney[ii]
-        
-        bg = totalMoney[ii]
-        ed = updateMoney[ii]
+            money[ii] *= (increase / count - 0.0015)
+        ed = money[ii]
         lack = ""
         if count < numStock:
             lack = "lack(%d)" % count
         
-        totalMoney[ii] = updateMoney[ii]
-        total = sum(totalMoney)
+        total = sum(money)
         print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, \
-            "%.8f" % (ed / bg), high, low, stop, len(predict[d]), lack #, buy.getvalue()[:-1]
+            "%.8f" % (ed / bg), high, low, stop, len(predict[d]), lack  # , buy.getvalue()[:-1]
     
-    return i, sum(totalMoney)
+    return sum(money)
 
 def process(predictFile, numStock, start, period):
     stock = getFt("data/2010/2016.ft")
@@ -80,17 +77,16 @@ def process(predictFile, numStock, start, period):
     idx = ds.index(start)
     ds = ds[idx:idx + period]
     
-    i, money = gain(predict, stock, numStock, ds)
-    print "after " + str(i + 1) + " days:"
+    money = gain(predict, stock, numStock, ds)
+    print "after %d days:" % len(ds)
     print "final: " + `money`
 
 if __name__ == "__main__":
     tgt = "ans/" + sys.argv[1]
-
+    
     args = [50, "20160104", 230]
     la = len(sys.argv) - 2
     args[:la] = sys.argv[2:]
     numStock, start, period = args
     
     process(tgt, int(numStock), start, int(period))
-
