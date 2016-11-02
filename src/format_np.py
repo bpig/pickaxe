@@ -108,8 +108,8 @@ def extend(key, v):
     tgt = np.empty(len(buy), dtype=float)
     tgt.fill(-1.0)
     
-    assert len(mark) == len(buy), "%s, %d, %d, %d" \
-                                  % (key, len(mark), len(buy), len(sell))
+    assert len(mark) == len(buy), \
+        "%s, %d, %d, %d" % (key, len(mark), len(buy), len(sell))
     assert len(mark) == len(sell)
     tgt[mark] = sell[mark] / buy[mark]
     

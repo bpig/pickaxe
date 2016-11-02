@@ -96,12 +96,12 @@ def getSt(fin):
         kv[key] = items
     return kv, sorted(list(dates))
 
-def dump(st, gb, fout, ds, predict=False):
+def dump(st, fout, ds, predict=False):
     ct = 0
     for items in st.items():
         if ds not in items[1][0]:
             continue
-        content = genOne(items, gb, ds, predict)
+        content = genOne(items, ds, predict)
         if content:
             fout.write(content)
             ct += 1
@@ -142,7 +142,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def genOne(kv, gb, ds, predict=False):
+def genOne(kv, ds, predict=False):
     feas = []
     key, values = kv
     
@@ -171,29 +171,9 @@ def genOne(kv, gb, ds, predict=False):
     
     # today day fea
     for d in range(max_win):
-        if d == 0 and gb:
-            gbFea = gb[values[0][d]]
-            feas += gbFea + [values[3][d] / float(gbFea[0]), values[10][d] * values[8][d] / float(gbFea[1])]
         feas += [values[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(values[15][d], values[16][d], values[17][d], values[18][d])
-        # key    20160304,
-        # 0  amount        3000.0,
-        # 1  shares * e    30300.0,
-        # 2  status-0      1,
-        # 3  status-1      0,
-        # 4  s-status-0    1,
-        # 5  s-status-1    0,
-        # 6  s-status-2    0,
-        # 7  wav-status-0  1,
-        # 8  wav-status-1  0,
-        # 9  wav-status-2  0,
-        # 10 wav-status-3  0,
-        # 11 e-status-0    1,
-        # 12 e-status-1    0,
-        # 13 e-status-2    0,
-        # 14 #0/#1         0.0990099009901,
-        # 15 rate          1.0
-    
+
     # win fea
     for window in windows:
         fea = []
@@ -213,10 +193,9 @@ def genOne(kv, gb, ds, predict=False):
     values = map(str, feas)
     return key + "_" + ds + ":" + ",".join(values) + "\n"
 
-def process(fin, gbfin, fout, ds=None):
+def process(fin, fout, ds=None):
     np.seterr(all='raise')
     st, dates = getSt(fin)
-    gb = getGb(gbfin)
     if not ds:
         ds = dates[-1]
         print "process ds %s" % ds
@@ -224,17 +203,16 @@ def process(fin, gbfin, fout, ds=None):
         print "%s not work day" % ds
         return
     fout = open(fout, "w")
-    ct = dump(st, gb, fout, ds, True)
+    ct = dump(st, fout, ds, True)
     print time.ctime(), ds, ct
 
-def genAll(fin, gbfin, fout, filter_func):
+def genAll(fin, fout, filter_func):
     st, dates = getSt(fin)
-    gb = getGb(gbfin)
     fout = open(fout, "w")
     dates = filter(filter_func, dates)
     total = len(dates)
     for c, ds in enumerate(dates):
-        ct = dump(st, gb, fout, ds)
+        ct = dump(st, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
 
 if __name__ == "__main__":
@@ -242,18 +220,10 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[sys.argv[1]]
     
     fin = "data/" + cfg["data"]
-    if "gb" in cfg:
-        gbfin = "data/" + cfg["gb"]
-        if not os.path.exists(gbfin):
-            print "gen gb info"
-            global_info.process(fin, gbfin)
-            print "finish gb info"
-    else:
-        gbfin = None
-    
+
     if "predict" in cfg:
         fout = "data/" + cfg["predict"]
-        process(fin, gbfin, fout)
+        process(fin, fout)
         sys.exit(0)
     
     fout1 = "data/" + cfg["train"]
@@ -261,7 +231,7 @@ if __name__ == "__main__":
     
     if sys.argv[2] == "test":
         filter_func = lambda x: x >= "20160000"
-        genAll(fin, gbfin, fout2, filter_func)
+        genAll(fin, fout2, filter_func)
     else:
         filter_func = lambda x: x < "20160000" and x >= "20060000"
-        genAll(fin, gbfin, fout1, filter_func)
+        genAll(fin, fout1, filter_func)

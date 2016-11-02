@@ -59,6 +59,11 @@ def extend(key, v):
     s_status = map(getStatus, s_rate)
     wav_status = map(getWavStatus, zip(h_rate, l_rate))
     e_status = map(getStatus, e_rate)
+
+    if e_rate[-1] > 1.12:
+        work_day = range(len(e_rate), 0, -1)
+    else:
+        work_day = range(len(e_rate) + 120, 120, -1)
     
     for i in range(len(status)):
         if status[i] == 0:
@@ -73,15 +78,17 @@ def extend(key, v):
     tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
     v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, tgt]
     v = map(lambda x: map(str, x), v)
-    return v
+    work_day = map(str, work_day)
+    return v, [v[0], work_day]
 
 def dump(kv, filename):
     fout = open(filename, "w")
+    fout1 = open(filename + ".aux", "w")
     # fdebug = open(filename + ".debug", "w")
     for c, (k, v) in enumerate(kv.items()):
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
-        v = extend(k, v)
+        v, aux = extend(k, v)
         
         # for debug
         # d = zip(*v)
@@ -92,8 +99,10 @@ def dump(kv, filename):
         
         # normal output
         v = map(lambda x: "_".join(x), v)
-        
         fout.write(k + "," + ",".join(v) + "\n")
+
+        aux = map(lambda x: "_".join(x), aux)
+        fout1.write(k + "," + ",".join(aux) + "\n")
 
 def mergeSmallCsv(kv, uniq):
     smallCsvDir = "data/predict/cache"
