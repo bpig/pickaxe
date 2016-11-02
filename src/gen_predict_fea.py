@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
     fe = "cache/%s.fe" % today
     if not os.path.exists(fe):
-        fea.process("today.ft", None, "today.fe")
+        fea.process("today.ft", "today.fe")
         os.system("cp today.fe %s" % fe)
     else:
         print "%s in cache" % fe

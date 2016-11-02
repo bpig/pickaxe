@@ -7,14 +7,14 @@ f0:
     - 1.0
   output: ans/2016_comb
 
-p0:
+today:
   input: 
     - ans/td_v1503
     - ans/td_v1501
   weights: 
     - 1.0
     - 1.0
-  output: ans/2016_pc
+  output: ans/today
 
 f2:
   input: test/2016_v2,test/2016_v4

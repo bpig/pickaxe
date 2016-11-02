@@ -25,18 +25,16 @@ def parseLine(l):
     return key, items, weight
 
 if __name__ == "__main__":
-    with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+    fin = "ans/" + sys.argv[1]
     
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
     else:
         ct = 50
-    
-    fin = "ans/" + cfg["tout"]
+
     l = next(open(fin))
     key, items, weight = parseLine(l)
-    print key
+
     stock = loadFile("data/2010/2016.ft")
     aux = loadFile("data/2010/2016.ft.aux")
     st2016 = set(map(str.strip, open("data/2016.st")))
@@ -50,29 +48,29 @@ if __name__ == "__main__":
             break
         item = items[i]
         if item in st2016:
-            print "st", item
+            # print "st", item
             continue
         idx = stock[item][0].index(key)
         if stock[item][15][idx] == '1':
-            print "stop", item
+            # print "stop", item
             stop += 1
             continue
         
         if stock[item][6][idx] == stock[item][7][idx] \
                 and float(stock[item][6][idx]) / float(stock[item][4][idx]) > 1.09:
-            print "---", item
+            # print "---", item
             one += 1
             continue
         
         if int(aux[item][1][idx]) <= 120:
-            print "new", item, aux[item][1][idx]
+            # print "new", item, aux[item][1][idx]
             n += 1
             continue
         
         ii += [item]
     
     ct = len(ii)
-    print "total", ct
+    # print "total", ct
     weight = weight[:len(ii)]
     weight = np.asarray(weight)
     
