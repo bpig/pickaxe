@@ -21,6 +21,14 @@ def filterByHighLine(ds, stock):
     
     return _inter
 
+def filterByNew(ds, aux):
+    def _inter(_):
+        ft = aux[_.code]
+        idx = ft.ds.index(ds)
+        return int(ft.work_day[idx]) > 120
+    
+    return _inter
+
 if __name__ == "__main__":
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
@@ -40,10 +48,10 @@ if __name__ == "__main__":
     for ds, ans in getAns(fin):
         bg = len(ans)
         ans = filter(lambda _: _.code not in st2016, ans)
-        ans = filter(filterByStop, ans)
-        ans = filter(filterByHighLine, ans)
+        ans = filter(filterByStop(ds, stock), ans)
+        ans = filter(filterByHighLine(ds, stock), ans)
+        ans = filter(filterByNew(ds, aux), ans)
         print ds, bg, "->", len(ans)
         
         ans = map(formatAns, ans)
         fout.write(ds + "," + ",".join(ans) + "\n")
-
