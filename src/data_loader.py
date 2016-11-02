@@ -44,6 +44,9 @@ def getAns(fin):
     for key, value in getKv(fin):
         yield key, map(ansTrans(), value.split(","))
 
+def formatAns(_):
+    return "_".join(_)
+
 if __name__ == '__main__':
     aux = getFt("data/2010/2016.ft.aux", Aux)
     keys = aux.keys()
