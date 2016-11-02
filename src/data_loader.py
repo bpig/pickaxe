@@ -4,7 +4,12 @@ __date__ = "11/2/16"
 
 from common import *
 
-Aux = collections.namedtuple('Aux', ['ds', 'workDay'])
+Aux = collections.namedtuple('Aux', ['ds', 'work_day'])
+Ft = collections.namedtuple(
+    'Ft', 
+    ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',
+      'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate', 
+      'status', 's_status', 'wav_status', 'e_status', 'target'])
 
 def getLine(fin):
     for l in open(fin):
@@ -21,13 +26,17 @@ def getFtKv(fin):
         items = map(lambda x: x.split("_"), items)
         yield key, items
 
-def getAux(fin):
+def getFt(fin, dtype=Ft):
     kv = {}
     for k, v in getFtKv(fin):
-        kv[k] = Aux(v[0], v[1])
+        kv[k] = dtype(*v)
     return kv
 
 if __name__ == '__main__':
-    aux = getAux("data/2010/2016.ft.aux")
-    print aux.ds
-    print aux.workDay
+    aux = getFt("data/2010/2016.ft.aux", Aux)
+    keys = aux.keys()
+    key = keys[0]
+    print len(aux[key].ds), len(aux[key].work_day)
+
+    ft = getFt("data/2010/2016.ft")
+    print len(ft[key].ds), len(ft[key].target)
