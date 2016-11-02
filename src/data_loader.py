@@ -23,7 +23,7 @@ def getLine(fin):
 def getKv(fin):
     for l in getLine(fin):
         pos = l.find(",")
-        return l[:pos], l[pos + 1:]
+        yield l[:pos], l[pos + 1:]
 
 def getFtKv(fin):
     for key, value in getKv(fin):
@@ -42,16 +42,16 @@ def getAns(fin):
         return Ans(*x.split("_"))
     
     for key, value in getKv(fin):
-        yield key, map(ansTrans(), value.split(","))
+        yield key, map(ansTrans, value.split(","))
 
 if __name__ == '__main__':
-    aux = getFt("data/2010/2016.ft.aux", Aux)
-    keys = aux.keys()
-    key = keys[0]
-    print len(aux[key].ds), len(aux[key].work_day)
+    # aux = getFt("data/2010/2016.ft.aux", Aux)
+    # keys = aux.keys()
+    # key = keys[0]
+    # print len(aux[key].ds), len(aux[key].work_day)
     
-    ft = getFt("data/2010/2016.ft")
-    print len(ft[key].ds), len(ft[key].target)
+    # ft = getFt("data/2010/2016.ft")
+    # print len(ft[key].ds), len(ft[key].target)
     
     for k, ans in getAns("ans/2016_pc"):
         print k, [_.code for _ in ans]
