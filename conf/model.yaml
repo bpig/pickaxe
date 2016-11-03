@@ -245,7 +245,7 @@ v1503a:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v1503a
-  batch_step: 11
+  batch_step: 12
   epoch: 1
   pdata: 2010/15/2016.fe
   pout: v1503a
@@ -258,10 +258,49 @@ v1501a:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   model: v1501a
-  batch_step: 11
+  batch_step: 12
   epoch: 1
   pdata: 2010/15/2016.fe
   pout: v1501a
   tdata: predict/today.fe
   tout: t1501a
+
+v1504a:
+  data: 2010/15/fe.cmvn
+  division: 1.04
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1504a
+  batch_step: 12
+  epoch: 1
+  pdata: 2010/15/2016.fe
+  pout: v1504a
+  tdata: predict/today.fe
+  tout: t1504a
+
+v1506a:
+  data: 2010/15/fe.cmvn
+  division: 1.06
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1506a
+  batch_step: 12
+  epoch: 1
+  pdata: 2010/15/2016.fe
+  pout: v1506a
+  tdata: predict/today.fe
+  tout: t1506a
+
+v1502a:
+  data: 2010/15/fe.cmvn
+  division: 1.02
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1502a
+  batch_step: 12
+  epoch: 1
+  pdata: 2010/15/2016.fe
+  pout: v1502a
+  tdata: predict/today.fe
+  tout: t1502a
 
