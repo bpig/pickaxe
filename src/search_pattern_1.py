@@ -21,7 +21,7 @@ def process(predictFile, stockFile, outfile, date):
     for k, v in loadFile(predictFile).items():
         v = sorted(v, key=lambda x: float(x[1]), reverse=True)
         predict[k] = v
-    res = search(predict, stock, outfile, date)
+    search(predict, stock, outfile, date)
 
 def search(predict, stock, outfile, date):
     fout = open(outfile, 'w')
@@ -50,7 +50,7 @@ def search(predict, stock, outfile, date):
                 if items[15][i] == '1' or items[16][i] == '1':
                     continue
                 es = float(items[8][i]) / float(items[5][i])
-                if es > 1.0 and es < 1.03:
+                if 1.0 < es < 1.03:
                     positive += 1
                 elif es < 1:
                     positive -= 1

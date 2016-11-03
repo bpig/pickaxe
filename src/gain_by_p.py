@@ -80,6 +80,7 @@ def process(predictFile, numStock, start, period):
     money = gain(predict, stock, numStock, ds)
     print "after %d days:" % len(ds)
     print "final: " + `money`
+    return money
 
 if __name__ == "__main__":
     tgt = "ans/" + sys.argv[1]

@@ -23,7 +23,7 @@ if __name__ == "__main__":
     model_dir = "model/" + cfg["model"]
     
     net = cfg["net"]
-    # keep_prob = cfg["keep_prob"]
+
     keep_prob = 1.0
     classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
     
