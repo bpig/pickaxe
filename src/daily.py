@@ -83,5 +83,5 @@ if __name__ == "__main__":
     for i in range(ct):
         print ",".join(map(str, (i+1, ii[i], weight[i])))
     
-    print "stop", stop, "one", one, "new", n
+    #print "stop", stop, "one", one, "new", n
 

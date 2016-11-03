@@ -226,3 +226,42 @@ v1506:
   tdata: predict/today.fe
   tout: td_v1506
 
+v1507:
+  data: 2010/15/fe.cmvn
+  division: 1.07
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1507
+  batch_step: 10
+  epoch: 1
+  pdata: 2010/15/2016.fe
+  pout: v1507
+  tdata: predict/today.fe
+  tout: td_v1507
+
+v1508:
+  data: 2010/15/fe.cmvn
+  division: 1.08
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1508
+  batch_step: 10
+  epoch: 1
+  pdata: 2010/15/2016.fe
+  pout: v1508
+  tdata: predict/today.fe
+  tout: td_v1508
+
+v1509:
+  data: 2010/15/fe.cmvn
+  division: 1.09
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1509
+  batch_step: 10
+  epoch: 1
+  pdata: 2010/15/2016.fe
+  pout: v1509
+  tdata: predict/today.fe
+  tout: td_v1509
+
