@@ -7,6 +7,15 @@ f0:
     - 1.0
   output: ans/2016_comb
 
+test:
+  input: 
+    - ans/v1501
+    - ans/v1503
+  weights: 
+    - 1.0
+    - 1.0
+  output: ans/comb
+
 today:
   input: 
     - ans/td_v1503
@@ -20,9 +29,4 @@ f2:
   input: test/2016_v2,test/2016_v4
   weights: 1.71,2.08
   output: test/2016_v2_v4
-
-test:
-  input: test/small_1.predict,test/small_2.predict
-  weights: 1,1
-  output: test/small_1_2.predict
 

@@ -39,6 +39,7 @@ if __name__ == "__main__":
     with open("conf/predict.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     fins = cfg["input"]
+    print fins
     weights = cfg["weights"]
     fout = cfg["output"]
     predictions = loadFile(zip(fins, weights))

@@ -105,10 +105,11 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     tgts = np.asarray(map(lambda x: 0 if x < division else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
+
     point = int(len(keys) * .9)
     
-    tr_x = feas[:point]
-    tr_y = tgts[:point]
+    tr_x = feas
+    tr_y = tgts
     
     te_x = feas[point:]
     te_y = tgts[point:]
