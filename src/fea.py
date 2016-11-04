@@ -34,9 +34,9 @@ def genStatus(status):
     ct1 = Counter(status[1])
     ct2 = Counter(status[2])
     ct3 = Counter(status[3])
-    return [ct0['0'], ct0['1'], 
-            ct1['0'], ct1['1'], ct1['2'], 
-            ct2['0'], ct2['1'], ct2['2'], ct2['3'], 
+    return [ct0['0'], ct0['1'],
+            ct1['0'], ct1['1'], ct1['2'],
+            ct2['0'], ct2['1'], ct2['2'], ct2['3'],
             ct3['0'], ct3['1'], ct3['2']]
 
 def oneHotStatus(status, sstatus, wavstatus, estatus):
@@ -74,7 +74,7 @@ def genOne(key, info, ds, predict=False):
     if len(info.ds) != max_win:
         # print "%s_%s, %d" % (key, ds, len(values[0]))
         return ""
-
+    
     feas = genOneFe(info, windows)
     if not predict:
         tgt = info.tgt[0]
@@ -89,7 +89,7 @@ def genOneFe(info, wins):
     # today day fea
     for d in range(maxWin):
         feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
-        feas += oneHotStatus(info.status[d], info.s_status[d], 
+        feas += oneHotStatus(info.status[d], info.s_status[d],
                              info.wav_status[d], info.e_status[d])
     
     # win fea
@@ -103,8 +103,7 @@ def genOneFe(info, wins):
         fea += genStatus(items[15:19])
         fea += [span, gain]
         feas += fea
-    return feas;
-
+    return feas
 
 def process(fin, fout, ds=None):
     np.seterr(all='raise')
