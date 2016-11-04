@@ -14,6 +14,7 @@ import time
 import sys
 import yaml
 import logging
+from itertools import chain
 from cStringIO import StringIO
 from collections import defaultdict
 from collections import namedtuple

@@ -54,9 +54,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     return arr1 + arr2 + arr3 + arr4
 
 def genOne(key, info, ds, predict=False):
-    feas = []
     idx = info.ds.index(ds)
-    
     if not predict:
         if idx <= 1:
             return ""
@@ -76,17 +74,28 @@ def genOne(key, info, ds, predict=False):
     if len(info.ds) != max_win:
         # print "%s_%s, %d" % (key, ds, len(values[0]))
         return ""
-    
+
+    feas = genOneFe(info, windows)
+    if not predict:
+        tgt = info.tgt[0]
+        assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
+        feas += [tgt]
+    info = map(str, feas)
+    return key + "_" + ds + ":" + ",".join(info) + "\n"
+
+def genOneFe(info, wins):
+    feas = []
+    maxWin = wins[-1]
     # today day fea
-    for d in range(max_win):
+    for d in range(maxWin):
         feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(info.status[d], info.s_status[d], 
                              info.wav_status[d], info.e_status[d])
     
     # win fea
-    for window in windows:
+    for win in wins:
         fea = []
-        items = Ft(*map(lambda x: x[:window], info))
+        items = Ft(*map(lambda x: x[:win], info))
         span = daySpan(items.ds[-1], items.ds[0])
         gain = float(items.e[0]) / float(items.s[-1])
         for i in [1, 2, 3, 9, 10, 11, 12, 13, 14]:
@@ -94,13 +103,8 @@ def genOne(key, info, ds, predict=False):
         fea += genStatus(items[15:19])
         fea += [span, gain]
         feas += fea
-    
-    if not predict:
-        tgt = info.tgt[0]
-        assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
-        feas += [tgt]
-    info = map(str, feas)
-    return key + "_" + ds + ":" + ",".join(info) + "\n"
+    return feas;
+
 
 def process(fin, fout, ds=None):
     np.seterr(all='raise')
