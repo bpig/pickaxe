@@ -1,31 +1,8 @@
 # -*- coding:utf-8 -*-
+from itertools import chain
 
 from common import *
-import global_info
-
-# 15
-# states
-# 正常 0
-# 停盘 1
-
-# 16
-# s-status
-# 开盘正常 0
-# 开盘涨停 1
-# 开盘跌停 2
-
-# 17
-# wav-status
-# 当天正常 0
-# 当天有涨停 1
-# 当天有跌停 2
-# 当天有涨停又有跌停 3
-
-# 18
-# e-status
-# 收盘正常 0
-# 收盘涨停 1
-# 收盘跌停 2
+from data_loader import getFt, Aux
 
 # key           600227.SH
 # values
@@ -51,11 +28,6 @@ import global_info
 # 19 target     -1.0_-1.0_1.0099009901_1.22891566265_1.01343101343_0.9
 
 
-# dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
-#  0,    1,      2,      3,  4, 5,    6,   7, 8,        9,     10,
-# s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
-#     11,     12,     13,     14,     15,       16,         17,       18,     19
-
 # gb:
 # amount, shares * e, status-0, status-1, s-status-0, s-status-1, s-status-2,
 #  0            1        2         3         4            5            6
@@ -64,42 +36,10 @@ import global_info
 # amount / (shares * e), rate
 #       14                 15
 
-def getGb(fin):
-    if not fin:
-        return None
-    gb = {}
-    for l in open(fin):
-        l = l.strip()
-        if not l:
-            continue
-        pos = l.find(",")
-        ds = l[:pos]
-        values = l[pos + 1:].split(",")
-        gb[ds] = values
-    return gb
-
-def getSt(fin):
-    dates = set()
-    kv = {}
-    for l in open(fin):
-        l = l.strip()
-        if not l:
-            continue
-        pos = l.find(",")
-        key = l[:pos]
-        items = l[pos + 1:].split(",")
-        items = map(lambda x: x.split("_"), items)
-        dates.update(items[0])
-        for i in range(1, len(items)):
-            items[i] = map(float, items[i])
-        # items = map(np.array, items)
-        kv[key] = items
-    return kv, sorted(list(dates))
-
 def dump(st, fout, ds, predict=False):
     ct = 0
     for items in st.items():
-        if ds not in items[1][0]:
+        if ds not in items.ds[0]:
             continue
         content = genOne(items, ds, predict)
         if content:
@@ -144,18 +84,18 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
 
 def genOne(kv, ds, predict=False):
     feas = []
-    key, values = kv
+    key, info = kv
     
-    index = values[0].index(ds)
+    idx = info.ds.index(ds)
     
     if not predict:
-        if index <= 1:
+        if idx <= 1:
             return ""
         # stock is stoped
-        if values[15][index - 1] == 1 or values[15][index - 2] == 1:
+        if info.status[idx - 1] == 1 or info.status[idx - 2] == 1:
             return ""
     else:
-        if index != 0:
+        if idx != 0:
             print "index %s of %s must 0" % (ds, key)
             return ""
     
@@ -163,23 +103,23 @@ def genOne(kv, ds, predict=False):
     # windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
     # windows = [2, 3, 5, 7, 10]  # , 30, 60]
     max_win = windows[-1]
-    values = map(lambda x: x[index:index + max_win], values)
+    info = map(lambda x: x[idx:idx + max_win], info)
     
-    if len(values[0]) != max_win:
+    if len(info.ds) != max_win:
         # print "%s_%s, %d" % (key, ds, len(values[0]))
         return ""
     
     # today day fea
     for d in range(max_win):
-        feas += [values[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
-        feas += oneHotStatus(values[15][d], values[16][d], values[17][d], values[18][d])
-
+        feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
+        feas += oneHotStatus(info.status[d], info.s_status[d], info.wav_status[d], info.e_status[d])
+    
     # win fea
     for window in windows:
         fea = []
-        items = map(lambda x: x[:window], values)
-        span = daySpan(items[0][-1], items[0][0])
-        gain = items[8][0] / items[5][-1]
+        items = map(lambda x: x[:window], info)
+        span = daySpan(items.ds[-1], items.ds[0])
+        gain = items.e[0] / items.s[-1]
         for i in [1, 2, 3, 9, 10, 11, 12, 13, 14]:
             fea += genBasic(items[i])
         fea += genStatus(items[15:19])
@@ -187,15 +127,18 @@ def genOne(kv, ds, predict=False):
         feas += fea
     
     if not predict:
-        tgt = values[-1][0]
+        tgt = info.tgt[0]
         assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
         feas += [tgt]
-    values = map(str, feas)
-    return key + "_" + ds + ":" + ",".join(values) + "\n"
+    info = map(str, feas)
+    return key + "_" + ds + ":" + ",".join(info) + "\n"
 
 def process(fin, fout, ds=None):
     np.seterr(all='raise')
-    st, dates = getSt(fin)
+    st = getFt(fin)
+    dates = set(chain(*map(lambda x: x.ds, st.values())))
+    dates = sorted(dates)
+    
     if not ds:
         ds = dates[-1]
         print "process ds %s" % ds
@@ -207,7 +150,10 @@ def process(fin, fout, ds=None):
     print time.ctime(), ds, ct
 
 def genAll(fin, fout, filter_func):
-    st, dates = getSt(fin)
+    st = getFt(fin)
+    dates = set(chain(*map(lambda x: x.ds, st.values())))
+    dates = sorted(dates)
+    
     fout = open(fout, "w")
     dates = filter(filter_func, dates)
     total = len(dates)
@@ -220,7 +166,7 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[sys.argv[1]]
     
     fin = "data/" + cfg["data"]
-
+    
     if "predict" in cfg:
         fout = "data/" + cfg["predict"]
         process(fin, fout)

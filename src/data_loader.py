@@ -11,6 +11,16 @@ Ft = collections.namedtuple(
      'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate',
      'status', 's_status', 'wav_status', 'e_status', 'tgt'])
 
+# states,正常 0,停盘 1
+# s-status,开盘正常 0,开盘涨停 1,开盘跌停 2
+# wav-status,当天正常 0,当天有涨停 1,当天有跌停 2,当天有涨停又有跌停 3
+# e-status,收盘正常 0,收盘涨停 1,收盘跌停 2
+
+# dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
+#  0,    1,      2,      3,  4, 5,    6,   7, 8,        9,     10,
+# s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
+#     11,     12,     13,     14,     15,       16,         17,       18,     19
+
 Ans = collections.namedtuple("Ans", ['code', 'prob', 'tgt'])
 
 def getLine(fin):
