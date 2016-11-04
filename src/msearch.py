@@ -16,6 +16,8 @@ def getCheckPoint(model_dir):
         subprocess.call("cp %s %s.bak" % (checkPointFile, checkPointFile), shell=True)
     models = filter(lambda _: _.endswith("00001"), os.listdir(model_dir))
     models = map(lambda _: _.split("-")[1], models)
+    models = sorted(models, key=lambda x:int(x))
+    models = filter(lambda x: x!= "1", models)
     print models
     return models
 
@@ -59,7 +61,7 @@ def searchModel(m):
     keep_prob = 1.0
     
     versions = getCheckPoint(model_dir)
-    gains = []
+    ans = []
     for version in versions:
         setCheckPoint(model_dir, version)
         
@@ -71,16 +73,22 @@ def searchModel(m):
         
         genAns(pp, foutFile, predSet)
         
-        gain50 = gain_by_p.process(foutFile, 50, "20160104", 200)
-        gain3 = gain_by_p.process(foutFile, 50, "20160104", 200)
-        gains += [(gain50, gain3)]
+        gain50 = gain_by_p.process(foutFile, 50, "20160104", 200, False)
+        gain3 = gain_by_p.process(foutFile, 3, "20160104", 200, False)
+        
+        value = "%s,%s,%.5f,%.5f\n" % (m, version, gain3, gain50)
+        print "==" * 10
+        print value,
+        print 
+        ans += [value]
     
-    return zip(versions, gains)
+    return ans
 
 if __name__ == "__main__":
-    model = ["v1501", "v1502", "v1503", "v1504", "v1506"]
-    fout = open("model_search", "w")
+    model = ["v1501a", "v1502a", "v1503a", "v1504a", "v1506a"]
+    fout = open("model_search", "a")
     for m in model:
         ans = searchModel(m)
-        line = "%s,%s,%.5f,%.5f\n" % (m, ans[0], ans[1][0], ans[1][1])
-        fout.write(line)
+        for line in ans:
+            fout.write(line)
+        fout.write("\n")

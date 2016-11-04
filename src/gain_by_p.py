@@ -4,9 +4,11 @@ from collections import Counter
 from common import *
 from data_loader import getFt, getAns
 
-def gain(predict, stock, numStock, ds):
+def gain(predict, stock, numStock, ds, output):
     money = [0.5, 0.5]
-    
+    month = ["init"]
+    rate = [1.0]
+
     for i, d in enumerate(ds):
         buy = StringIO()
         increase, count = 0, 0
@@ -24,7 +26,7 @@ def gain(predict, stock, numStock, ds):
             assert d in info.ds, "%s not exist" % d
             
             index = info.ds.index(d) - 1  # tomorrow
-            if index == 0:
+            if index < 1:
                 continue
             # stop or +10 high
             if info.status[index] == '1':
@@ -64,12 +66,21 @@ def gain(predict, stock, numStock, ds):
             lack = "lack(%d)" % count
         
         total = sum(money)
-        print d, "%.8f" % total, "%.8f" % bg, "->", "%.8f" % ed, \
-            "%.8f" % (ed / bg), high, low, stop, len(predict[d]), lack  # , buy.getvalue()[:-1]
-    
+        if output:
+            print d, "%.5f" % total, "%.5f" % bg, "->", "%.5f" % ed, \
+                "%.5f" % (ed / bg), high, low, stop, len(predict[d]), lack  # , buy.getvalue()[:-1]
+        key = d[:-2]
+        if key not in month:
+            month += [key]
+            rate += [total]
+        else:
+            rate[-1] = total
+    if output:
+        for m,r1,r2 in zip(month[1:],rate[:-1],rate[1:]):
+            print "%s %.5f" % (m, r2/r1)
     return sum(money)
 
-def process(predictFile, numStock, start, period):
+def process(predictFile, numStock, start, period, output=True):
     stock = getFt("data/2010/2016.ft")
     predict = dict(getAns(predictFile))
     
@@ -77,9 +88,10 @@ def process(predictFile, numStock, start, period):
     idx = ds.index(start)
     ds = ds[idx:idx + period]
     
-    money = gain(predict, stock, numStock, ds)
-    print "after %d days:" % len(ds)
-    print "final: " + `money`
+    money = gain(predict, stock, numStock, ds, output)
+    if output:
+        print "after %d days:" % len(ds)
+        print "final: " + `money`
     return money
 
 if __name__ == "__main__":

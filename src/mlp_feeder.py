@@ -105,7 +105,6 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     tgts = np.asarray(map(lambda x: 0 if x < division else 1, tgts))
     if reshape:
         tgts = tgts.reshape([ct, 1])
-
     point = int(len(keys) * .9)
     
     tr_x = feas
@@ -162,10 +161,10 @@ def read_predict_sets(datafile, cache=True):
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     
-    # keys, feas, tgts = merge_small_predict(keys, feas, tgts)
+    keys, feas, tgts = merge_small_predict(keys, feas, tgts)
     
-    # tgts = tgts.astype(np.float32)
-    # feas = feas.astype(np.float32)
+    tgts = tgts.astype(np.float32)
+    feas = feas.astype(np.float32)
     
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"

@@ -1,20 +1,44 @@
-f0:
+self:
   input: 
-    - ans/v1503
-    - ans/v1501
+    - ans/v1502.filter
+    - ans/v1504.filter
+    - ans/v1506.filter
   weights: 
     - 1.0
     - 1.0
-  output: ans/2016_comb
+    - 1.0
+  output: ans/self
 
-test:
+c4:
   input: 
-    - ans/v1501
-    - ans/v1503
+    - ans/v1501.filter
+    - ans/v1503.filter
+    - ans/v1505.filter
+#    - ans/v1501a.filter
+#    - ans/v1503a.filter
+#    - ans/v1506a.filter
   weights: 
     - 1.0
     - 1.0
-  output: ans/comb
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+  output: ans/c4
+
+c3:
+  input: 
+    - ans/v1501.filter
+    - ans/v1503.filter
+    - ans/v1505.filter
+  weights: 
+    - 1.0
+    - 1.0
+    - 1.0
+  output: ans/c3
 
 today:
   input: 

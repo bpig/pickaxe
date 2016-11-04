@@ -60,10 +60,10 @@ def extend(key, v):
     wav_status = map(getWavStatus, zip(h_rate, l_rate))
     e_status = map(getStatus, e_rate)
 
-    if e_rate[-1] > 1.12:
-        work_day = range(len(e_rate), 0, -1)
-    else:
-        work_day = range(len(e_rate) + 120, 120, -1)
+    #if e_rate[-1] > 1.12:
+    work_day = range(len(e_rate), 0, -1)
+    # else:
+    #     work_day = range(len(e_rate) + 120, 120, -1)
     
     for i in range(len(status)):
         if status[i] == 0:

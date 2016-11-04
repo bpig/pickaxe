@@ -11,15 +11,13 @@ def parseLine(l):
     return key, items
 
 if __name__ == "__main__":
-    with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+    fin = "ans/" + sys.argv[1]
     
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
     else:
         ct = 50
-    
-    fin = "ans/" + cfg["tout"]
+
     for l in open(fin):
         # l = next(open(fin))
         key, items = parseLine(l)

@@ -25,7 +25,8 @@ def loadFile(fins):
 
 def combine(predictions, fout):
     fout = open(fout, "w")
-    for k, v in predictions.items():
+    for k in sorted(predictions.keys()):
+        v = predictions[k]
         kv = defaultdict(float)
         for items in v:
             for item in items:

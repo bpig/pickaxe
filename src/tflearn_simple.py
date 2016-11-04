@@ -71,12 +71,12 @@ if __name__ == "__main__":
             print time.ctime(), "batch_step", i
     
         # te_acc = pred(classifier, data.test.feas, data.test.tgts)
-        # ct = data.test.num_examples
+
         # tr_acc = pred(classifier, data.train.feas[:ct], data.train.tgts[:ct])
         # print time.ctime(), "finish epoch %d, train acc %.6f, test acc %.6f" \
         #     % (epoch, tr_acc, te_acc)
 
-        tr_acc = pred(classifier, data.train.feas, data.train.tgts)
+        tr_acc = pred(classifier, data.test.feas, data.test.tgts)
         print time.ctime(), "finish epoch %d, train acc %.6f" % (epoch, tr_acc)
 
 

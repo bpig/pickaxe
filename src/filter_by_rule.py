@@ -41,6 +41,12 @@ if __name__ == "__main__":
     
     stock = getFt("data/2010/2016.ft")
     aux = getFt("data/2010/2016.ft.aux", Aux)
+    
+    # ft = aux['603090.SH']
+    # ft2 = stock['603090.SH']
+    # idx = ft.ds.index("20161103")
+    # print idx, int(ft.work_day[idx]), ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
+
     st2016 = set(map(str.strip, open("data/2016.st")))
     
     for ds, ans in sorted(getAns(fin)):
@@ -51,9 +57,10 @@ if __name__ == "__main__":
         ct += [len(ans)]
         ans = filter(filterByHighLine(ds, stock), ans)
         ct += [len(ans)]
-        ans = filter(filterByNew(ds, aux), ans)
-        ct += [len(ans)]
+        # ans = filter(filterByNew(ds, aux), ans)
+        # ct += [len(ans)]
         print ds, ct
         
         ans = map(formatAns, ans)
-        fout.write(ds + "," + ",".join(ans) + "\n")
+        if ans:
+            fout.write(ds + "," + ",".join(ans) + "\n")
