@@ -49,8 +49,8 @@ if __name__ == "__main__":
     with open("conf/spark.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     sc = getSC()
-    fin = cfg["data"]
-    fout = cfg["output"]
+    fin = cfg["ft"]
+    fout = cfg["fe"]
     ft = sc.textFile(fin)
     ft.map(process).values().filter(len) \
         .flatMap(lambda x: x).saveAsSequenceFile(fout)
