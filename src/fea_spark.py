@@ -55,8 +55,8 @@ if __name__ == "__main__":
     sc = getSC()
     fin = "htk/" + cfg["ft"]
     fout = "htk/" + cfg["fe"]
-    ft = sc.textFile(fin, 300)
+    ft = sc.textFile(fin, 500)
     fe = ft.map(process).values().filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
-#spark-submit  --num-executors 10 --executor-cores 30 --executor-memory 200g fe.py 
+#spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010
