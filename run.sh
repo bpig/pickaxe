@@ -1,3 +1,5 @@
+set -x
+
 python src/gen_predict_fea.py  $1 #20161102
 
 python src/format.py f1
@@ -11,9 +13,14 @@ python src/tflearn_predict.py v1505 today
 python src/tflearn_predict.py v1506 today
 
 python src/combine_predict.py today
-python src/filter_by_rule.py today
+python src/filter_by_rule.py today 
+
+python src/combine_predict.py top
+python src/filter_by_rule.py top
 
 python src/daily.py today.filter 100 > daily/$2.csv
+
+python src/top.py top.filter 6
 
 # 1101 1167
 # 1031 1877

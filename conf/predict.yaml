@@ -3,10 +3,6 @@ self:
     - ans/v1502.filter
     - ans/v1504.filter
     - ans/v1506.filter
-  weights: 
-    - 1.0
-    - 1.0
-    - 1.0
   output: ans/self
 
 c4:
@@ -17,16 +13,6 @@ c4:
 #    - ans/v1501a.filter
 #    - ans/v1503a.filter
 #    - ans/v1506a.filter
-  weights: 
-    - 1.0
-    - 1.0
-    - 1.0
-    - 1.0
-    - 1.0
-    - 1.0
-    - 1.0
-    - 1.0
-    - 1.0
   output: ans/c4
 
 c3:
@@ -34,23 +20,18 @@ c3:
     - ans/v1501.filter
     - ans/v1503.filter
     - ans/v1505.filter
-  weights: 
-    - 1.0
-    - 1.0
-    - 1.0
   output: ans/c3
 
 today:
   input: 
-    - ans/td_v1503
     - ans/td_v1501
-  weights: 
-    - 1.0
-    - 1.0
+    - ans/td_v1503
+    - ans/td_v1505
   output: ans/today
 
-f2:
-  input: test/2016_v2,test/2016_v4
-  weights: 1.71,2.08
-  output: test/2016_v2_v4
-
+top:
+  input: 
+    - ans/td_v1502
+    - ans/td_v1504
+    - ans/td_v1506
+  output: ans/top

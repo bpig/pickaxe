@@ -161,7 +161,7 @@ def read_predict_sets(datafile, cache=True):
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     
-    keys, feas, tgts = merge_small_predict(keys, feas, tgts)
+    #keys, feas, tgts = merge_small_predict(keys, feas, tgts)
     
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)

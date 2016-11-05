@@ -19,6 +19,5 @@ if __name__ == "__main__":
         ct = 50
 
     for l in open(fin):
-        # l = next(open(fin))
         key, items = parseLine(l)
         print key, " ".join(map(str, items[:ct]))

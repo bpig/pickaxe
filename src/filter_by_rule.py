@@ -51,14 +51,19 @@ if __name__ == "__main__":
     
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
+
         ans = filter(lambda _: _.code not in st2016, ans)
         ct += [len(ans)]
+        
         ans = filter(filterByStop(ds, stock), ans)
         ct += [len(ans)]
+
         ans = filter(filterByHighLine(ds, stock), ans)
         ct += [len(ans)]
-        # ans = filter(filterByNew(ds, aux), ans)
-        # ct += [len(ans)]
+
+        if sys.argv[1] == "today":
+            ans = filter(filterByNew(ds, aux), ans)
+            ct += [len(ans)]
         print ds, ct
         
         ans = map(formatAns, ans)

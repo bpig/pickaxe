@@ -1,6 +1,4 @@
 # -*- coding:utf-8 -*-
-from collections import Counter
-
 from common import *
 
 def transform(weight):
@@ -41,7 +39,10 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[sys.argv[1]]
     fins = cfg["input"]
     print fins
-    weights = cfg["weights"]
+    if "weights" in cfg:
+        weights = cfg["weights"]
+    else:
+        weights = [1.0] * len(fins)
     fout = cfg["output"]
     predictions = loadFile(zip(fins, weights))
     combine(predictions, fout)
