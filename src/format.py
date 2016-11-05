@@ -18,7 +18,7 @@ def getKv(filename, kv, uniq):
         value = value.split(",")
         ds = value[0]
         if ds < "20160000":
-            continue        
+            continue
         kid = key + "_" + value[0]
         if kid in uniq:
             continue
@@ -59,11 +59,8 @@ def extend(key, v):
     s_status = map(getStatus, s_rate)
     wav_status = map(getWavStatus, zip(h_rate, l_rate))
     e_status = map(getStatus, e_rate)
-
-    #if e_rate[-1] > 1.12:
+    
     work_day = range(len(e_rate), 0, -1)
-    # else:
-    #     work_day = range(len(e_rate) + 120, 120, -1)
     
     for i in range(len(status)):
         if status[i] == 0:
@@ -100,7 +97,7 @@ def dump(kv, filename):
         # normal output
         v = map(lambda x: "_".join(x), v)
         fout.write(k + "," + ",".join(v) + "\n")
-
+        
         aux = map(lambda x: "_".join(x), aux)
         fout1.write(k + "," + ",".join(aux) + "\n")
 

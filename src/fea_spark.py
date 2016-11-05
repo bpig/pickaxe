@@ -24,7 +24,7 @@ def process(line):
     ds = items[0]
     wins = [2, 3, 5, 7, 15]
     maxWin = wins[-1]
-
+    
     ct = len(ds) - 2 - maxWin
     if ct < 0:
         return key, []
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     fe = ft.map(process).values().filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
-#spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010
+# spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

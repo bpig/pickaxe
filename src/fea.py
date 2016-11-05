@@ -1,8 +1,6 @@
 # -*- coding:utf-8 -*-
-from itertools import chain
-
 from common import *
-from data_loader import getFt, Aux, Ft
+from data_loader import getFt, Ft
 
 def dump(st, fout, ds, predict=False):
     ct = 0
