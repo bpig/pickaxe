@@ -6,7 +6,7 @@ __date__ = "11/3/16"
 
 from common import *
 from mlp_feeder import read_predict_sets
-from tflearn_simple import kernel
+from simple import kernel
 from jsq_estimator import JSQestimator
 import gain_by_p
 

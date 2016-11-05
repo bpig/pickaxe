@@ -1,69 +1,56 @@
-from train import *
-from collections import defaultdict
-
-tv = int(sys.argv[1])
-
-def loadStock(filename):
-    c = 0
-    kv = defaultdict(list)
-    dim = 0
-    for l in open(filename):
-        l = l.strip()
-        if not l:
-            continue
-        pos = l.find(":")
-        key, dt = l[:pos].split("_")
-        l = l[pos+1:]
-        # if dt < "20160500":
-        #     continue
-        items = l.split(",")
-        dim = len(items)
-        xx = map(float, items)
-        x = np.reshape(xx, (dim, 1))
-        kv[dt] += [(key, x)]
-        c += 1
-        if c == tv:
-            break
-    return kv
-
-def select(money):
-    return sorted(money, key=lambda x:-x[1])
-
-def predict(model, kv):
-    net = load(model)
-    dt = sorted(kv.keys())
-    for c, d in enumerate(dt):
-        lt = kv[d]
-        money = []
-        hot = 0
-        for key, x in lt:
-            yy = net.feedforward(x)
-            idx = np.argmax(yy)
-            prob = yy[idx][0]
-            if idx != 3:
-                continue
-            if prob >= 0.85:
-                hot += 1
-                money += [(key, prob)]
-        if not money:
-            continue
-
-        # if len(money) >= 10:
-        skip = ""
-        if hot >= 10:
-            skip = "skip"
-        money = select(money)[:10]
-        print d,
-        for k, p in money:
-            print k, "--", p, "|",
-        print skip
-
-    # print sum(v) / len(v), total
+from common import *
+from sklearn import metrics
+import tensorflow as tf
+from mlp_feeder import read_predict_sets
+from simple import kernel
+from jsq_estimator import JSQestimator
 
 if __name__ == "__main__":
-    kv = loadStock("2016.p")
-    idx = 48
-    model = "m22/model_%d" % idx
-    predict(model, kv)
+    model = sys.argv[1]
+    with open("conf/model.yaml") as fin:
+        cfg = yaml.load(fin)[model[:3]]
+    
+    if len(sys.argv) == 3:
+        datafile = "data/" + cfg["tdata"]
+        fout = "ans/t" + model[1:]
+    else:
+        datafile = "data/" + cfg["pdata"]
+        fout = "ans/" + model
+    if "pcache" in cfg:
+        predSet = read_predict_sets(datafile, cfg["pcache"])
+    else:
+        predSet = read_predict_sets(datafile)
+    
+    model_dir = "model/" + model
+    
+    net = cfg["net"]
 
-
+    keep_prob = 1.0
+    classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
+    
+    print predSet.fea.dtype
+    classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
+    
+    pp = classifier.predict(predSet.fea, as_iterable=True)
+    
+    ans = defaultdict(list)
+    
+    for c, p in enumerate(pp):
+        if p['class'] == 0:
+            continue
+        prob = p['prob'][1]
+        if "_" in predSet.key[c]:
+            key, date = predSet.key[c].split("_")
+        else:
+            date = predSet.key[c]
+            key = "gb"
+        tgt = predSet.tgt[c]
+        ans[date] += [(key, prob, tgt)]
+    
+    fout = open(fout, "w")
+    for ds in sorted(ans.keys()):
+        st = ans[ds]
+        st = sorted(st, key=lambda x: x[1], reverse=True)
+        st = map(lambda (x, y, z): (x, str(y), str(z)), st)
+        st = map(lambda x: "_".join(x), st)
+        fout.write(ds + "," + ",".join(st) + "\n")

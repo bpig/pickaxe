@@ -4,7 +4,7 @@ import tensorflow as tf
 import tensorflow.contrib.layers.python.layers as layers
 import tensorflow.contrib.learn.python.learn as learn
 from mlp_feeder import read_data_sets
-from tflearn_simple import kernel
+from simple import kernel
 
 def pred(classifier, feas, tgts):
     y_predicted = [p['class'] for p in classifier.predict(feas, as_iterable=True)]
