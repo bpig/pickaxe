@@ -1,0 +1,37 @@
+self:
+  input: 
+    - ans/v1502
+    - ans/v1504
+    - ans/v1506
+  output: ans/self
+
+c4:
+  input: 
+    - ans/v1501
+    - ans/v1503
+    - ans/v1505
+#    - ans/v1601
+#    - ans/v1603
+#    - ans/v1606
+  output: ans/c4
+
+c3:
+  input: 
+    - ans/v1501.filter
+    - ans/v1503.filter
+    - ans/v1505.filter
+  output: ans/c3
+
+today:
+  input: 
+    - ans/t1501
+    - ans/t1503
+    - ans/t1505
+  output: ans/today
+
+top:
+  input: 
+    - ans/t1502
+    - ans/t1504
+    - ans/t1506
+  output: ans/top

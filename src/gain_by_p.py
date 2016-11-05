@@ -3,12 +3,13 @@ from collections import Counter
 
 from common import *
 from data_loader import getFt, getAns
+import filter_by_rule
 
 def gain(predict, stock, numStock, ds, output):
     money = [0.5, 0.5]
     month = ["init"]
     rate = [1.0]
-
+    
     for i, d in enumerate(ds):
         buy = StringIO()
         increase, count = 0, 0
@@ -76,8 +77,9 @@ def gain(predict, stock, numStock, ds, output):
         else:
             rate[-1] = total
     if output:
-        for m,r1,r2 in zip(month[1:],rate[:-1],rate[1:]):
-            print "%s %.5f" % (m, r2/r1)
+        print "month rate"
+        for m, r1, r2 in zip(month[1:], rate[:-1], rate[1:]):
+            print "%s %.5f" % (m, r2 / r1)
     return sum(money)
 
 def process(predictFile, numStock, start, period, output=True):
@@ -96,10 +98,12 @@ def process(predictFile, numStock, start, period, output=True):
 
 if __name__ == "__main__":
     tgt = "ans/" + sys.argv[1]
+    # first do filter
+    filter_by_rule.process(tgt)
     
     args = [50, "20160104", 230]
     la = len(sys.argv) - 2
     args[:la] = sys.argv[2:]
     numStock, start, period = args
     
-    process(tgt, int(numStock), start, int(period))
+    process(tgt + ".filter", int(numStock), start, int(period))
