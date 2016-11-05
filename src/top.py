@@ -2,6 +2,7 @@
 # __author__ = "shuai.li(286287737@qq.com)"
 # __date__ = "2016/10/26"
 from common import *
+import filter_by_rule
 
 def parseLine(l):
     l = l.strip()
@@ -12,12 +13,13 @@ def parseLine(l):
 
 if __name__ == "__main__":
     fin = "ans/" + sys.argv[1]
+    filter_by_rule.process(fin)
     
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
     else:
-        ct = 50
-
-    for l in open(fin):
+        ct = 6
+    
+    for l in open(fin + ".filter"):
         key, items = parseLine(l)
         print key, " ".join(map(str, items[:ct]))
