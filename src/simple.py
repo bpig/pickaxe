@@ -49,6 +49,8 @@ if __name__ == "__main__":
         save_checkpoints_secs=600, keep_checkpoint_max=2000)
 
     model_dir = "model/" + model
+    print "model:", model
+    print "division:", division
     net = cfg["net"]
     keep_prob = cfg["keep_prob"]
     classifier = learn.Estimator(
