@@ -49,12 +49,10 @@ def globalCal(data):
     delta += 1
     return mu, delta
 
-def calMuDelta(value):
+def calMuDelta(fin, value):
     mu, delta = globalCal(value)
     np.save(fin + ".mu.npy", mu)
     np.save(fin + ".delta.npy", delta)
-    # print mu
-    # print delta
     return mu, delta
 
 def loadMuDelta(fin):
@@ -83,12 +81,17 @@ def pdNormalize(fin):
     np.save(feafile, feas)
     np.save(tgtfile, tgts)
 
-def process(fin):
+def process(fin, cal=True):
     data = loadData(fin)
     value = [fea.value for fea in data]
 
-    print time.ctime(), "cal fe.mu, fe.delta"
-    mu, delta = calMuDelta(value)
+    if cal:
+        print time.ctime(), "cal fe.mu, fe.delta"
+        mu, delta = calMuDelta(fin, value)
+    else:
+        tgt = fin[:-3] + "tr"
+        print "load mu, delta %s" % tgt
+        mu, delta = loadMuDelta(tgt)
 
     keyfile = fin + ".key.npy"
     feafile = fin + ".fea.npy"
@@ -124,6 +127,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     fin = sys.argv[2]
+    cal = False if fin = "test" else True
     fin = "data/" + cfg[fin]
     process(fin)
 

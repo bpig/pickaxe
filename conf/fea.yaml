@@ -51,4 +51,9 @@ w2:
   train: 2010/10/fe
   test: 2010/10/2016.fe
 
-  
+spark:
+  raw: 2010/2010.cc
+  data: 2010/2010.ft
+  train: fe/fe.15.tr
+  test: fe/fe.15.te
+

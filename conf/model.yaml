@@ -304,3 +304,17 @@ v1502a:
   tdata: predict/today.fe
   tout: t1502a
 
+v1601:
+  data: fe/fe.15.tr
+  division: 1.01
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  model: v1501
+  batch_step: 14
+  epoch: 1
+  pdata: fe/fe.15.te
+  pout: v1601
+  tdata: predict/today.fe
+  tout: t1601
+
+  

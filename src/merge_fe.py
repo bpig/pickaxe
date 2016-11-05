@@ -6,21 +6,36 @@ from common import *
 
 if __name__ == '__main__':
     fin = sys.argv[1]
-    fout = open(sys.argv[2], "w")
+    tr = open(sys.argv[2] + ".tr", "w")
+    te = open(sys.argv[2] + ".te", "w")
+
+    if len(sys.argv) == 4:
+        point = sys.argv[3]
+    else:
+        point = "20160900"
 
     files = os.listdir(fin)
     files = sorted(files)
     print "total %d files" % len(files)
 
+    ctr, cte = 0, 0
     for c, l in enumerate(files):
         if "dumper.list" in l:
             continue
         tgt = fin + "/" + l
-        fout.write(l)
-        fout.write(":")
-        fout.write(open(tgt).read())
-        fout.write("\n")
+        ds = l.split("_")[1]
+
+        content = "%s:%s\n" % (l, open(tgt).read())
+        if ds < point:
+            tr.write(content)
+            ctr += 1
+        else:
+            te.write(content)
+            cte += 1
+
         if c % 10000 == 0:
             print time.ctime(), c
+    
+    print "tr %d, te %d" % (ctr, cte)
     
 
