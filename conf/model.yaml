@@ -1,83 +1,3 @@
-v0:
-  data: 2013/15/fe.cmvn
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v0
-  batch_step: 6
-  epoch: 4
-  pdata: 2013/15/2016.fe.cmvn
-  pout: 2016_v0
-
-v1:
-  data: 2013/15/fe.cmvn
-  net: [512, 512, 512]
-  keep_prob: 0.2
-  model: v1
-  batch_step: 3
-  epoch: 4
-  pdata: 2013/15/2016.fe.cmvn
-  pout: 2016_v1
-  
-v2:
-  data: 2013/15/fe.cmvn
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: 15_3y_2048
-  batch_step: 6
-  epoch: 4
-  #pdata: 2013/15/2016.fe.cmvn
-  pdata: 2013/15.bak/2016.fe.cmvn
-  #pout: 2016_v2
-  pout: 2016_v2
-
-p2:
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: 15_3y_2048
-  pdata: predict/today.fe
-  pout: 2016_p2
-
-v3:
-  data: 2013/60/fe
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v3
-  batch_step: 6
-  epoch: 3
-  pdata: 2013/60/fe.2016
-  pout: 2016_v3
-
-v4:
-  data: 2010/15/fe.cmvn
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v4
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15/2016.fe.cmvn
-  pout: 2016_v4
-
-v5:
-  data: 2010/15g/fe.cmvn
-  # dcache: False
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v5
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15g/2016.fe.cmvn
-  pout: 2016_v5
-
-v6:
-  data: 2013/15g/fe.cmvn
-  net: [256, 256, 256]
-  keep_prob: 0.4
-  model: v6
-  batch_step: 6
-  epoch: 1
-  pdata: 2013/15g/2016.fe.cmvn
-  pout: 2016_v6
-
 vall:
   data: all/15/fe
   # dcache: False
@@ -98,11 +18,6 @@ vall2:
   epoch: 1
   pdata: all/15/2016.fe
   pout: 2016_vall2
-
-test:
-  #pout: 2016_v2
-  pout: 2016_v2_v4
-  #pout: 2016_v2_v6
 
 gb:
   data: gb/train.gb
@@ -141,180 +56,31 @@ comb:
 pc:
   tout: 2016_pc
 
-p4:
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v4
-  pdata: predict/today.fe
-  pout: 2016_p4
-
-v1501:
+v15:
   data: 2010/15/fe.cmvn
-  division: 1.01
   net: [2048, 1024, 1024]
   keep_prob: 0.3
-  model: v1501
   batch_step: 10
-  epoch: 1
   pdata: 2010/15/2016.fe
-  pout: v1501
   tdata: predict/today.fe
-  tout: td_v1501
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
-v1502:
+v16:
   data: 2010/15/fe.cmvn
-  division: 1.02
   net: [2048, 1024, 1024]
   keep_prob: 0.3
-  model: v1502
   batch_step: 10
-  epoch: 1
   pdata: 2010/15/2016.fe
-  pout: v1502
   tdata: predict/today.fe
-  tout: td_v1502
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
-v1503:
-  data: 2010/15/fe.cmvn
-  division: 1.03
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1503
-  batch_step: 10
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1503
-  tdata: predict/today.fe
-  tout: td_v1503
-
-v1504:
-  data: 2010/15/fe.cmvn
-  division: 1.04
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1504
-  batch_step: 10
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1504
-  tdata: predict/today.fe
-  tout: td_v1504
-
-v1505:
-  data: 2010/15/fe.cmvn
-  division: 1.05
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1505
-  batch_step: 10
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1505
-  tdata: predict/today.fe
-  tout: td_v1505
-
-v1506:
-  data: 2010/15/fe.cmvn
-  division: 1.06
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1506
-  batch_step: 10
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1506
-  tdata: predict/today.fe
-  tout: td_v1506
-
-v1507:
-  data: 2010/15/fe.cmvn
-  division: 1.07
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1507
-  batch_step: 10
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1507
-  tdata: predict/today.fe
-  tout: td_v1507
-
-v1503a:
-  data: 2010/15/fe.cmvn
-  division: 1.03
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1503a
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1503a
-  tdata: predict/today.fe
-  tout: t1503a
-
-v1501a:
-  data: 2010/15/fe.cmvn
-  division: 1.01
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1501a
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1501a
-  tdata: predict/today.fe
-  tout: t1501a
-
-v1504a:
-  data: 2010/15/fe.cmvn
-  division: 1.04
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1504a
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1504a
-  tdata: predict/today.fe
-  tout: t1504a
-
-v1506a:
-  data: 2010/15/fe.cmvn
-  division: 1.06
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1506a
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1506a
-  tdata: predict/today.fe
-  tout: t1506a
-
-v1502a:
-  data: 2010/15/fe.cmvn
-  division: 1.02
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: v1502a
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/15/2016.fe
-  pout: v1502a
-  tdata: predict/today.fe
-  tout: t1502a
-
-v1601:
+v17:
   data: fe/fe.15.tr
-  division: 1.01
   net: [2048, 1024, 1024]
   keep_prob: 0.3
-  model: v1501
   batch_step: 14
   epoch: 1
   pdata: fe/fe.15.te
-  pout: v1601
   tdata: predict/today.fe
-  tout: t1601
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
-  

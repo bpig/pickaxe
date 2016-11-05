@@ -127,7 +127,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     fin = sys.argv[2]
-    cal = False if fin = "test" else True
+    cal = False if fin == "test" else True
     fin = "data/" + cfg[fin]
     process(fin)
 

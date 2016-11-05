@@ -29,16 +29,16 @@ def kernel(net, keep_prob):
 if __name__ == "__main__":
     tf.logging.set_verbosity(tf.logging.INFO)
 
+    model = sys.argv[1]
     with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+        cfg = yaml.load(fin)[model[:3]]
     
     for key in cfg:
         print key, ":", cfg[key]
 
     datafile = "data/" + cfg["data"]
-    division = 1.002
-    if "division" in cfg:
-        division = cfg["division"]
+    idx = int(model[-2:])
+    division = cfg["division"][idx]
     if "dcache" in cfg:
         data = read_data_sets(datafile, division, cfg["dcache"])
     else:
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         log_device_placement=False, save_summary_steps=100,
         save_checkpoints_secs=600, keep_checkpoint_max=2000)
 
-    model_dir = "model/" + cfg["model"]
+    model_dir = "model/" + model
     net = cfg["net"]
     keep_prob = cfg["keep_prob"]
     classifier = learn.Estimator(
@@ -57,12 +57,10 @@ if __name__ == "__main__":
     batch_step = cfg["batch_step"]
     batch_size = int(data.train.num_examples / batch_step)
 
-    try:
+    if "epoch" in cfg:
         epochs = cfg["epoch"]
-        if sys[2] == "inc":
-            epochs = 1
-    except:
-        pass
+    else:
+        epochs = 1
 
     for epoch in range(epochs):
         for i in range(batch_step):

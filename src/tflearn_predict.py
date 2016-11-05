@@ -6,21 +6,22 @@ from tflearn_simple import kernel
 from jsq_estimator import JSQestimator
 
 if __name__ == "__main__":
+    model = sys.argv[1]
     with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+        cfg = yaml.load(fin)[model[:3]]
     
     if len(sys.argv) == 3:
         datafile = "data/" + cfg["tdata"]
-        fout = "ans/" + cfg["tout"]
+        fout = "ans/t" + model[1:]
     else:
         datafile = "data/" + cfg["pdata"]
-        fout = "ans/" + cfg["pout"]
+        fout = "ans/" + model
     if "pcache" in cfg:
         predSet = read_predict_sets(datafile, cfg["pcache"])
     else:
         predSet = read_predict_sets(datafile)
     
-    model_dir = "model/" + cfg["model"]
+    model_dir = "model/" + model
     
     net = cfg["net"]
 
