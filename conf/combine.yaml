@@ -25,9 +25,9 @@ c3:
 c17:
   input: 
     - ans/v1701
-    - ans/v1704
     - ans/v1706
-#    - ans/v1703
+    - ans/v1703
+#    - ans/v1704
 #    - ans/v1705
 #    - ans/v1702
 

@@ -59,6 +59,9 @@ def searchModel(model):
     keep_prob = 1.0
     
     versions = getCheckPoint(model_dir)
+    # idx = versions.index("1400")
+    # versions = versions[idx+1:]
+    # print versions
     ans = []
     for version in versions:
         setCheckPoint(model_dir, version)

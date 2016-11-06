@@ -11,3 +11,4 @@ daily*
 smsr_dumper
 raw
 *.sh
+train
