@@ -57,3 +57,15 @@ spark:
   train: fe/fe.15.tr
   test: fe/fe.15.te
 
+v18:
+  train: fe/11.tr
+  test: fe/11.te
+
+v19:
+  train: fe/12.tr
+  test: fe/12.te
+
+v20:
+  train: fe/13.tr
+  test: fe/13.te
+

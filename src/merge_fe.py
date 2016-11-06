@@ -5,14 +5,14 @@ __date__ = "10/31/16"
 from common import *
 
 if __name__ == '__main__':
-    fin = sys.argv[1]
+    fin = sys.argv[1] # raw/2010_15/ 
     tr = open(sys.argv[2] + ".tr", "w")
     te = open(sys.argv[2] + ".te", "w")
 
     if len(sys.argv) == 4:
         point = sys.argv[3]
     else:
-        point = "20160900"
+        point = "20160400"
 
     files = os.listdir(fin)
     files = sorted(files)
@@ -26,6 +26,8 @@ if __name__ == '__main__':
         ds = l.split("_")[1]
 
         content = "%s:%s\n" % (l, open(tgt).read())
+        if ds < "20101200":
+            continue
         if ds < point:
             tr.write(content)
             ctr += 1

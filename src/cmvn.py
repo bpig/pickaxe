@@ -88,7 +88,7 @@ def process(fin, cal=True):
         value = [fea.value for fea in data]
         mu, delta = calMuDelta(fin, value)
     else:
-        tgt = fin[:-3] + "tr"
+        tgt = fin[:-2] + "tr"
         print "load mu, delta %s" % tgt
         mu, delta = loadMuDelta(tgt)
     
@@ -104,10 +104,10 @@ if __name__ == '__main__':
         pdNormalize(fin)
         sys.exit(0)
     
-    fin = sys.argv[2]
-    cal = False if fin == "test" else True
-    fin = "data/" + cfg[fin]
-    process(fin)
+    train = "data/" + cfg["train"]
+    test = "data/" + cfg["test"]
+    process(train, cal=True)
+    process(test, cal=False)
     
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
     #       % (fin + ".tmp", fin + ".cmvn")
