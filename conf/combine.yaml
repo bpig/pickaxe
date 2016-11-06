@@ -22,6 +22,17 @@ c3:
     - ans/v1505.filter
   output: ans/c3
 
+c17:
+  input: 
+    - ans/v1701
+    - ans/v1704
+    - ans/v1706
+#    - ans/v1703
+#    - ans/v1705
+#    - ans/v1702
+
+  output: ans/c17
+
 today:
   input: 
     - ans/t1501

@@ -16,8 +16,9 @@ class DataSet(object):
         self._feas = feas
         self._tgts = tgts
         self._epochs_completed = 0
-        self._index_in_epoch = 0
         self._num_examples = len(feas)
+        self._index_in_epoch = len(feas)
+
     
     @property
     def feas(self):
@@ -135,7 +136,8 @@ def merge_small_predict(keys, feas, tgts):
     uniq = set(keys)
     small_fes = "data/predict/cache/"
     
-    mu, delta = cmvn.loadMuDelta("data/predict/2016.fe")
+    #mu, delta = cmvn.loadMuDelta("data/predict/2016.fe")
+    mu, delta = cmvn.loadMuDelta("data/fe/fe.15.tr")
     
     k = []
     f = []
@@ -155,13 +157,14 @@ def merge_small_predict(keys, feas, tgts):
     tgts = np.concatenate((tgts, t))
     return keys, feas, tgts
 
-def read_predict_sets(datafile, cache=True):
+def read_predict_sets(datafile, cache=True, merge=False):
     print time.ctime(), "begin load data", datafile
     keys, feas, tgts = base_data(datafile, cache)
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
-    
-    # keys, feas, tgts = merge_small_predict(keys, feas, tgts)
+
+    if merge:
+        keys, feas, tgts = merge_small_predict(keys, feas, tgts)
     
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)

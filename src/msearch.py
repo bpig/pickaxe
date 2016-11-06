@@ -1,6 +1,4 @@
 # -*- coding:utf-8 -*-
-import subprocess
-
 __author__ = "shuai.li(286287737@qq.com)"
 __date__ = "11/3/16"
 
@@ -49,14 +47,14 @@ def genAns(pp, foutFile, predSet):
         st = map(lambda x: "_".join(x), st)
         fout.write(ds + "," + ",".join(st) + "\n")
 
-def searchModel(m):
+def searchModel(model):
     with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[m]
+        cfg = yaml.load(fin)[model[:3]]
     
-    model_dir = "model/" + cfg["model"]
+    model_dir = "model/" + model
     datafile = "data/" + cfg["pdata"]
-    foutFile = "ans/" + cfg["pout"]
-    predSet = read_predict_sets(datafile)
+    foutFile = "ans/" + model
+    predSet = read_predict_sets(datafile, merge=True)
     net = cfg["net"]
     keep_prob = 1.0
     
@@ -73,8 +71,8 @@ def searchModel(m):
         
         genAns(pp, foutFile, predSet)
         
-        gain50 = gain_by_p.process(foutFile, 50, "20160104", 200, False)
-        gain3 = gain_by_p.process(foutFile, 3, "20160104", 200, False)
+        gain50 = gain_by_p.process(foutFile, 50, "20160901", 200, output=False)
+        gain3 = gain_by_p.process(foutFile, 3, "20160901", 200, output=False)
         
         value = "%s,%s,%.5f,%.5f\n" % (m, version, gain3, gain50)
         print "==" * 10
@@ -85,8 +83,9 @@ def searchModel(m):
     return ans
 
 if __name__ == "__main__":
-    model = ["v1501a", "v1502a", "v1503a", "v1504a", "v1506a"]
-    fout = open("model_search", "a")
+    model = ["v" + `_` for _ in range(1701, 1707)]
+    print model
+    fout = open("log/model_search.v17tr", "a")
     for m in model:
         ans = searchModel(m)
         for line in ans:

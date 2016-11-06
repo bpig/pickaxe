@@ -10,16 +10,21 @@ if __name__ == "__main__":
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
     
-    if len(sys.argv) == 3:
+    if "today" in sys.argv:
         datafile = "data/" + cfg["tdata"]
         fout = "ans/t" + model[1:]
     else:
         datafile = "data/" + cfg["pdata"]
         fout = "ans/" + model
+
+    merge = False
+    if "merge" in sys.argv:
+        merge = True
+
     if "pcache" in cfg:
-        predSet = read_predict_sets(datafile, cfg["pcache"])
+        predSet = read_predict_sets(datafile, cfg["pcache"], merge=merge)
     else:
-        predSet = read_predict_sets(datafile)
+        predSet = read_predict_sets(datafile, merge=merge)
     
     model_dir = "model/" + model
     

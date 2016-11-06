@@ -87,7 +87,10 @@ def process(predictFile, numStock, start, period, output=True):
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())
-    idx = ds.index(start)
+    if start not in ds:
+        idx = 0
+    else:
+        idx = ds.index(start)
     ds = ds[idx:idx + period]
     
     money = gain(predict, stock, numStock, ds, output)
