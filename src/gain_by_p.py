@@ -68,8 +68,8 @@ def gain(predict, stock, numStock, ds, output):
         
         total = sum(money)
         if output:
-            print d, "%.5f" % total, "%.5f" % bg, "->", "%.5f" % ed, \
-                "%.5f" % (ed / bg), high, low, stop, len(predict[d]), lack  # , buy.getvalue()[:-1]
+            print d, "%.3f" % total, "%.3f" % (ed / bg), "%.3f" % bg, "->", "%.3f" % ed, \
+                high, low, stop, len(predict[d]), lack  # , buy.getvalue()[:-1]
         key = d[:-2]
         if key not in month:
             month += [key]
@@ -79,7 +79,7 @@ def gain(predict, stock, numStock, ds, output):
     if output:
         print "month rate"
         for m, r1, r2 in zip(month[1:], rate[:-1], rate[1:]):
-            print "%s %.5f" % (m, r2 / r1)
+            print "%s %.3f" % (m, r2 / r1)
     return sum(money)
 
 def process(predictFile, numStock, start, period, output=True):
@@ -96,7 +96,7 @@ def process(predictFile, numStock, start, period, output=True):
     money = gain(predict, stock, numStock, ds, output)
     if output:
         print "after %d days:" % len(ds)
-        print "final: " + `money`
+        print "final: %.3f" % money
     return money
 
 if __name__ == "__main__":

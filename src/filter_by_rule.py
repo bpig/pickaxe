@@ -54,7 +54,7 @@ def process(fin, output=True):
         ans = filter(filterByHighLine(ds, stock), ans)
         ct += [len(ans)]
         
-        if sys.argv[1] == "today":
+        if "today" in sys.argv:
             ans = filter(filterByNew(ds, aux), ans)
             ct += [len(ans)]
         

@@ -1,7 +1,9 @@
 self:
   input: 
-    - ans/v1502
+#    - ans/v1502
+    - ans/v1503
     - ans/v1504
+    - ans/v1505
     - ans/v1506
   output: ans/self
 
@@ -42,7 +44,8 @@ today:
 
 top:
   input: 
-    - ans/t1502
+    - ans/t1503
     - ans/t1504
+    - ans/t1505
     - ans/t1506
   output: ans/top

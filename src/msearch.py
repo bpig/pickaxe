@@ -74,8 +74,9 @@ def searchModel(model):
         
         genAns(pp, foutFile, predSet)
         
-        gain50 = gain_by_p.process(foutFile, 50, "20160503", 200, output=False)
-        gain3 = gain_by_p.process(foutFile, 3, "20160503", 200, output=False)
+        gain50 = gain_by_p.process(foutFile, 50, "20160104", 200, output=False)
+        gain3 = gain_by_p.process(foutFile, 3, "20160104", 200, output=False)
+#        gain3 = gain_by_p.process(foutFile, 3, "20160503", 200, output=False)
         
         value = "%s,%s,%.5f,%.5f\n" % (m, version, gain3, gain50)
         print "==" * 10
@@ -86,9 +87,9 @@ def searchModel(model):
     return ans
 
 if __name__ == "__main__":
-    model = ["v" + `_` for _ in range(1801, 1807)]
+    model = ["v" + `_` for _ in range(1501, 1507)]
     print model
-    fout = open("log/model_search.v18", "a")
+    fout = open("log/model_search.v15.tr", "a")
     for m in model:
         ans = searchModel(m)
         for line in ans:
