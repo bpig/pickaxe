@@ -102,11 +102,13 @@ def process(predictFile, numStock, start, period, output=True):
 if __name__ == "__main__":
     tgt = "ans/" + sys.argv[1]
     # first do filter
-    filter_by_rule.process(tgt)
+    if not "filter" in tgt:
+        filter_by_rule.process(tgt)
+        tgt += ".filter"
     
     args = [50, "20160104", 230]
     la = len(sys.argv) - 2
     args[:la] = sys.argv[2:]
     numStock, start, period = args
     
-    process(tgt + ".filter", int(numStock), start, int(period))
+    process(tgt, int(numStock), start, int(period))

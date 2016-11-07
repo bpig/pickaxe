@@ -12,7 +12,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 4:
         point = sys.argv[3]
     else:
-        point = "20160400"
+        point = "20160500"
 
     files = os.listdir(fin)
     files = sorted(files)

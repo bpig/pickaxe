@@ -16,7 +16,6 @@ python src/combine_ans.py today
 
 python src/combine_ans.py top
 
-
 python src/daily.py today > daily/$2.csv
 
 python src/top.py top

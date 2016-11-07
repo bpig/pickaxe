@@ -88,7 +88,7 @@ v18:
   data: fe/11.tr  # 201101 - 201603
   net: [2048, 1024, 1024]
   keep_prob: 0.3
-  batch_step: 10
+  batch_step: 12
   epoch: 1
   pdata: fe/11.te
   tdata: predict/today.fe
@@ -108,7 +108,7 @@ v20:
   data: fe/11.tr  # 201301 - 201603
   net: [2048, 1024, 1024]
   keep_prob: 0.3
-  batch_step: 10
+  batch_step: 8
   epoch: 1
   pdata: fe/13.te
   tdata: predict/today.fe

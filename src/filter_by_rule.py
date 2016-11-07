@@ -30,7 +30,7 @@ def filterByNew(ds, aux):
     
     return _inter
 
-def process(fin):
+def process(fin, output=True):
     fout = open(fin + ".filter", "w")
     stock = getFt("data/2010/2016.ft")
     aux = getFt("data/2010/2016.ft.aux", Aux)
@@ -57,7 +57,9 @@ def process(fin):
         if sys.argv[1] == "today":
             ans = filter(filterByNew(ds, aux), ans)
             ct += [len(ans)]
-        print ds, ct
+        
+        if output:
+            print ds, ct
         
         ans = map(formatAns, ans)
         if ans:

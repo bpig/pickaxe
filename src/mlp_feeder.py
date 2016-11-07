@@ -137,7 +137,8 @@ def merge_small_predict(keys, feas, tgts):
     small_fes = "data/predict/cache/"
     
     #mu, delta = cmvn.loadMuDelta("data/predict/2016.fe")
-    mu, delta = cmvn.loadMuDelta("data/fe/fe.15.tr")
+    mu, delta = cmvn.loadMuDelta("data/2010/15/2016.fe")
+    #mu, delta = cmvn.loadMuDelta("data/fe/11.tr")
     
     k = []
     f = []

@@ -38,7 +38,7 @@ if __name__ == "__main__":
     l = next(open(fin + ".filter"))
     key, items, weight = parseLine(l)
     
-    key = key[:ct]
+    items = items[:ct]
     weight = weight[:ct]
     weight = np.asarray(weight)
     
@@ -49,6 +49,6 @@ if __name__ == "__main__":
     weight[-1] = 0.00001
     print ",".join(["", "code", "weight"])
     for i in range(ct):
-        print ",".join(map(str, (i + 1, key[i], weight[i])))
+        print ",".join(map(str, (i + 1, items[i], weight[i])))
         
         # print "stop", stop, "one", one, "new", n
