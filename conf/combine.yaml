@@ -10,8 +10,9 @@ self:
 c4:
   input: 
     - ans/v1501
-    - ans/v1503
-    - ans/v1505
+    - ans/v1502
+#    - ans/v1503
+#    - ans/v1505
 #    - ans/v1601
 #    - ans/v1603
 #    - ans/v1606

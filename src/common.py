@@ -23,6 +23,7 @@ import multiprocessing
 import subprocess
 import collections
 import time
+import random
 # from scipy import stats
 
 class TimeLog:

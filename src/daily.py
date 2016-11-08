@@ -47,6 +47,12 @@ if __name__ == "__main__":
     weight = (weight - wmin) / (wmax - wmin)
     weight[0] -= 0.00001
     weight[-1] = 0.00001
+
+    if ct == 100:
+        i1 = list(items[:50])
+        random.shuffle(i1)
+        items = i1 + items[50:]
+
     print ",".join(["", "code", "weight"])
     for i in range(ct):
         print ",".join(map(str, (i + 1, items[i], weight[i])))
