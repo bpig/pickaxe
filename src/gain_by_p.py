@@ -68,8 +68,11 @@ def gain(predict, stock, numStock, ds, output):
         
         total = sum(money)
         if output:
-            print d, "%.3f" % total, "%.3f" % (ed / bg), "%.3f" % bg, "->", "%.3f" % ed, \
-                high, low, stop, len(predict[d]), lack  # , buy.getvalue()[:-1]
+            print ("{ds} {total:>7.3f} {rate:>5.3f} " +
+                   "{bg:>7.3f} -> {ed:>7.3f} {hi} {lo} {stop} {ct} {lack}").format(
+                       ds=d, total=total, rate=ed / bg, 
+                       bg=bg, ed=ed, hi=high, lo=low, stop=stop, ct=len(predict[d]), lack=lack) #, buy.getvalue()[:-1]
+
         key = d[:-2]
         if key not in month:
             month += [key]
