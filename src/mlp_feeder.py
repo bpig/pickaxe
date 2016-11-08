@@ -119,7 +119,7 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     print time.ctime(), "finish load data"
     return Datasets(train=train, test=test)
 
-def get_small_k_f_t(filename, uniq, k, f):
+def get_one_day(filename, uniq, k, f):
     for l in open(filename):
         l = l.strip()
         if not l:
@@ -132,40 +132,47 @@ def get_small_k_f_t(filename, uniq, k, f):
         k.append(key)
         f.append(fea)
 
-def merge_small_predict(keys, feas, tgts):
+def merge_daily(keys, feas, tgts, cfg):
     uniq = set(keys)
-    small_fes = "data/predict/cache/"
+    if "daily_fe" not in cfg or "normal" not in cfg:
+        return keys, feas, tgts
     
-    mu, delta = cmvn.loadMuDelta("data/predict/2016.fe")
-    #mu, delta = cmvn.loadMuDelta("data/2010/15/2016.fe")
-    #mu, delta = cmvn.loadMuDelta("data/fe/11.tr")
-    
+    normal = "data/" + cfg["normal"]
+    mu, delta = cmvn.loadMuDelta(normal)
     k = []
     f = []
-    for d in os.listdir(small_fes):
+    daily_fe = "data/" + cfg["daily_fe"] + "/"
+    for d in os.listdir(daily_fe):
         if d > 11 and not d.endswith(".fe"):
             continue
-        print "load", small_fes + d
-        get_small_k_f_t(small_fes + d, uniq, k, f)
+        print "load", daily_fe + d
+        get_one_day(daily_fe + d, uniq, k, f)
+    if not k:
+        return keys, feas, tgts
     
     k = np.asarray(k)
     f = np.asarray(f, dtype=np.float32)
     f = (f - mu) / delta
     t = np.ones(len(k), dtype=np.float32)
-    # return k, f, t
+
     keys = np.concatenate((keys, k))
     feas = np.concatenate((feas, f))
     tgts = np.concatenate((tgts, t))
     return keys, feas, tgts
 
-def read_predict_sets(datafile, cache=True, merge=False):
+def read_predict_sets(datafile, cfg):
+    if "cache" not in cfg:
+        cfg["cache"] = True
+    if "merge" not in cfg:
+        cfg["merge"] = False
+
     print time.ctime(), "begin load data", datafile
-    keys, feas, tgts = base_data(datafile, cache)
+    keys, feas, tgts = base_data(datafile, cfg["cache"])
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
 
-    if merge:
-        keys, feas, tgts = merge_small_predict(keys, feas, tgts)
+    if cfg["merge"]:
+        keys, feas, tgts = merge_daily(keys, feas, tgts, cfg)
     
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)

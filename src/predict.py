@@ -17,14 +17,10 @@ if __name__ == "__main__":
         datafile = "data/" + cfg["pdata"]
         fout = "ans/" + model
 
-    merge = False
     if "merge" in sys.argv:
-        merge = True
+        cfg["merge"] = True
 
-    if "pcache" in cfg:
-        predSet = read_predict_sets(datafile, cfg["pcache"], merge=merge)
-    else:
-        predSet = read_predict_sets(datafile, merge=merge)
+    predSet = read_predict_sets(datafile, cfg)
     
     model_dir = "model/" + model
     
