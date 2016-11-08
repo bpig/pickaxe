@@ -28,7 +28,7 @@ def parseLine(l):
 if __name__ == "__main__":
     fin = "ans/" + sys.argv[1]
     
-    filter_by_rule.process(fin)
+    filter_by_rule.process(fin, output=False)
     
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
@@ -49,9 +49,10 @@ if __name__ == "__main__":
     weight[-1] = 0.00001
 
     if ct == 100:
-        i1 = list(items[:50])
+        point = 33
+        i1 = list(items[:point])
         random.shuffle(i1)
-        items = i1 + items[50:]
+        items = i1 + items[point:]
 
     print ",".join(["", "code", "weight"])
     for i in range(ct):
