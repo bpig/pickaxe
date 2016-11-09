@@ -90,12 +90,18 @@ def searchModel(model, keys):
     return ans
 
 def getkeys(logfile):
-    return set([_[0] + "," + _[1] for _ in csv.reader(open(logfile)) if _ ])
+    try:
+        return set([_[0] + "," + _[1] for _ in csv.reader(open(logfile)) if _ ])
+    except:
+        return set()
 
 if __name__ == "__main__":
-    model = ["v" + `_` for _ in range(2103, 2105)]
+    begin = int(sys.argv[1])
+    end = int(sys.argv[2])
+    model = ["v" + `_` for _ in range(begin, end)]
     print model
-    logfile = "log/model_search.v21.172"
+    #logfile = "log/model_search.v21.153"
+    logfile = sys.argv[3]
     keys = getkeys(logfile)
 
     fout = open(logfile, "a")
