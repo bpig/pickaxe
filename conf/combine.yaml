@@ -48,8 +48,7 @@ today:
 
 top:
   input: 
-    - ans/t1503
-    - ans/t1504
-    - ans/t1505
-    - ans/t1506
+    - ans/t2103
+    - ans/t2105
+    - ans/t2106
   output: ans/top
