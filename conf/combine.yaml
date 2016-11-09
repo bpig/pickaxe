@@ -1,11 +1,11 @@
 self:
   input: 
-    - ans/v1501
-#    - ans/v1502
-#    - ans/v1503
-    - ans/v1504
-    - ans/v1505
-    - ans/v1506
+    - ans/v2101
+    - ans/v2102
+    - ans/v2103
+    - ans/v2104
+    - ans/v2105
+    - ans/v2106
   output: ans/self
 
 c4:

@@ -6,7 +6,7 @@ set -x
 # python src/simple.py v1705
 
 
-CUDA_VISIBLE_DEVICES=0 python src/predict.py v2103 &
-CUDA_VISIBLE_DEVICES=1 python src/predict.py v2104 &
+CUDA_VISIBLE_DEVICES=0 python src/simple.py v2105 &
+CUDA_VISIBLE_DEVICES=1 python src/simple.py v2106 &
 
 wait
