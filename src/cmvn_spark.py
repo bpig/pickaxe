@@ -61,18 +61,41 @@ def trans(content):
     value = content.split(",")[:-1]
     return np.asarray(value).astype(np.float32)
 
+def cal(iterator):
+    x = next(iterator)
+    xx = x * x
+    for y in iterator:
+        x += y
+        xx += y * y
+    yield x, xx
+
 if __name__ == "__main__":
+    model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+        cfg = yaml.load(fin)[model]
     sc = getSC()
     fin = "htk/" + cfg["fe"]
     ft = sc.sequenceFile(fin)
     tb = cfg["train_begin"]
     te = cfg["train_end"]
-    ft = ft.filter(select(tb, te)).values().trans()
+    ft = ft.filter(select(tb, te)).values().map(trans)
+    ft.cache()
+    ct = ft.count()
+    print ct
+    ft = ft.mapPartitions(cal).reduce(lambda x, y: (x[0] + y[0], x[1] + y[1]))
+
+    mu, delta = ft
+    mu /= ct
+    delta = delta / ct - mu * mu
+    delta = np.maximum(delta, 0)
+
+    delta **= .5
+    delta += 1
+    print len(mu), len(delta)
+    np.save(model + ".mu.npy", mu)
+    np.save(model + ".delta.npy", delta)
+
     
 
-    fe = ft.map(process).values().filter(len).flatMap(lambda x: x)
-    fe.saveAsSequenceFile(fout)
 
 # spark-submit  --num-executors 500 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

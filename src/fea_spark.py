@@ -22,7 +22,8 @@ def process(line):
     items = value.split(",")
     items = map(lambda x: x.split("_"), items)
     ds = items[0]
-    wins = [2, 3, 5, 7, 15]
+    # wins = [2, 3, 5, 7, 15]
+    wins = [2, 3, 5, 7, 10, 15, 20, 30, 60]
     maxWin = wins[-1]
     
     ct = len(ds) - 2 - maxWin
@@ -50,11 +51,13 @@ def getSC(appName='aux'):
     return sc
 
 if __name__ == "__main__":
-    with open("conf/spark.yaml") as fin:
+    with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     sc = getSC()
     fin = "htk/" + cfg["ft"]
     fout = "htk/" + cfg["fe"]
+    print "fin", fin
+    print "fout", fout
     ft = sc.textFile(fin, 500)
     fe = ft.map(process).values().filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)

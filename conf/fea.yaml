@@ -70,11 +70,15 @@ v20:
   test: fe/13.te
 
 f1:
+  ft: 2010.ft
+  fe: 2010_15fe
   raw_fe: raw/2010_15/ 
   train_begin: 20100000
   train_end: 20160500
 
 f2:
+  ft: 2010.ft
+  fe: 2010_60fe
   raw_fe: raw/2010_60/ 
   train_begin: 20100000
   train_end: 20160500
