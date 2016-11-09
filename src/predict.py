@@ -9,12 +9,13 @@ if __name__ == "__main__":
     model = sys.argv[1]
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
-    
+
     if "today" in sys.argv:
         datafile = "data/" + cfg["tdata"]
         fout = "ans/t" + model[1:]
     else:
-        datafile = "data/" + cfg["pdata"]
+        fe_version = cfg["fe"]
+        datafile = "data/fe/%s/train" % fe_version
         fout = "ans/" + model
 
     if "merge" in sys.argv:
