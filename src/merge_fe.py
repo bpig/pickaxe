@@ -4,6 +4,14 @@ __date__ = "10/31/16"
 
 from common import *
 
+def np_save(prefix, key, fea, tgt):
+    key = np.asarray(key)
+    fea = np.asarray(fea, dtype=np.float32)
+    tgt = np.asarray(tgt, dtype=np.float32)
+    np.save(prefix + ".key", key)
+    np.save(prefix + ".fea", fea)
+    np.save(prefix + ".tgt", tgt)
+
 if __name__ == '__main__':
     model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
@@ -11,10 +19,15 @@ if __name__ == '__main__':
 
     fin = cfg["raw_fe"]
     tgt = "data/fe/%s/" % model
+    tr = tgt + "train"
+    te = tgt + "test"
 
     os.system("mkdir -p %s" % tgt)
-    tr = open(tgt + "train", "w")
-    te = open(tgt + "test", "w")
+
+    mu = "data/fe/%s/%s.mu.npy" % (model, model)
+    delta = "data/fe/%s/%s.delta.npy" % (model, model)
+    mu = np.load(mu)
+    delta = np.load(delta)
 
     tr_begin = int(cfg["train_begin"])
     tr_end = int(cfg["train_end"])
@@ -25,7 +38,9 @@ if __name__ == '__main__':
     files = sorted(files)
     print "total %d files" % len(files)
 
-    cf, ctr, cte = 0, 0, 0
+    tr_key, te_key = [], []
+    tr_fea, te_fea = [], []
+    tr_tgt, te_tgt = [], []
     for c, l in enumerate(files):
         if "dumper.list" in l:
             continue
@@ -33,20 +48,33 @@ if __name__ == '__main__':
         ds = int(l.split("_")[1])
 
         if ds < tr_begin:
-            cf += 1
             continue
+            
+        key = l
+        values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
+        tgt = values[-1]
+        values = values[:-1]
+        values = (values - mu) / delta
 
-        content = "%s:%s\n" % (l, open(tgt).read())
         if ds < tr_end:
-            tr.write(content)
-            ctr += 1
+            tr_key += [l]
+            tr_fea += [values]
+            tr_tgt += [tgt]
         else:
-            te.write(content)
-            cte += 1
+            te_key += [l]
+            te_fea += [values]
+            te_tgt += [tgt]
 
         if c % 10000 == 0:
             print time.ctime(), c
-    
-    print "cf %d, tr %d, te %d" % (cf, ctr, cte)
+
+    print "train:", len(tr_key), len(tr_fea[0])
+    print "test:", len(te_key), len(tr_fea[0])
+    with TimeLog():
+        np_save(tr, tr_key, tr_fea, tr_tgt)
+    with TimeLog():
+        np_save(te, te_key, te_fea, te_tgt)
+
+
     
 
