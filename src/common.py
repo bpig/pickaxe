@@ -24,6 +24,7 @@ import subprocess
 import collections
 import time
 import random
+from argparse import ArgumentParser
 # from scipy import stats
 
 class TimeLog:

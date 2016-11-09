@@ -30,7 +30,7 @@ def filterByNew(ds, aux):
     
     return _inter
 
-def process(fin, output=True):
+def process(fin, filterNew=False, output=True):
     fout = open(fin + ".filter", "w")
     stock = getFt("data/2010/2016.ft")
     aux = getFt("data/2010/2016.ft.aux", Aux)
@@ -54,7 +54,7 @@ def process(fin, output=True):
         ans = filter(filterByHighLine(ds, stock), ans)
         ct += [len(ans)]
         
-        if "today" not in sys.argv:
+        if filterNew:
             ans = filter(filterByNew(ds, aux), ans)
             ct += [len(ans)]
         
@@ -65,6 +65,15 @@ def process(fin, output=True):
         if ans:
             fout.write(ds + "," + ",".join(ans) + "\n")
 
+def getArgs():
+    parser = ArgumentParser(description="Filter")
+    parser.add_argument("-t", dest="tgt", required=True,
+                        help="target")
+    parser.add_argument("-fn", dest="fn", action="store_true", default=False,
+                        help="filter new")
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    fin = "ans/" + sys.argv[1]
-    process(fin)
+    args = getArgs()
+    tgt = "ans/" + args.tgt
+    process(tgt, args.fn)

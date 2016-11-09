@@ -102,16 +102,24 @@ def process(predictFile, numStock, start=None, period=200, output=True):
         print "final: %.3f" % money
     return money
 
+
+def getArgs():
+    parser = ArgumentParser(description="Gain")
+    parser.add_argument("-t", dest="tgt", required=True,
+                        help="target")
+    parser.add_argument("-fn", dest="fn", action="store_true", default=False,
+                        help="filter new")
+    parser.add_argument("-c", dest="c", default=50, type=int, 
+                        help="cal count")
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    tgt = "ans/" + sys.argv[1]
-    # first do filter
+    args = getArgs()
+    
+    tgt = "ans/" + args.tgt
+
     if not "filter" in tgt:
-        filter_by_rule.process(tgt)
+        filter_by_rule.process(tgt, args.fn)
         tgt += ".filter"
     
-    args = [50, "20160104", 230]
-    la = len(sys.argv) - 2
-    args[:la] = sys.argv[2:]
-    numStock, start, period = args
-    
-    process(tgt, int(numStock), start, int(period))
+    process(tgt, args.c)
