@@ -25,7 +25,7 @@ if __name__ == '__main__':
     files = sorted(files)
     print "total %d files" % len(files)
 
-    cf, ctr, cte = 0, 0
+    cf, ctr, cte = 0, 0, 0
     for c, l in enumerate(files):
         if "dumper.list" in l:
             continue

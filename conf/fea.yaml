@@ -69,13 +69,13 @@ v20:
   train: fe/13.tr
   test: fe/13.te
 
-v21:
-  raw_fe: raw/2010_15/ # spark 15
-  train_begin: "20100000"
-  train_end: "20160500"
+f1:
+  raw_fe: raw/2010_15/ 
+  train_begin: 20100000
+  train_end: 20160500
 
-v21:
-  raw_fe: raw/2010_15/ # spark 15
-  train_begin: "20100000"
-  train_end: "20160500"
+f2:
+  raw_fe: raw/2010_60/ 
+  train_begin: 20100000
+  train_end: 20160500
 

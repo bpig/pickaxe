@@ -9,7 +9,7 @@ Fea = namedtuple("Fea", ["key", "value", "tgt"])
 def loadData(filename, hasTgt=True):
     print time.ctime(), "begin load data"
     datas = []
-    for l in open(filename):
+    for c, l in enumerate(open(filename)):
         l = l.strip()
         if not l:
             continue
@@ -23,6 +23,8 @@ def loadData(filename, hasTgt=True):
             tgt = 0.0
         value = np.asarray(value).astype(np.float32)
         datas.append(Fea(key, value, tgt))
+        if c % 10000 == 0:
+            print time.ctime(), c
     print time.ctime(), "finish load data"
     return datas
 

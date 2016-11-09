@@ -47,7 +47,7 @@ def genAns(pp, foutFile, predSet):
         st = map(lambda x: "_".join(x), st)
         fout.write(ds + "," + ",".join(st) + "\n")
 
-def searchModel(model):
+def searchModel(model, keys):
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
     
@@ -65,6 +65,9 @@ def searchModel(model):
 
     ans = []
     for version in versions:
+        key = model + "," + version
+        if key in keys:
+            continue
         setCheckPoint(model_dir, version)
         
         classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
@@ -78,7 +81,7 @@ def searchModel(model):
         gain50 = gain_by_p.process(foutFile, 50, output=False)
         gain3 = gain_by_p.process(foutFile, 3, output=False)
 
-        value = "%s,%s,%.5f,%.5f\n" % (m, version, gain3, gain50)
+        value = "%s,%s,%.5f,%.5f\n" % (model, version, gain3, gain50)
         print "==" * 10
         print value,
         print
@@ -86,12 +89,20 @@ def searchModel(model):
     
     return ans
 
+def getkeys(logfile):
+    return set([_[0] + "," + _[1] for _ in csv.reader(open(logfile)) if _ ])
+
 if __name__ == "__main__":
     model = ["v" + `_` for _ in range(2103, 2105)]
     print model
-    fout = open("log/model_search.v21.172", "a")
+    logfile = "log/model_search.v21.172"
+    keys = getkeys(logfile)
+
+    fout = open(logfile, "a")
     for m in model:
-        ans = searchModel(m)
+        ans = searchModel(m, keys)
+        if not ans:
+            continue
         for line in ans:
             fout.write(line)
         fout.write("\n")
