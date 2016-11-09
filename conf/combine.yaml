@@ -38,8 +38,12 @@ c17:
 
 today:
   input: 
-    - ans/t1501
-    - ans/t1502
+    - ans/t2101
+    - ans/t2102
+    - ans/t2103
+    - ans/t2104
+    - ans/t2105
+    - ans/t2106
   output: ans/today
 
 top:

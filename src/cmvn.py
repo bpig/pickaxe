@@ -25,7 +25,7 @@ def loadData(filename, hasTgt=True):
         datas.append(Fea(key, value, tgt))
         if c % 10000 == 0:
             print time.ctime(), c
-    print time.ctime(), "finish load data"
+    print time.ctime(), "finish load data", c
     return datas
 
 def globalCal(data):
@@ -50,8 +50,8 @@ def calMuDelta(fin, value):
 
 def loadMuDelta(fin):
     dirname = os.path.dirname(fin)
-    mu = np.load(dirname + "fe.mu.npy")
-    delta = np.load(dirname + "fe.delta.npy")
+    mu = np.load(fin + ".mu.npy")
+    delta = np.load(fin + ".delta.npy")
     return mu, delta
 
 def saveByNp(fin, keys, feas, tgts, shuffle=True):
@@ -79,7 +79,7 @@ def getKFT(mu, delta, data):
 
 def pdNormalize(fin):
     data = loadData(fin, hasTgt=False)
-    mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/2010/15/fe")
+    mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/fe/f1/f1")
     
     keys, feas, tgts = getKFT(mu, delta, data)
     saveByNp(fin, keys, feas, tgts)

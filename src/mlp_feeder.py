@@ -134,11 +134,12 @@ def get_one_day(filename, uniq, k, f):
 
 def merge_daily(keys, feas, tgts, cfg):
     uniq = set(keys)
-    if "daily_fe" not in cfg or "normal" not in cfg:
+    if "daily_fe" not in cfg:
         return keys, feas, tgts
-    
-    normal = "data/" + cfg["normal"]
-    mu, delta = cmvn.loadMuDelta(normal)
+    fe_version = cfg["fe"]
+    normal = "data/fe/%s/%s" % (fe_version, fe_version)
+    mu = np.load(normal + ".mu.npy")
+    delta = np.load(normal + ".delta.npy")
     k = []
     f = []
     daily_fe = "data/" + cfg["daily_fe"] + "/"

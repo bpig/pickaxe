@@ -122,5 +122,6 @@ v21:
   keep_prob: 0.3
   batch_step: 12
   epoch: 1
+  daily_fe: predict/cache
   tdata: predict/today.fe
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]

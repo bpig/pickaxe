@@ -26,7 +26,7 @@ def filterByNew(ds, aux):
     def _inter(_):
         ft = aux[_.code]
         idx = ft.ds.index(ds)
-        return int(ft.work_day[idx]) > 120
+        return int(ft.work_day[idx]) > 100
     
     return _inter
 
