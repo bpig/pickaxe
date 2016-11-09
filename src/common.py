@@ -25,6 +25,7 @@ import collections
 import time
 import random
 from argparse import ArgumentParser
+import itertools
 # from scipy import stats
 
 class TimeLog:

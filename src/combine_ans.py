@@ -35,6 +35,12 @@ def combine(predictions, fout):
         cw = map(lambda x: x[0] + "_" + str(x[1]) + "_0.0", cw)
         fout.write(k + "," + ",".join(cw) + "\n")
 
+def process(fins, fout, weights=None):
+    if not weights:
+        weights = [1.0] * len(fins)
+    predictions = loadFile(zip(fins, weights))
+    combine(predictions, fout)
+
 if __name__ == "__main__":
     with open("conf/combine.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
@@ -45,5 +51,4 @@ if __name__ == "__main__":
     else:
         weights = [1.0] * len(fins)
     fout = cfg["output"]
-    predictions = loadFile(zip(fins, weights))
-    combine(predictions, fout)
+    process(fins, fout, weights)

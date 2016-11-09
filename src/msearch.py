@@ -74,14 +74,14 @@ def searchModel(model):
         pp = classifier.predict(predSet.fea, as_iterable=True)
         
         genAns(pp, foutFile, predSet)
-        
+
         gain50 = gain_by_p.process(foutFile, 50, output=False)
         gain3 = gain_by_p.process(foutFile, 3, output=False)
-        
+
         value = "%s,%s,%.5f,%.5f\n" % (m, version, gain3, gain50)
         print "==" * 10
         print value,
-        print 
+        print
         ans += [value]
     
     return ans
