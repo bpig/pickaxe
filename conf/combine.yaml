@@ -19,12 +19,11 @@ c4:
 #    - ans/v1606
   output: ans/c4
 
-c3:
+c21:
   input: 
-    - ans/v1501.filter
-    - ans/v1503.filter
-    - ans/v1505.filter
-  output: ans/c3
+    - ans/v2103
+    - ans/v2104
+  output: ans/c21
 
 c17:
   input: 

@@ -15,7 +15,7 @@ if __name__ == "__main__":
         fout = "ans/t" + model[1:]
     else:
         fe_version = cfg["fe"]
-        datafile = "data/fe/%s/train" % fe_version
+        datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
 
     if "merge" in sys.argv:

@@ -85,12 +85,12 @@ def gain(predict, stock, numStock, ds, output):
             print "%s %.3f" % (m, r2 / r1)
     return sum(money)
 
-def process(predictFile, numStock, start, period, output=True):
+def process(predictFile, numStock, start=None, period=200, output=True):
     stock = getFt("data/2010/2016.ft")
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())
-    if start not in ds:
+    if not start or start not in ds:
         idx = 0
     else:
         idx = ds.index(start)
