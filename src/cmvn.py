@@ -41,13 +41,15 @@ def globalCal(data):
 
 def calMuDelta(fin, value):
     mu, delta = globalCal(value)
-    np.save(fin + ".mu.npy", mu)
-    np.save(fin + ".delta.npy", delta)
+    dirname = os.path.dirname(fin)
+    np.save(dirname + "fe.mu.npy", mu)
+    np.save(dirname + "fe.delta.npy", delta)
     return mu, delta
 
 def loadMuDelta(fin):
-    mu = np.load(fin + ".mu.npy")
-    delta = np.load(fin + ".delta.npy")
+    dirname = os.path.dirname(fin)
+    mu = np.load(dirname + "fe.mu.npy")
+    delta = np.load(dirname + "fe.delta.npy")
     return mu, delta
 
 def saveByNp(fin, keys, feas, tgts, shuffle=True):
@@ -80,7 +82,7 @@ def pdNormalize(fin):
     keys, feas, tgts = getKFT(mu, delta, data)
     saveByNp(fin, keys, feas, tgts)
 
-def process(fin, cal=True):
+def process(fin, cal=True, shuffle=True):
     data = loadData(fin)
     
     if cal:
@@ -88,26 +90,23 @@ def process(fin, cal=True):
         value = [fea.value for fea in data]
         mu, delta = calMuDelta(fin, value)
     else:
-        tgt = fin[:-2] + "tr"
-        print "load mu, delta %s" % tgt
-        mu, delta = loadMuDelta(tgt)
+        print "load mu, delta for %s" % fin
+        mu, delta = loadMuDelta(fin)
     
     keys, feas, tgts = getKFT(mu, delta, data)
-    saveByNp(fin, keys, feas, tgts, shuffle=True)
+    saveByNp(fin, keys, feas, tgts, shuffle=shuffle)
 
 if __name__ == '__main__':
+    model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+        cfg = yaml.load(fin)[model]
     
-    if "predict" in cfg:
-        fin = "data/" + cfg["predict"]
-        pdNormalize(fin)
-        sys.exit(0)
-    
-    train = "data/" + cfg["train"]
-    test = "data/" + cfg["test"]
+    tgt = "data/fe/%s/" % model
+        
+    train = tgt + "train"
+    test = tgt + "test"
     process(train, cal=True)
-    process(test, cal=False)
+    process(test, cal=False, shuffle=False)
     
     # cmd = "perl -MList::Util -e 'print List::Util::shuffle <>' %s > %s" \
     #       % (fin + ".tmp", fin + ".cmvn")

@@ -32,11 +32,11 @@ if __name__ == "__main__":
     model = sys.argv[1]
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
-    
-    for key in cfg:
-        print key, ":", cfg[key]
 
-    datafile = "data/" + cfg["data"]
+    fe_version = cfg["fe"]
+
+    datafile = "data/fe/%s/train" % fe_version
+
     idx = int(model[-2:])
     division = cfg["division"][idx]
     if "dcache" in cfg:
@@ -44,13 +44,14 @@ if __name__ == "__main__":
     else:
         data = read_data_sets(datafile, division)
 
+    print "model={m}, data={d}".format(d=datafile, m=model)
+
     config = learn.estimators.run_config.RunConfig(
         log_device_placement=False, save_summary_steps=100,
         save_checkpoints_secs=600, keep_checkpoint_max=2000)
 
     model_dir = "model/" + model
-    print "model:", model
-    print "division:", division
+
     net = cfg["net"]
     keep_prob = cfg["keep_prob"]
     classifier = learn.Estimator(

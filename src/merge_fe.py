@@ -5,30 +5,39 @@ __date__ = "10/31/16"
 from common import *
 
 if __name__ == '__main__':
-    fin = sys.argv[1] # raw/2010_15/ 
-    tr = open(sys.argv[2] + ".tr", "w")
-    te = open(sys.argv[2] + ".te", "w")
+    model = sys.argv[1]
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[model]
 
-    if len(sys.argv) == 4:
-        point = sys.argv[3]
-    else:
-        point = "20160500"
+    fin = cfg["raw_fe"]
+    tgt = "data/fe/%s/" % model
+
+    os.system("mkdir -p %s" % tgt)
+    tr = open(tgt + "train", "w")
+    te = open(tgt + "test", "w")
+
+    tr_begin = int(cfg["train_begin"])
+    tr_end = int(cfg["train_end"])
+
+    print "model {m}, train {tb} - {te}, test {te} - now".format(m=model, tb=tr_begin, te=tr_end)
 
     files = os.listdir(fin)
     files = sorted(files)
     print "total %d files" % len(files)
 
-    ctr, cte = 0, 0
+    cf, ctr, cte = 0, 0
     for c, l in enumerate(files):
         if "dumper.list" in l:
             continue
         tgt = fin + "/" + l
-        ds = l.split("_")[1]
+        ds = int(l.split("_")[1])
+
+        if ds < tr_begin:
+            cf += 1
+            continue
 
         content = "%s:%s\n" % (l, open(tgt).read())
-        if ds < "20101200":
-            continue
-        if ds < point:
+        if ds < tr_end:
             tr.write(content)
             ctr += 1
         else:
@@ -38,6 +47,6 @@ if __name__ == '__main__':
         if c % 10000 == 0:
             print time.ctime(), c
     
-    print "tr %d, te %d" % (ctr, cte)
+    print "cf %d, tr %d, te %d" % (cf, ctr, cte)
     
 

@@ -70,6 +70,12 @@ v20:
   test: fe/13.te
 
 v21:
-  train: 2010/15/fe
-  test: 2010/15/2016.fe
+  raw_fe: raw/2010_15/ # spark 15
+  train_begin: "20100000"
+  train_end: "20160500"
+
+v21:
+  raw_fe: raw/2010_15/ # spark 15
+  train_begin: "20100000"
+  train_end: "20160500"
 

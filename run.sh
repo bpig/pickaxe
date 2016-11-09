@@ -1,14 +1,14 @@
 set -x
 
-# python src/gen_predict_fea.py  $1 #20161102
+python src/gen_predict_fea.py  $1 #20161102
 
 # python src/format.py f1
 
-python src/predict.py v1501 today
+# python src/predict.py v1501 today
+# python src/predict.py v1502 today
+
 python src/predict.py v1503 today
 python src/predict.py v1505 today
-
-python src/predict.py v1502 today
 python src/predict.py v1504 today
 python src/predict.py v1506 today
 
