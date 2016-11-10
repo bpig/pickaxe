@@ -18,27 +18,27 @@ def download(today):
     except:
         noData = set()
     fout = open(checkpoint, "a")
-
+    
     now = datetime.datetime(int(today[:4]), int(today[4:6]), int(today[6:]))
-
+    
     print now.year, now.month, now.day
     dates = []
     while len(dates) < 15:
-        mode = "%04d-%02d-%02d"
-        ds = mode % (now.year, now.month, now.day)
+        tmpl = "%04d-%02d-%02d"
+        ds = tmpl % (now.year, now.month, now.day)
         if ds in noData:
             now = yesterday(now)
             continue
         print "valid", ds
         downloadByDs(ds)
-        if wc(ds):
+        if valid(ds):
             dates += [ds]
         else:
             fout.write(ds + "\n")
         now = yesterday(now)
     return dates
 
-def wc(ds):
+def valid(ds):
     f = "cache/price_" + ds + ".csv"
     ff = "cache/derivativeindicator_" + ds + ".csv"
     if not os.path.isfile(f):
@@ -54,17 +54,16 @@ def downloadByDs(ds):
     tmpl = "http://61.130.4.98:8000/download/%s_%s.csv"
     f = "price_" + ds + ".csv"
     ff = "derivativeindicator_" + ds + ".csv"
-    os.chdir("cache")
-    files = os.listdir(".")
-    if ff not in files:
-        url = tmpl % ("derivativeindicator", ds)
-        print url
-        wget.download(url)
-    if f not in files:
-        url = tmpl % ("price", ds)
-        print url
-        wget.download(url)
-    os.chdir("..")
+    with CD("cache"):
+        files = os.listdir(".")
+        if ff not in files:
+            url = tmpl % ("derivativeindicator", ds)
+            print url
+            wget.download(url)
+        if f not in files:
+            url = tmpl % ("price", ds)
+            print url
+            wget.download(url)
 
 # price.S_INFO_WINDCODE, price.TRADE_DT, price.S_DQ_PCTCHANGE, price.S_DQ_VOLUME, price.S_DQ_AMOUNT, price.S_DQ_ADJPRECLOSE, price.S_DQ_ADJOPEN, price.S_DQ_ADJHIGH, price.S_DQ_ADJLOW, price.S_DQ_ADJCLOSE, big.S_DQ_FREETURNOVER, big.FREE_SHARES_TODAY
 #                 code,             dt,                 rate,            volumn,            amount,                     pe,                  s,               high,               low,                   e,              turnover,                shares
@@ -109,7 +108,8 @@ def downloadByDs(ds):
 
 def genCsv(dates):
     dates = sorted(dates, reverse=True)
-    fout = open("today.csv", "w")
+    csvname = dates[0].replace("-", "")
+    fout = open(csvname, "w")
     for ds in dates:
         pricefile = "cache/price_" + ds + ".csv"
         bigfile = "cache/derivativeindicator_" + ds + ".csv"
@@ -150,34 +150,37 @@ def transformOne(filename, table, ct):
     return kv
 
 if __name__ == "__main__":
-    os.chdir("data/predict")
-
-    today = sys.argv[1]
-
-    csv = "cache/%s.csv" % today
-    if not os.path.exists(csv):
-        dates = download(today)
-        print dates
-        genCsv(dates)
-        os.system("cp today.csv %s" % csv)
-    else:
-        print "%s in cache" % csv
-        os.system("cp %s today.csv" % csv)
-
-    ftfile = "cache/%s.ft" % today
-    if not os.path.exists(ftfile):
-        ft.process("today.csv", "today.ft")
-        os.system("cp today.ft %s" % ftfile)
-    else:
-        print "%s in cache" % ftfile
-        os.system("cp %s today.ft" % ftfile)        
-
-    fe = "cache/%s.fe" % today
-    if not os.path.exists(fe):
-        fea.process("today.ft", "today.fe")
-        os.system("cp today.fe %s" % fe)
+    model = sys.argv[1]
+    with open("conf/model.yaml") as fin:
+        cfg = yaml.load(fin)[model]
+    fe_version = cfg["fe"]
+    today = sys.argv[2]
+    
+    os.system("mkdir -p data/daily/cache")
+    
+    dailydt = "data/daily/"
+    with CD(dailydt):
+        csv = "%s.csv" % today
+        if not os.path.exists(csv):
+            dates = download(today)
+            print dates
+            genCsv(dates)
+        else:
+            print "%s in cache" % csv
+        
+        ftfile = "%s.ft" % today
+        if not os.path.exists(ftfile):
+            ft.process(csv, ftfile)
+        else:
+            print "%s in cache" % ftfile
+    dailyfe = "data/fe/%s/daily/" % fe_version
+    os.system("mkdir -p %s" % dailyfe)
+    
+    fe = "%s.fe" % today
+    if not os.path.exists(dailyfe + fe):
+        fea.process(dailydt + ftfile, dailyfe + fe)
     else:
         print "%s in cache" % fe
-        os.system("cp %s today.fe" % fe)
-
-    cmvn.pdNormalize("today.fe")
+    
+    with CD(dailyfe):
+        cmvn.dailyNormal(fe, fe_version)

@@ -7,6 +7,7 @@ import os
 import numpy as np
 import math
 import csv
+
 try:
     import pandas as pd
     import yaml
@@ -29,12 +30,23 @@ import time
 import random
 from argparse import ArgumentParser
 import itertools
+
 # from scipy import stats
 
 class TimeLog:
     def __enter__(self, name=""):
         self.t = time.time()
         self.n = name
-
+    
     def __exit__(self, exc_type, exc_val, exc_tb):
         print "%s %.2fs" % (self.n, time.time() - self.t)
+
+class CD(object):
+    def __enter__(self, dirname):
+        self.cwd = os.getcwd()
+        print "enter", dirname
+        os.chdir(dirname)
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print "return to", self.cwd
+        os.chdir(self.cwd)

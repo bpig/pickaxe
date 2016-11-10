@@ -77,11 +77,11 @@ def getKFT(mu, delta, data):
     tgts = np.asarray([fea.tgt for fea in data]).astype(np.float32)
     return keys, feas, tgts
 
-def pdNormalize(fin):
+def dailyNormal(fin, fe_version):
     data = loadData(fin, hasTgt=False)
-    #mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/fe/f1/f1")
-    mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/2010/15/fe")
-    
+    prefix = "../" + fe_version
+    mu = np.load(prefix + ".mu.npy")
+    delta = np.load(prefix + ".delta.npy")
     keys, feas, tgts = getKFT(mu, delta, data)
     saveByNp(fin, keys, feas, tgts)
 
