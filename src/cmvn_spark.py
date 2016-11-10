@@ -76,11 +76,8 @@ def normal(mu, delta):
         tgt = value[-1]
         value = np.asarray(value[:-1]).astype(np.float32)
         value = (value - mu) / delta
-        value = np.asarray(list(value) + [tgt], dtype=np.float32)
-        v = StringIO()
-        np.save(v, value)
-        # fea = ",".join(map(str, list(value) + [tgt]))
-        return k, bytearray(v.getvalue())
+        fea = ",".join(map(str, list(value) + [tgt]))
+        return k, fea
     return _inter
 
 if __name__ == "__main__":
