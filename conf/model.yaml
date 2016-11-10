@@ -57,11 +57,12 @@ pc:
   tout: 2016_pc
 
 v15:
+  fe: f2
   data: 2010/15/fe.cmvn
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   batch_step: 10
-  pdata: 2010/15/2016.fe
+  #pdata: 2010/15/2016.fe
   tdata: predict/today.fe
   normal: 2010/15/fe
   daily_fe: predict/cache/

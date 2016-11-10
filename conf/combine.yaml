@@ -1,5 +1,11 @@
 self:
   input: 
+    - ans/v2201
+    - ans/v2202
+    - ans/v2203
+    - ans/v2204
+    - ans/v2205
+    - ans/v2206
     - ans/v2101
     - ans/v2102
     - ans/v2103
@@ -48,7 +54,7 @@ today:
 
 top:
   input: 
-    - ans/t2103
-    - ans/t2105
-    - ans/t2106
+    - ans/t1503
+    - ans/t1505
+    - ans/t1506
   output: ans/top

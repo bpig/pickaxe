@@ -79,7 +79,8 @@ def getKFT(mu, delta, data):
 
 def pdNormalize(fin):
     data = loadData(fin, hasTgt=False)
-    mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/fe/f1/f1")
+    #mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/fe/f1/f1")
+    mu, delta = loadMuDelta("/home/shuai.li/pickaxe/data/2010/15/fe")
     
     keys, feas, tgts = getKFT(mu, delta, data)
     saveByNp(fin, keys, feas, tgts)
