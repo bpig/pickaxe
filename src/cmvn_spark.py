@@ -69,6 +69,20 @@ def cal(iterator):
         xx += y * y
     yield x, xx
 
+def normal(mu, delta):
+    def _inter(x):
+        k, v = x
+        value = v.split(",")
+        tgt = value[-1]
+        value = np.asarray(value[:-1]).astype(np.float32)
+        value = (value - mu) / delta
+        value = np.asarray(list(value) + [tgt], dtype=np.float32)
+        v = StringIO()
+        np.save(v, value)
+        # fea = ",".join(map(str, list(value) + [tgt]))
+        return k, bytearray(v.getvalue())
+    return _inter
+
 if __name__ == "__main__":
     model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
@@ -95,6 +109,11 @@ if __name__ == "__main__":
     np.save("md/" + model + ".mu.npy", mu)
     np.save("md/" + model + ".delta.npy", delta)
 
+    print "begin normal"
+    fout = fin + "n"
+
+    ft = sc.sequenceFile(fin)
+    ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
     
 
 
