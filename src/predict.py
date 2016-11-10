@@ -5,16 +5,27 @@ from mlp_feeder import read_predict_sets
 from simple import kernel
 from jsq_estimator import JSQestimator
 
+def getArgs():
+    parser = ArgumentParser(description="Predict")
+    parser.add_argument("-m", dest="m", 
+                        help="model")
+    parser.add_argument("-ds", dest="ds", 
+                        help="day")
+    parser.add_argument("-merge", dest="merge", action="store_true", default=False,
+                        help="merge daily")
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    model = sys.argv[1]
+    args = getArgs()
+    model = args.m
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
 
-    if "today" in sys.argv:
-        datafile = "data/" + cfg["tdata"]
+    fe_version = cfg["fe"]
+    if args.ds:
+        datafile = "data/fe/%s/daily/%s.fe" % (fe_version, args.ds)
         fout = "ans/t" + model[1:]
     else:
-        fe_version = cfg["fe"]
         datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
 

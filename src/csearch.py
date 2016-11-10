@@ -26,8 +26,11 @@ if __name__ == "__main__":
     fins = cfg["input"]
 
     logfile = "log/cb_" + model
-    rd = csv.reader(open(logfile))
-    keys = set([r[0] for r in rd])
+    try:
+        rd = csv.reader(open(logfile))
+        keys = set([r[0] for r in rd])
+    except:
+        keys = set()
 
     fout = open("log/cb_" + model, "a")
     
@@ -38,4 +41,5 @@ if __name__ == "__main__":
                 continue
             cb = searchCb(cb)
             fout.write(cb)
+            fout.flush()
     os.system("rm -f cb.tmp")

@@ -164,12 +164,13 @@ if __name__ == "__main__":
             dates = download(today)
             print dates
             genCsv(dates, csv)
+            print "format"
+            with TimeLog():
+                os.system("python src/format.py %s" % fe_version)
         else:
             print "%s in cache" % csv
+            print "no need format"
 
-    print "format"
-    with TimeLog():
-        os.system("python src/format.py %s" % fe_version)
 
     print "fe"
     fe = "%s.fe" % today

@@ -13,13 +13,14 @@ def parseLine(l):
 
 if __name__ == "__main__":
     fin = "ans/" + sys.argv[1]
-    filter_by_rule.process(fin)
+    # filter_by_rule.process(fin)
+    # fin = fin + ".filter"
     
     if len(sys.argv) == 3:
         ct = int(sys.argv[2])
     else:
         ct = 6
     
-    for l in open(fin + ".filter"):
+    for l in open(fin):
         key, items = parseLine(l)
         print key, " ".join(map(str, items[:ct]))

@@ -119,7 +119,6 @@ def getArgs():
 
 if __name__ == "__main__":
     args = getArgs()
-    
     tgt = "ans/" + args.tgt
 
     if not args.d and not "filter" in tgt:
