@@ -111,6 +111,10 @@ def getArgs():
                         help="filter new")
     parser.add_argument("-c", dest="c", default=50, type=int, 
                         help="cal count")
+    parser.add_argument("-d", dest="d", action="store_true", default=False,
+                        help="direct, no filter")
+    parser.add_argument("-hi", dest="h", action="store_true", default=False,
+                        help="high line ok")
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -118,8 +122,8 @@ if __name__ == "__main__":
     
     tgt = "ans/" + args.tgt
 
-    if not "filter" in tgt:
-        filter_by_rule.process(tgt, args.fn)
+    if not args.d and not "filter" in tgt:
+        filter_by_rule.process(tgt, args.fn, nohigh=not args.h)
         tgt += ".filter"
     
     process(tgt, args.c)

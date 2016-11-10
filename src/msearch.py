@@ -98,9 +98,9 @@ def getkeys(logfile):
 if __name__ == "__main__":
     begin = int(sys.argv[1])
     end = int(sys.argv[2])
-    model = ["v" + `_` for _ in range(begin, end)]
+    model = ["v" + `_` for _ in range(begin, end + 1)]
     print model
-    #logfile = "log/model_search.v21.153"
+
     logfile = sys.argv[3]
     keys = getkeys(logfile)
 

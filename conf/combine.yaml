@@ -25,11 +25,11 @@ c4:
 #    - ans/v1606
   output: ans/c4
 
-c21:
+c23:
   input: 
-    - ans/v2103
-    - ans/v2104
-  output: ans/c21
+    - ans/v2306
+    - ans/v2305
+  output: ans/c23
 
 c17:
   input: 

@@ -30,7 +30,7 @@ def filterByNew(ds, aux):
     
     return _inter
 
-def process(fin, filterNew=False, output=True):
+def process(fin, filterNew=False, nohigh=True, output=True):
     fout = open(fin + ".filter", "w")
     stock = getFt("data/2010/2016.ft")
     aux = getFt("data/2010/2016.ft.aux", Aux)
@@ -50,9 +50,10 @@ def process(fin, filterNew=False, output=True):
         
         ans = filter(filterByStop(ds, stock), ans)
         ct += [len(ans)]
-        
-        ans = filter(filterByHighLine(ds, stock), ans)
-        ct += [len(ans)]
+
+        if nohigh:
+            ans = filter(filterByHighLine(ds, stock), ans)
+            ct += [len(ans)]
         
         if filterNew:
             ans = filter(filterByNew(ds, aux), ans)
