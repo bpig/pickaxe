@@ -24,11 +24,6 @@ if __name__ == '__main__':
 
     os.system("mkdir -p %s" % tgt)
 
-    mu = "data/fe/%s/%s.mu.npy" % (model, model)
-    delta = "data/fe/%s/%s.delta.npy" % (model, model)
-    mu = np.load(mu)
-    delta = np.load(delta)
-
     tr_begin = int(cfg["train_begin"])
     tr_end = int(cfg["train_end"])
 
@@ -54,7 +49,6 @@ if __name__ == '__main__':
         values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
         tgt = values[-1]
         values = values[:-1]
-        values = (values - mu) / delta
 
         if ds < tr_end:
             tr_key += [l]
