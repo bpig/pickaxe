@@ -17,7 +17,7 @@ def getKv(filename, kv, uniq):
         value = l[pos + 1:].replace("NULL", "0.0")
         value = value.split(",")
         ds = value[0]
-        if ds < "20150500":
+        if ds < "20160000":
             continue
         kid = key + "_" + value[0]
         if kid in uniq:
@@ -101,29 +101,29 @@ def dump(kv, filename):
         aux = map(lambda x: "_".join(x), aux)
         fout1.write(k + "," + ",".join(aux) + "\n")
 
-def mergeSmallCsv(kv, uniq):
-    smallCsvDir = "data/predict/cache"
-    for d in os.listdir(smallCsvDir):
-        if len(d) > 12 or not d.endswith(".csv"):
-            continue
-        getKv(smallCsvDir + "/" + d, kv, uniq)
-        print d, len(kv), len(uniq)
+def mergeDailyCsv(kv, uniq):
+    dailyCsv = "data/daily"
+    with CD(dailyCsv):
+        for d in os.listdir("."):
+            if len(d) > 12 or not d.endswith(".csv"):
+                continue
+            getKv(d, kv, uniq)
+            print d, len(kv), len(uniq)
 
-def process(fin, fout, merge=False):
+def process(fin, fout, model, merge=False):
     kv = defaultdict(list)
     uniq = set()
     getKv(fin, kv, uniq)
     print len(kv), len(uniq)
     if merge:
-        mergeSmallCsv(kv, uniq)
+        mergeDailyCsv(kv, uniq)
     dump(kv, fout)
 
 if __name__ == "__main__":
+    model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+        cfg = yaml.load(fin)[model]
     
-    # fin = sys.argv[1]
-    # fout = sys.argv[2]
     fin = "data/" + cfg["raw"]
     fout = "data/" + cfg["data"]
-    process(fin, fout, True)
+    process(fin, fout, model, merge=True)

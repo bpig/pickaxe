@@ -62,8 +62,9 @@ def genOne(key, info, ds, predict=False):
     elif idx != 0:
         print "index %s of %s must 0" % (ds, key)
         return ""
-    
-    windows = [2, 3, 5, 7, 15]  # , 30, 60]
+
+    windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]    
+    # windows = [2, 3, 5, 7, 15]  # , 30, 60]
     # windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
     # windows = [2, 3, 5, 7, 10]  # , 30, 60]
     max_win = windows[-1]
@@ -132,22 +133,13 @@ def genAll(fin, fout, filter_func):
         print time.ctime(), ds, c, "/", total, ct
 
 if __name__ == "__main__":
+    model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
-    
+        cfg = yaml.load(fin)[model]
+    ds = sys.argv[2]
     fin = "data/" + cfg["data"]
+    fout = "data/fe/%s/daily/%s.fe" % (model, ds)
+    with TimeLog():
+        process(fin, fout, ds)
+
     
-    if "predict" in cfg:
-        fout = "data/" + cfg["predict"]
-        process(fin, fout)
-        sys.exit(0)
-    
-    fout1 = "data/" + cfg["train"]
-    fout2 = "data/" + cfg["test"]
-    
-    if sys.argv[2] == "test":
-        filter_func = lambda x: x >= "20160000"
-        genAll(fin, fout2, filter_func)
-    else:
-        filter_func = lambda x: x < "20160000" and x >= "20060000"
-        genAll(fin, fout1, filter_func)

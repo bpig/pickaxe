@@ -106,9 +106,8 @@ def downloadByDs(ds):
 # "NET_ASSETS_TODAY","NET_CASH_FLOWS_OPER_ACT_TTM","NET_CASH_FLOWS_OPER_ACT_LYR","OPER_REV_TTM","OPER_REV_LYR","NET_INCR_CASH_CASH_EQU_TTM","NET_INCR_CASH_CASH_EQU_LYR","UP_DOWN_LIMIT_STATUS","LOWEST_HIGHEST_STATUS","OPDATE","OPMODE"
 
 
-def genCsv(dates):
+def genCsv(dates, csvname):
     dates = sorted(dates, reverse=True)
-    csvname = dates[0].replace("-", "")
     fout = open(csvname, "w")
     for ds in dates:
         pricefile = "cache/price_" + ds + ".csv"
@@ -152,7 +151,7 @@ def transformOne(filename, table, ct):
 if __name__ == "__main__":
     model = sys.argv[1]
     with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[model]
+        cfg = yaml.load(fin)[model[:3]]
     fe_version = cfg["fe"]
     today = sys.argv[2]
     
@@ -164,23 +163,22 @@ if __name__ == "__main__":
         if not os.path.exists(csv):
             dates = download(today)
             print dates
-            genCsv(dates)
+            genCsv(dates, csv)
         else:
             print "%s in cache" % csv
-        
-        ftfile = "%s.ft" % today
-        if not os.path.exists(ftfile):
-            ft.process(csv, ftfile)
-        else:
-            print "%s in cache" % ftfile
+
+    print "format"
+    #os.system("python src/format.py %s" % fe_version)
+
+    print "fe"
+    fe = "%s.fe" % today
     dailyfe = "data/fe/%s/daily/" % fe_version
     os.system("mkdir -p %s" % dailyfe)
-    
-    fe = "%s.fe" % today
     if not os.path.exists(dailyfe + fe):
-        fea.process(dailydt + ftfile, dailyfe + fe)
+        print "gen %s" % (dailyfe + fe)
+        os.system("python src/fea.py %s %s" % (fe_version, today))
     else:
-        print "%s in cache" % fe
+        print "%s in cache" % (dailyfe + fe)
     
     with CD(dailyfe):
         cmvn.dailyNormal(fe, fe_version)
