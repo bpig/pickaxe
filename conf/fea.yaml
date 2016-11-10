@@ -79,3 +79,11 @@ f2:
   train_begin: 20100000
   train_end: 20160500
 
+f3:
+  raw: 2010.cc
+  ft: 2010.ft
+  fe: 2010_120fe
+  raw_fe: raw/2010_120/ 
+  train_begin: 20100000
+  train_end: 20160500
+

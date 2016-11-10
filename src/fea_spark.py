@@ -23,7 +23,7 @@ def process(line):
     items = map(lambda x: x.split("_"), items)
     ds = items[0]
     # wins = [2, 3, 5, 7, 15]
-    wins = [2, 3, 5, 7, 10, 15, 20, 30, 60]
+    wins = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
     maxWin = wins[-1]
     
     ct = len(ds) - 2 - maxWin

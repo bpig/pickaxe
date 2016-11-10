@@ -83,7 +83,7 @@ def genOne(key, info, ds, predict=False):
 
 def genOneFe(info, wins):
     feas = []
-    maxWin = wins[-1]
+    maxWin = 15 # wins[-1]
     # today day fea
     for d in range(maxWin):
         feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]

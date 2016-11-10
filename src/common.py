@@ -7,12 +7,15 @@ import os
 import numpy as np
 import math
 import csv
-import pandas as pd
+try:
+    import pandas as pd
+    import yaml
+except:
+    pass
 import datetime
 import random
 import time
 import sys
-import yaml
 import logging
 from itertools import chain
 from cStringIO import StringIO

@@ -92,8 +92,8 @@ if __name__ == "__main__":
     delta **= .5
     delta += 1
     print len(mu), len(delta)
-    np.save(model + ".mu.npy", mu)
-    np.save(model + ".delta.npy", delta)
+    np.save("md/" + model + ".mu.npy", mu)
+    np.save("md/" + model + ".delta.npy", delta)
 
     
 
