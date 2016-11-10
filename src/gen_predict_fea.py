@@ -168,7 +168,8 @@ if __name__ == "__main__":
             print "%s in cache" % csv
 
     print "format"
-    #os.system("python src/format.py %s" % fe_version)
+    with TimeLog():
+        os.system("python src/format.py %s" % fe_version)
 
     print "fe"
     fe = "%s.fe" % today
@@ -176,7 +177,8 @@ if __name__ == "__main__":
     os.system("mkdir -p %s" % dailyfe)
     if not os.path.exists(dailyfe + fe):
         print "gen %s" % (dailyfe + fe)
-        os.system("python src/fea.py %s %s" % (fe_version, today))
+        with TimeLog():
+            os.system("python src/fea.py %s %s" % (fe_version, today))
     else:
         print "%s in cache" % (dailyfe + fe)
     
