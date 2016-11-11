@@ -53,9 +53,10 @@ def gain(predict, stock, numStock, ds, output):
                 print "warning, %s low everyday" % key
                 index = 0
             outPrice = float(info.e[index])
-            # buy.write(key + "_" + rec.tgt + ",")
-            buy.write(key + ",")
+            #buy.write(key + "_" + rec.tgt + ",")
+            #buy.write(key + ",")
             increase += outPrice / inPrice
+            buy.write("%s_%.3f," % (key, outPrice / inPrice))
             count += 1
         
         bg = money[ii]
@@ -71,7 +72,8 @@ def gain(predict, stock, numStock, ds, output):
             print ("{ds} {total:>7.3f} {rate:>5.3f} " +
                    "{bg:>7.3f} -> {ed:>7.3f} {hi} {lo} {stop} {ct} {lack}").format(
                        ds=d, total=total, rate=ed / bg, 
-                       bg=bg, ed=ed, hi=high, lo=low, stop=stop, ct=len(predict[d]), lack=lack) #, buy.getvalue()[:-1]
+                       bg=bg, ed=ed, hi=high, lo=low, stop=stop, 
+                       ct=len(predict[d]), lack=lack) , buy.getvalue()[:-1]
 
         key = d[:-2]
         if key not in month:

@@ -16,11 +16,12 @@ self:
 
 c4:
   input: 
-    - ans/v2102
     - ans/v2104
-    - ans/v2304
-    - ans/v2305
     - ans/v2105
+    - ans/v2301
+    - ans/v2303
+    - ans/v2304
+    - ans/v2306
 #    - ans/v2306
 #    - ans/v2106
 #    - ans/v1503
@@ -52,11 +53,7 @@ c21:
 
 c2123:
   input: 
-    - ans/v2102
-    - ans/v2101
-    - ans/v2103
     - ans/v2104
-    - ans/v2106
     - ans/v2105
     - ans/v2302
     - ans/v2301
@@ -89,9 +86,10 @@ today:
 
 top:
   input: 
-    - ans/t2102
     - ans/t2104
-    - ans/t2304
-    - ans/t2305
     - ans/t2105
+    - ans/t2301
+    - ans/t2303
+    - ans/t2304
+    - ans/t2306
   output: ans/top

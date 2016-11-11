@@ -2,12 +2,12 @@ set -x
 
 #python src/gen_predict_fea.py  $1 #20161102
 
-python src/predict.py -m v2101 -ds 20161110
-python src/predict.py -m v2102 -ds 20161110
-python src/predict.py -m v2103 -ds 20161110
-python src/predict.py -m v2104 -ds 20161110
-python src/predict.py -m v2105 -ds 20161110
-python src/predict.py -m v2106 -ds 20161110
+python src/predict.py -m v2301 -ds 20161110
+python src/predict.py -m v2302 -ds 20161110
+python src/predict.py -m v2303 -ds 20161110
+python src/predict.py -m v2304 -ds 20161110
+python src/predict.py -m v2305 -ds 20161110
+python src/predict.py -m v2306 -ds 20161110
 
 #python src/combine_ans.py today
 
