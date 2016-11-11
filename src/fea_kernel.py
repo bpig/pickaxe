@@ -25,6 +25,33 @@ def base_fea(values):
     items += [values[13]]  # target
     return items
 
+def rsi(key, info, win):
+    '''
+    :param key: st name
+    :param info: FT info
+    :param win: win
+    :return: list((date, value), (date, value))  , sorted by date reversed
+    '''
+    ct = len(info.ds) - 1
+    if ct < win:
+        return []
+    e = np.asarray(info.e, dtype=np.float32)[:-1]
+    pe = np.asarray(info.pe, dtype=np.float32)[:-1]
+    gain = e - pe
+    value = np.empty(ct)
+    ave_gain = gain[-win:][gain[-win:] > 0].sum() / win
+    ave_lost = -gain[-win:][gain[-win:] < 0].sum() / win
+    value[-win] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
+    for i in range(-win - 1, -ct - 1, -1):
+        g = gain[i]
+        ag = 0 if g < 0 else g
+        al = 0 if g > 0 else -g
+        ave_gain = (ag + ave_gain * (win - 1)) / win
+        ave_lost = (al + ave_lost * (win - 1)) / win
+        value[i] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
+    value = value[:-win + 1]
+    return zip(info.ds, value)
+
 if __name__ == '__main__':
     print kernels
     k = kernels["base_fea"]
