@@ -20,7 +20,7 @@ def daySpan(d1, d2):
 
 def genBasic(vals):
     vals = np.asarray(vals, dtype=np.float32)
-    res = [sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
+    res = [np.mean(vals), np.std(vals), max(vals), min(vals)]
     # if len(vals) > 7:
     #     res += [stats.skewtest(vals)]
     # if len(vals) > 20:
@@ -62,8 +62,8 @@ def genOne(key, info, ds, predict=False):
     elif idx != 0:
         print "index %s of %s must 0" % (ds, key)
         return ""
-
-    windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]    
+    
+    windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
     # windows = [2, 3, 5, 7, 15]  # , 30, 60]
     # windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
     # windows = [2, 3, 5, 7, 10]  # , 30, 60]
@@ -84,7 +84,7 @@ def genOne(key, info, ds, predict=False):
 
 def genOneFe(info, wins):
     feas = []
-    maxWin = 15 # wins[-1]
+    maxWin = 15  # wins[-1]
     # today day fea
     for d in range(maxWin):
         feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
@@ -141,5 +141,3 @@ if __name__ == "__main__":
     fout = "data/fe/%s/daily/%s.fe" % (model, ds)
     with TimeLog():
         process(fin, fout, ds)
-
-    

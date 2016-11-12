@@ -25,22 +25,45 @@ def base_fea(values):
     items += [values[13]]  # target
     return items
 
-def sma(key, info, win):
+def boll(key, info, win):
     ct = len(info.ds)
     if ct < win:
         return []
-    value = np.empty(ct)
+    ds = info.ds[:-win + 1]
+    band_mid, band_upper, band_lower = np.empty((3, len(ds)))
     e = np.asarray(info.e, dtype=np.float32)
-    total = e[:win].sum()
-    value[0] = total / win
-    for i in range(1, ct - win + 1):
-        total = total - e[i - 1] + e[i + win - 1]
-        value[i] = total / win
-    value = value[:-win + 1]
+    for i in range(ct - win + 1):
+        e_win = e[i:i + win]
+        std = e_win.std()
+        mean = e_win.mean()
+        band_mid[i] = mean
+        band_upper[i] = mean + std * 2
+        band_lower[i] = mean - std * 2
+    band_width = (band_upper - band_lower) / band_mid
+    return ds, band_upper, band_mid, band_lower, band_width
 
-    factor = 2 / (1 + win)
+def sma(key, info, win, ema=True):
+    ct = len(info.ds)
+    if ct < win:
+        return []
+    sma_value = np.empty(ct)
+    e = np.asarray(info.e, dtype=np.float32)
+    for i in range(ct - win + 1):
+        sma_value[i] = e[i:i + win].mean()
+    sma_value = sma_value[:-win + 1]
+    e = e[:-win + 1]
     
-    return zip(info.ds, value)
+    if not ema:
+        return info.ds[:ct], sma_value
+    
+    ct = len(sma_value)
+    factor = 2.0 / (1 + win)
+    ema_value = np.empty(ct)
+    ema_value[-1] = sma_value[-1]
+    for i in range(-2, -ct - 1, -1):
+        ema_value[i] = (e[i] - ema_value[i + 1]) * factor + ema_value[i + 1]
+    
+    return info.ds[:ct], sma_value, ema_value
 
 def rsi(key, info, win):
     '''
@@ -55,19 +78,19 @@ def rsi(key, info, win):
     e = np.asarray(info.e, dtype=np.float32)[:-1]
     pe = np.asarray(info.pe, dtype=np.float32)[:-1]
     gain = e - pe
-    value = np.empty(ct)
+    rsi_value = np.empty(ct)
     ave_gain = gain[-win:][gain[-win:] > 0].sum() / win
     ave_lost = -gain[-win:][gain[-win:] < 0].sum() / win
-    value[-win] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
+    rsi_value[-win] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
     for i in range(-win - 1, -ct - 1, -1):
         g = gain[i]
         ag = 0 if g < 0 else g
         al = 0 if g > 0 else -g
         ave_gain = (ag + ave_gain * (win - 1)) / win
         ave_lost = (al + ave_lost * (win - 1)) / win
-        value[i] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
-    value = value[:-win + 1]
-    return zip(info.ds, value)
+        rsi_value[i] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
+    rsi_value = rsi_value[:-win + 1]
+    return info.ds[:ct], rsi_value
 
 if __name__ == '__main__':
     print kernels
