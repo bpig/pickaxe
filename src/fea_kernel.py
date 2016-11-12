@@ -25,6 +25,23 @@ def base_fea(values):
     items += [values[13]]  # target
     return items
 
+def sma(key, info, win):
+    ct = len(info.ds)
+    if ct < win:
+        return []
+    value = np.empty(ct)
+    e = np.asarray(info.e, dtype=np.float32)
+    total = e[:win].sum()
+    value[0] = total / win
+    for i in range(1, ct - win + 1):
+        total = total - e[i - 1] + e[i + win - 1]
+        value[i] = total / win
+    value = value[:-win + 1]
+
+    factor = 2 / (1 + win)
+    
+    return zip(info.ds, value)
+
 def rsi(key, info, win):
     '''
     :param key: st name
