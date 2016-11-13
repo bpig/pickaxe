@@ -35,7 +35,7 @@ def emv(info, win):  # self version
     dis = e - pe
     ans = dis / volumn
     ans_ma = sma(ans, win)
-    return ans[:-win + 1], ans_ma
+    return fea_length_extend(ans, ans_ma, len(info.ds))
 
 def cr(info, win):
     ct = len(info.pe)
@@ -57,7 +57,7 @@ def cr(info, win):
         if l_sum == 0:
             l_sum = 1
         ans[i] = h[i:i + win].sum() / l_sum
-    return ans
+    return fea_length_extend(ans, len(info.ds))
 
 def br(info, win):
     ct = len(info.pe)
@@ -78,7 +78,7 @@ def br(info, win):
         if l_sum == 0:
             l_sum = 1
         ans[i] = h[i:i + win].sum() / l_sum
-    return ans
+    return fea_length_extend(ans, len(info.ds))
 
 def kdj(info, rsv_win, k_win, d_win):
     ct = len(info.e)
@@ -96,7 +96,7 @@ def kdj(info, rsv_win, k_win, d_win):
     d = sma(k, d_win)
     k = k[:len(d)]
     j = 3 * k - 2 * d
-    return k, d, j
+    return fea_length_extend(k, d, j, len(info.ds))
 
 def sma(col, win):
     ct = len(col)
@@ -133,7 +133,7 @@ def macd(info, long_win, short_win, m):
     
     diff_ma = sma(diff, m)
     diff_ema = ema(diff, diff_ma, m)
-    return diff_ema
+    return fea_length_extend(diff_ema, len(info.ds))
 
 def boll(info, win):
     ct = len(info.ds)
@@ -151,7 +151,7 @@ def boll(info, win):
         band_upper[i] = mean + std * 2
         band_lower[i] = mean - std * 2
     band_width = (band_upper - band_lower) / band_mid
-    return band_upper, band_mid, band_lower, band_width
+    return fea_length_extend(band_upper, band_mid, band_lower, band_width, len(info.ds))
 
 def rsi(info, win):
     ct = len(info.e) - 1
@@ -160,7 +160,7 @@ def rsi(info, win):
     e = np.asarray(info.e, dtype=np.float32)[:-1]
     pe = np.asarray(info.pe, dtype=np.float32)[:-1]
     gain = e - pe
-
+    
     rsi_value = np.empty(ct)
     ave_gain = gain[-win:][gain[-win:] > 0].sum() / win
     ave_lost = -gain[-win:][gain[-win:] < 0].sum() / win
@@ -173,7 +173,7 @@ def rsi(info, win):
         ave_lost = (al + ave_lost * (win - 1)) / win
         rsi_value[i] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
     rsi_value = rsi_value[:-win + 1]
-    return rsi_value
+    return fea_length_extend(rsi_value, len(info.ds))
 
 if __name__ == '__main__':
     print kernels

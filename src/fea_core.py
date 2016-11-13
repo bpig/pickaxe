@@ -13,7 +13,7 @@ def bias(info, win):
     for i in range(ct):
         mean_e = e[i:i + win].mean()
         value[i] = (e[i] - mean_e) / mean_e
-    return value
+    return fea_length_extend(value, len(info.ds))
 
 def cci(info, win):
     ct = len(info.ds)
@@ -31,18 +31,18 @@ def cci(info, win):
         mean_typ = typ[i:i + win].mean()
         avedev_typ = np.abs(typ[i:i + win] - mean_typ).mean()
         value[i] = (typ[i] - mean_typ) / (C * avedev_typ)
-    return value
+    return fea_length_extend(value, len(info.ds))
 
 def cdp(info):  # may be useless
-    h = np.asarray(info.h, dtype=np.float32)[1:]
-    l = np.asarray(info.l, dtype=np.float32)[1:]
-    e = np.asarray(info.e, dtype=np.float32)[1:]
+    h = np.asarray(info.h, dtype=np.float32)
+    l = np.asarray(info.l, dtype=np.float32)
+    e = np.asarray(info.e, dtype=np.float32)
     cdp = (h + l + e) / 3
     ah = cdp + (h - l)
     al = cdp - (h - l)
     nh = cdp * 2 - l
     nl = cdp * 2 - h
-    return ah, nh, cdp, nl, al
+    return fea_length_extend(ah, nh, cdp, nl, al, len(info.ds))
 
 def mtm(info, win1, win2):
     ct = len(info.ds)
@@ -56,7 +56,7 @@ def mtm(info, win1, win2):
     mtmma = np.empty()
     for i in range(ct):
         mtmma[i] = mtm[i:i + win2].mean()
-    return mtm[:ct], mtmma
+    return fea_length_extend(mtm, mtmma, len(info.ds))
 
 def osc(info, win):
     ct = len(info.ds)
@@ -69,7 +69,7 @@ def osc(info, win):
     for i in range(ct):
         mean_e = e[i: i + win].mean()
         value = e[i] - mean_e
-    return value
+    return fea_length_extend(value, len(info.ds))
 
 def psy(info, win):
     ct = len(info.ds) - 1
@@ -84,7 +84,7 @@ def psy(info, win):
     for i in range(ct):
         value = gain[i:i + win][gain[i:i + win] > 0].size / 1.0 / win
     
-    return value
+    return fea_length_extend(value, len(info.ds))
 
 # win > 12
 def vr(info, win):
@@ -102,7 +102,7 @@ def vr(info, win):
         bvs = v[i:i + win][gain[i:i + win] < 0].sum()
         cvs = v[i:i + win][gain[i:i + win] == 0].sum()
         value[i] = (avs + 0.5 * cvs) / (bvs + 0.5 * cvs)
-    return value
+    return fea_length_extend(value, len(info.ds))
 
 def wms(info, win):
     ct = len(info.ds)
@@ -118,7 +118,7 @@ def wms(info, win):
         hn = h[i:i + win].max()
         ln = l[i:i + win].min()
         value = (hn - e[i]) / (hn - ln)
-    return value
+    return fea_length_extend(value, len(info.ds))
 
 def obv(info, win):
     ct = len(info.ds)
@@ -136,4 +136,4 @@ def obv(info, win):
             value[i] = value[i + 1] - v[i]
         else:
             value[i] = value[i + 1]
-    return value
+    return fea_length_extend(value, len(info.ds))

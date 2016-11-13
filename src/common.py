@@ -24,17 +24,21 @@ import time
 import random
 from argparse import ArgumentParser
 import itertools
+
 try:
     import pandas as pd
     import yaml
 except:
     pass
+
 # from scipy import stats
 
 class TimeLog:
-    def __enter__(self, name=""):
-        self.t = time.time()
+    def __init__(self, name):
         self.n = name
+    
+    def __enter__(self):
+        self.t = time.time()
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         print "%s %.2fs" % (self.n, time.time() - self.t)
@@ -42,7 +46,7 @@ class TimeLog:
 class CD:
     def __init__(self, dirname):
         self.dirname = dirname
-
+    
     def __enter__(self):
         self.cwd = os.getcwd()
         print "enter", self.dirname
@@ -51,3 +55,22 @@ class CD:
     def __exit__(self, exc_type, exc_val, exc_tb):
         print "return to", self.cwd
         os.chdir(self.cwd)
+
+def fea_length_extend(*args):
+    ct = int(args[-1])
+    ans = args[:-1]
+    new_ans = []
+    for i in range(len(ans)):
+        item = np.zeros(ct)
+        item[:len(ans[i])] = ans[i]
+        new_ans += [item]
+    if len(new_ans) == 1:
+        return new_ans[0]
+    return new_ans
+
+if __name__ == '__main__':
+    def a():
+        return fea_length_extend(np.ones(4), np.ones(3), 5)
+    
+    s = a()
+    print s
