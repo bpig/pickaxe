@@ -21,7 +21,7 @@ def kernel(net, keep_prob):
     
         train_op = tf.contrib.layers.optimize_loss(
             loss, tf.contrib.framework.get_global_step(), optimizer='Adam',
-            learning_rate=0.0001)
+            learning_rate=0.001)
     
         return {'class': tf.argmax(prediction, 1), 'prob': prediction}, loss, train_op
     return _model
