@@ -118,12 +118,12 @@ def extend(key, v):
     macd_26 = macd(v, 26, 12, 9)
     ex += [macd_5, macd_10, macd_15, macd_26]
 
-    boll_3 = boll(v, 3);
-    boll_5 = boll(v, 5);
-    boll_7 = boll(v, 7);
-    boll_10 = boll(v, 10);
-    boll_15 = boll(v, 15);
-    boll_26 = boll(v, 26);
+    _,_,_,boll_3 = boll(v, 3);
+    _,_,_,boll_5 = boll(v, 5);
+    _,_,_,boll_7 = boll(v, 7);
+    _,_,_,boll_10 = boll(v, 10);
+    _,_,_,boll_15 = boll(v, 15);
+    _,_,_,boll_26 = boll(v, 26);
     ex += [boll_3, boll_5, boll_7, boll_10, boll_15, boll_26]
 
     rsi_3 = rsi(v, 3)
