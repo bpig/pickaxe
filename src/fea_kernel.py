@@ -25,6 +25,18 @@ def base_fea(values):
     items += [values[13]]  # target
     return items
 
+def emv(info, win):  # self version
+    ct = len(info.e)
+    if ct < win:
+        return []
+    e = np.asarray(info.e, dtype=np.float32)
+    pe = np.asarray(info.pe, dtype=np.float32)
+    volumn = np.asarray(info.volumn, dtype=np.float32)
+    dis = e - pe
+    ans = dis / volumn
+    ans_ma = sma(ans, win)
+    return ans[:-win + 1], ans_ma
+
 def cr(info, win):
     ct = len(info.pe)
     if ct < win:
@@ -65,8 +77,22 @@ def br(info, win):
         ans[i] = h[i:i + win].sum() / l_sum
     return ans
 
-def kdj():
-    pass
+def kdj(info, rsv_win, k_win, d_win):
+    ct = len(info.e)
+    if ct < rsv_win + k_win + d_win - 2:
+        return []
+    e = info.asarray(info.e, dtype=np.float32)
+    high = info.asarray(info.high, dtype=np.float32)
+    low = info.asarray(info.low, dtype=np.float32)
+    rsv = np.empty(ct - rsv_win + 1)
+    for i in range(ct - rsv_win + 1):
+        high_max = high[i:i + rsv_win].max()
+        low_min = low[i:i + rsv_win].min()
+        rsv[i] = (e - high_max) / (high_max - low_min)
+    k = sma(rsv, k_win)
+    d = sma(k, d_win)
+    j = 3 * k[:len(d)] - 2 * d
+    return k, d, j
 
 def sma(col, win):
     ct = len(col)

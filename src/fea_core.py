@@ -14,12 +14,11 @@ def bias(info, win):
     value = value[:-win + 1]
     return value
 
-
 def cci(info, win):
     ct = len(info.ds)
     C = 0.015
     if ct < win:
-        return[]
+        return []
     h = np.asarray(info.h, dtype=np.float32)
     l = np.asarray(info.l, dtype=np.float32)
     e = np.asarray(info.e, dtype=np.float32)
@@ -69,7 +68,7 @@ def osc(info, win):
     value = value[:-win + 1]
     return value
 
-def psy(info , win):
+def psy(info, win):
     ct = len(info.ds) - 1
     if ct < win:
         return []
@@ -122,11 +121,8 @@ def obv(info, win):
     value = np.empty(ct)
     value[-1] = v[-1]
     for i in range(-2, -ct - 1, -1):
-        if gain[i+1] > 0:
-            value[i] = value[i+1] + v[i]
-        if gain[i+1] < 0:
-            value[i] = value[i+1] - v[i]
+        if gain[i + 1] > 0:
+            value[i] = value[i + 1] + v[i]
+        if gain[i + 1] < 0:
+            value[i] = value[i + 1] - v[i]
     return value
-
-
-    
