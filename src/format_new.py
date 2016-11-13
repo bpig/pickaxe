@@ -117,15 +117,15 @@ def extend(key, v):
     macd_15 = macd(v, 15, 7, 5)
     macd_26 = macd(v, 26, 12, 9)
     ex += [macd_5, macd_10, macd_15, macd_26]
-
-    _,_,_,boll_3 = boll(v, 3);
-    _,_,_,boll_5 = boll(v, 5);
-    _,_,_,boll_7 = boll(v, 7);
-    _,_,_,boll_10 = boll(v, 10);
-    _,_,_,boll_15 = boll(v, 15);
-    _,_,_,boll_26 = boll(v, 26);
+    
+    _, _, _, boll_3 = boll(v, 3);
+    _, _, _, boll_5 = boll(v, 5);
+    _, _, _, boll_7 = boll(v, 7);
+    _, _, _, boll_10 = boll(v, 10);
+    _, _, _, boll_15 = boll(v, 15);
+    _, _, _, boll_26 = boll(v, 26);
     ex += [boll_3, boll_5, boll_7, boll_10, boll_15, boll_26]
-
+    
     rsi_3 = rsi(v, 3)
     rsi_5 = rsi(v, 5)
     rsi_7 = rsi(v, 7)
@@ -133,7 +133,7 @@ def extend(key, v):
     rsi_15 = rsi(v, 15)
     rsi_26 = rsi(v, 26)
     ex += [rsi_3, rsi_5, rsi_7, rsi_10, rsi_15, rsi_26]
-
+    
     bias_3 = bias(v, 3)
     bias_5 = bias(v, 5)
     bias_7 = bias(v, 7)
@@ -141,7 +141,7 @@ def extend(key, v):
     bias_15 = bias(v, 15)
     bias_26 = bias(v, 26)
     ex += [bias_3, bias_5, bias_7, bias_10, bias_15, bias_26]
-
+    
     cci_3 = cci(v, 3)
     cci_5 = cci(v, 5)
     cci_7 = cci(v, 7)
@@ -151,14 +151,14 @@ def extend(key, v):
     ex += [cci_3, cci_5, cci_7, cci_10, cci_15, cci_26]
     
     ex += [cdp(v)]
-
+    
     mtm_4, mtma_4 = mtm(v, 4, 2)
     mtm_8, mtma_8 = mtm(v, 8, 4)
     mtm_12, mtma_12 = mtm(v, 12, 6)
     mtm_20, mtma_20 = mtm(v, 20, 10)
     mtm_26, mtma_26 = mtm(v, 26, 13)
     ex += [mtm_4, mtma_4, mtm_8, mtma_8, mtm_12, mtma_12, mtm_20, mtma_20, mtm_26, mtma_26]
-
+    
     osc_3 = osc(v, 3)
     osc_5 = osc(v, 5)
     osc_7 = osc(v, 7)
@@ -166,7 +166,7 @@ def extend(key, v):
     osc_15 = osc(v, 15)
     osc_26 = osc(v, 26)
     ex += [osc_3, osc_5, osc_7, osc_10, osc_15, osc_26]
-
+    
     psy_3 = psy(v, 3)
     psy_5 = psy(v, 5)
     psy_7 = psy(v, 7)
@@ -178,15 +178,15 @@ def extend(key, v):
     vr_12 = vr(v, 12)
     vr_26 = vr(v, 26)
     ex += [vr_12, vr_26]
-
-    wms_3 =  wms(v, 3)
-    wms_5 =  wms(v, 5)
-    wms_7 =  wms(v, 7)
-    wms_10 =  wms(v, 10)
-    wms_15 =  wms(v, 15)
-    wms_26 =  wms(v, 26)
+    
+    wms_3 = wms(v, 3)
+    wms_5 = wms(v, 5)
+    wms_7 = wms(v, 7)
+    wms_10 = wms(v, 10)
+    wms_15 = wms(v, 15)
+    wms_26 = wms(v, 26)
     ex += [wms_3, wms_5, wms_7, wms_10, wms_15, wms_26]
-
+    
     obv_3 = obv(v, 3)
     obv_5 = obv(v, 5)
     obv_7 = obv(v, 7)
@@ -194,7 +194,6 @@ def extend(key, v):
     obv_15 = obv(v, 15)
     obv_26 = obv(v, 26)
     ex += [obv_3, obv_5, obv_7, obv_10, obv_15, obv_26]
-    
     
     work_day = range(len(e_rate), 0, -1)
     
