@@ -4,12 +4,15 @@ from data_loader import getFt, Ft
 from fea_kernel import *
 from fea_core import *
 
+def getBaseInfo():
+    pass
+
 def dump(st, fout, ds, predict=False):
     ct = 0
-    for key, info in st.items():
+    for key, info, exinfo in getBaseInfo():
         if ds not in info.ds:
             continue
-        content = genOne(key, info, ds, predict)
+        content = genOne(key, info, exinfo, ds, predict)
         if content:
             fout.write(content)
             ct += 1
@@ -49,7 +52,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def genOne(key, info, ds, predict=False):
+def genOne(key, info, exinfo, ds, predict=False):
     idx = info.ds.index(ds)
     if not predict:
         if idx <= 1:
@@ -67,12 +70,12 @@ def genOne(key, info, ds, predict=False):
     # windows = [2, 3, 5, 7, 10]  # , 30, 60]
     max_win = windows[-1]
     info = Ft(*map(lambda x: x[idx:idx + max_win], info))
-    
+    exinfo = Ft(*map(lambda x: x[idx:idx + max_win], exinfo))
     if len(info.ds) != max_win:
         # print "%s_%s, %d" % (key, ds, len(values[0]))
         return ""
     
-    feas = genOneFe(info, windows)
+    feas = genOneFe(info, exinfo, windows)
     if not predict:
         tgt = info.tgt[0]
         assert tgt > 0, "%s_%s %f" % (key, ds, tgt)
@@ -80,7 +83,7 @@ def genOne(key, info, ds, predict=False):
     info = map(str, feas)
     return key + "_" + ds + ":" + ",".join(info) + "\n"
 
-def genOneFe(info, wins):
+def genOneFe(info, exinfo, wins):
     feas = []
     maxWin = 15  # wins[-1]
     # today day fea
@@ -88,7 +91,8 @@ def genOneFe(info, wins):
         feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(info.status[d], info.s_status[d],
                              info.wav_status[d], info.e_status[d])
-        
+    for d in range(maxWin):
+        feas += [exinfo[_][d] for _ in range(1, len(exinfo))]
     
     # win fea
     for win in wins:
