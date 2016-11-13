@@ -1,11 +1,15 @@
 # -*- coding:utf-8 -*-
 from common import *
-from data_loader import getFt, Ft
+from data_loader import getFt, Ft, getFtEx
 from fea_kernel import *
 from fea_core import *
 
-def getBaseInfo():
-    pass
+def getBaseInfo(fin):
+    st = getFt(fin)
+    ex = getFtEx(fin)
+    assert set(st.keys()) == set(ex.keys())
+    for key in st.keys():
+        yield key, st[key], ex[key]
 
 def dump(st, fout, ds, predict=False):
     ct = 0
@@ -65,9 +69,6 @@ def genOne(key, info, exinfo, ds, predict=False):
         return ""
     
     windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
-    # windows = [2, 3, 5, 7, 15]  # , 30, 60]
-    # windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
-    # windows = [2, 3, 5, 7, 10]  # , 30, 60]
     max_win = windows[-1]
     info = Ft(*map(lambda x: x[idx:idx + max_win], info))
     exinfo = Ft(*map(lambda x: x[idx:idx + max_win], exinfo))

@@ -47,6 +47,15 @@ def getFt(fin, dtype=Ft):
         kv[k] = dtype(*v)
     return kv
 
+def getFtEx(fin):
+    keyfile = fin + ".key.ex.npy"
+    valuefile = fin + ".value.ex.npy"
+    keys = np.load(keyfile)
+    values = np.load(valuefile)
+    assert len(keys) == len(values), \
+        "%d keys not equal %d values" % (len(keys), len(values))
+    return dict(zip(keys, values))
+
 def getAns(fin):
     def ansTrans(x):
         return Ans(*x.split("_"))
@@ -68,8 +77,6 @@ if __name__ == '__main__':
     
     for k, ans in getAns("ans/2016_pc"):
         print k, [_.code for _ in ans]
-
-
 
 # key           600227.SH
 # values
@@ -102,4 +109,3 @@ if __name__ == '__main__':
 #   7                 8             9          10           11          12          13
 # amount / (shares * e), rate
 #       14                 15
-

@@ -53,41 +53,42 @@ def getWavStatus((h_rate, l_rate)):
 def extend(key, v):
     for i in [4, 5, 6, 7, 8, 9]:
         v[i] = map(float, v[i])
-    s_rate = map(lambda (x, y): y / x, zip(v[4], v[5]))
-    h_rate = map(lambda (x, y): y / x, zip(v[4], v[6]))
-    l_rate = map(lambda (x, y): y / x, zip(v[4], v[7]))
-    e_rate = map(lambda (x, y): y / x, zip(v[4], v[8]))
+    s_rate = map(lambda x, y: y / x, v[4], v[5])
+    h_rate = map(lambda x, y: y / x, v[4], v[6])
+    l_rate = map(lambda x, y: y / x, v[4], v[7])
+    e_rate = map(lambda x, y: y / x, v[4], v[8])
     status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
     s_status = map(getStatus, s_rate)
     wav_status = map(getWavStatus, zip(h_rate, l_rate))
     e_status = map(getStatus, e_rate)
     
     ex = []
-    ex += [v[0]]
+    ex += [np.asarray(v[0], dtype=np.float32)]
     
-    emv_3 = emv(v, 3)
-    emv_5 = emv(v, 5)
-    emv_7 = emv(v, 7)
-    emv_10 = emv(v, 10)
-    emv_15 = emv(v, 15)
-    emv_26 = emv(v, 26)
-    ex += [emv_3, emv_5, emv_7, emv_10, emv_15, emv_26]
-    
-    cr_3 = cr(v, 3)
-    cr_5 = cr(v, 5)
-    cr_7 = cr(v, 7)
-    cr_10 = cr(v, 10)
-    cr_15 = cr(v, 15)
-    cr_26 = cr(v, 26)
-    ex += [cr_3, cr_5, cr_7, cr_10, cr_15, cr_26]
-    
-    br_3 = br(v, 3)
-    br_5 = br(v, 5)
-    br_7 = br(v, 7)
-    br_10 = br(v, 10)
-    br_15 = br(v, 15)
-    br_26 = br(v, 26)
-    ex += [br_3, br_5, br_7, br_10, br_15, br_26]
+    for i in [3, 5, 7, 10, 15, 26]:
+        emv_value = emv(v, i)
+        
+        cr_value = cr(v, i)
+        br_value = br(v, i)
+        
+        sma_value = sma(v.e, i)
+        ema_value = ema(v.e, sma_value, 3)
+        sma_value = fea_length_extend(sma_value, len(v.ds))
+        ema_value = fea_length_extend(ema_value, len(v.ds))
+        
+        _, _, _, boll_value = boll(v, i)
+        
+        rsi_value = rsi(v, i)
+        bias_value = bias(v, i)
+        cci_value = cci(v, i)
+        
+        osc_value = osc(v, i)
+        psy_value = psy(v, i)
+        wms_value = wms(v, i)
+        obv_value = obv(v, i)
+        ex += [emv_value, cr_value, br_value, sma_value, ema_value, boll_value,
+               rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
+               obv_value]
     
     _, _, j_2 = kdj(v, 4, 2, 2)
     _, _, j_3 = kdj(v, 9, 3, 3)
@@ -95,62 +96,13 @@ def extend(key, v):
     _, _, j_5 = kdj(v, 25, 5, 5)
     ex += [j_2, j_3, j_4, j_5]
     
-    sma_3 = sma(v.e, 3)
-    sma_5 = sma(v.e, 5)
-    sma_7 = sma(v.e, 7)
-    sma_10 = sma(v.e, 10)
-    sma_15 = sma(v.e, 15)
-    sma_26 = sma(v.e, 26)
-    # sma3, sma5, sma7, sma10, sma15, sma26 = map(sma, [v.e] * 6, [3, 5, 7, 10, 15, 26])
-    ex += [sma_3, sma_5, sma_7, sma_10, sma_15, sma_26]
-    
-    ema_3 = ema(v.e, sma_3, 3)
-    ema_5 = ema(v.e, sma_5, 5)
-    ema_7 = ema(v.e, sma_5, 7)
-    ema_10 = ema(v.e, sma_5, 10)
-    ema_15 = ema(v.e, sma_5, 15)
-    ema_26 = ema(v.e, sma_5, 26)
-    ex += [ema_3, ema_5, ema_7, ema_10, ema_15, ema_26]
-    
     macd_5 = macd(v, 5, 3, 2)
     macd_10 = macd(v, 10, 5, 3)
     macd_15 = macd(v, 15, 7, 5)
     macd_26 = macd(v, 26, 12, 9)
     ex += [macd_5, macd_10, macd_15, macd_26]
     
-    _, _, _, boll_3 = boll(v, 3);
-    _, _, _, boll_5 = boll(v, 5);
-    _, _, _, boll_7 = boll(v, 7);
-    _, _, _, boll_10 = boll(v, 10);
-    _, _, _, boll_15 = boll(v, 15);
-    _, _, _, boll_26 = boll(v, 26);
-    ex += [boll_3, boll_5, boll_7, boll_10, boll_15, boll_26]
-    
-    rsi_3 = rsi(v, 3)
-    rsi_5 = rsi(v, 5)
-    rsi_7 = rsi(v, 7)
-    rsi_10 = rsi(v, 10)
-    rsi_15 = rsi(v, 15)
-    rsi_26 = rsi(v, 26)
-    ex += [rsi_3, rsi_5, rsi_7, rsi_10, rsi_15, rsi_26]
-    
-    bias_3 = bias(v, 3)
-    bias_5 = bias(v, 5)
-    bias_7 = bias(v, 7)
-    bias_10 = bias(v, 10)
-    bias_15 = bias(v, 15)
-    bias_26 = bias(v, 26)
-    ex += [bias_3, bias_5, bias_7, bias_10, bias_15, bias_26]
-    
-    cci_3 = cci(v, 3)
-    cci_5 = cci(v, 5)
-    cci_7 = cci(v, 7)
-    cci_10 = cci(v, 10)
-    cci_15 = cci(v, 15)
-    cci_26 = cci(v, 26)
-    ex += [cci_3, cci_5, cci_7, cci_10, cci_15, cci_26]
-    
-    ex += [cdp(v)]
+    # ex += [cdp(v)]
     
     mtm_4, mtma_4 = mtm(v, 4, 2)
     mtm_8, mtma_8 = mtm(v, 8, 4)
@@ -159,41 +111,10 @@ def extend(key, v):
     mtm_26, mtma_26 = mtm(v, 26, 13)
     ex += [mtm_4, mtma_4, mtm_8, mtma_8, mtm_12, mtma_12, mtm_20, mtma_20, mtm_26, mtma_26]
     
-    osc_3 = osc(v, 3)
-    osc_5 = osc(v, 5)
-    osc_7 = osc(v, 7)
-    osc_10 = osc(v, 10)
-    osc_15 = osc(v, 15)
-    osc_26 = osc(v, 26)
-    ex += [osc_3, osc_5, osc_7, osc_10, osc_15, osc_26]
-    
-    psy_3 = psy(v, 3)
-    psy_5 = psy(v, 5)
-    psy_7 = psy(v, 7)
-    psy_10 = psy(v, 10)
-    psy_15 = psy(v, 15)
-    psy_26 = psy(v, 26)
-    ex += [psy_3, psy_5, psy_7, psy_10, psy_15, psy_26]
-    
-    vr_12 = vr(v, 12)
+    vr_10 = vr(v, 10)
+    vr_15 = vr(v, 15)
     vr_26 = vr(v, 26)
-    ex += [vr_12, vr_26]
-    
-    wms_3 = wms(v, 3)
-    wms_5 = wms(v, 5)
-    wms_7 = wms(v, 7)
-    wms_10 = wms(v, 10)
-    wms_15 = wms(v, 15)
-    wms_26 = wms(v, 26)
-    ex += [wms_3, wms_5, wms_7, wms_10, wms_15, wms_26]
-    
-    obv_3 = obv(v, 3)
-    obv_5 = obv(v, 5)
-    obv_7 = obv(v, 7)
-    obv_10 = obv(v, 10)
-    obv_15 = obv(v, 15)
-    obv_26 = obv(v, 26)
-    ex += [obv_3, obv_5, obv_7, obv_10, obv_15, obv_26]
+    ex += [vr_10, vr_15, vr_26]
     
     work_day = range(len(e_rate), 0, -1)
     
@@ -216,7 +137,8 @@ def extend(key, v):
 def dump(kv, filename):
     fout = open(filename, "w")
     fout1 = open(filename + ".aux", "w")
-    fout2 = open(filename + ".ex", "w")
+    ex_keys = []
+    ex_values = []
     # fdebug = open(filename + ".debug", "w")
     for c, (k, v) in enumerate(kv.items()):
         v = sorted(v, key=lambda x: x[0], reverse=True)
@@ -237,8 +159,11 @@ def dump(kv, filename):
         aux = map(lambda x: "_".join(x), aux)
         fout1.write(k + "," + ",".join(aux) + "\n")
         
-        ex = map(lambda x: "_".join(x), ex)
-        fout2.write(k + ", " + ",".join(ex) + "\n")
+        ex_values += [ex]
+        ex_keys += [k]
+    
+    np.save(filename + ".value.ex", np.asarray(ex_values))
+    np.save(filename + ".key.ex", np.asarray(ex_keys))
 
 def mergeDailyCsv(kv, uniq):
     dailyCsv = "data/daily"
@@ -249,7 +174,7 @@ def mergeDailyCsv(kv, uniq):
             getKv(d, kv, uniq)
             print d, len(kv), len(uniq)
 
-def process(fin, fout, model, merge=False):
+def process(fin, fout, merge=False):
     kv = defaultdict(list)
     uniq = set()
     getKv(fin, kv, uniq)
@@ -265,4 +190,4 @@ if __name__ == "__main__":
     
     fin = "data/" + cfg["raw"]
     fout = "data/" + cfg["data"]
-    process(fin, fout, model, merge=True)
+    process(fin, fout, merge=True)
