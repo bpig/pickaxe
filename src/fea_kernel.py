@@ -25,7 +25,43 @@ def base_fea(values):
     items += [values[13]]  # target
     return items
 
-def boll(key, info, win):
+def sma(col, win):
+    ct = len(col)
+    if ct < win:
+        return []
+    ans = np.empty(ct)
+    col = np.asarray(col, dtype=np.float32)
+    for i in range(ct - win + 1):
+        ans[i] = col[i:i + win].mean()
+    ans = ans[:-win + 1]
+    
+    return ans
+
+def ema(col, sma_value, win):
+    assert len(col) >= len(sma_value)
+    ct = len(sma_value)
+    col = np.asarray(col[:ct], dtype=np.float32)
+    factor = 2.0 / (1 + win)
+    ans = np.empty(ct)
+    ans[-1] = sma_value[-1]
+    for i in range(-2, -ct - 1, -1):
+        ans[i] = (col[i] - ans[i + 1]) * factor + ans[i + 1]
+    return ans
+
+def macd(info, long_win, short_win, m):
+    long_ma = sma(info.e, long_win)
+    long_ema = ema(info.e, long_ma, long_win)
+    
+    short_ma = sma(info.e, short_win)
+    short_ema = ema(info.e, short_ma, short_win)
+    
+    diff = short_ema[:len(long_ema)] - long_ema
+    
+    diff_ma = sma(diff, m)
+    diff_ema = ema(diff, diff_ma, m)
+    return diff_ema
+
+def boll(info, win):
     ct = len(info.ds)
     if ct < win:
         return []
@@ -42,37 +78,8 @@ def boll(key, info, win):
     band_width = (band_upper - band_lower) / band_mid
     return ds, band_upper, band_mid, band_lower, band_width
 
-def sma(key, info, win, ema=True):
-    ct = len(info.ds)
-    if ct < win:
-        return []
-    sma_value = np.empty(ct)
-    e = np.asarray(info.e, dtype=np.float32)
-    for i in range(ct - win + 1):
-        sma_value[i] = e[i:i + win].mean()
-    sma_value = sma_value[:-win + 1]
-    e = e[:-win + 1]
-    
-    if not ema:
-        return info.ds[:ct], sma_value
-    
-    ct = len(sma_value)
-    factor = 2.0 / (1 + win)
-    ema_value = np.empty(ct)
-    ema_value[-1] = sma_value[-1]
-    for i in range(-2, -ct - 1, -1):
-        ema_value[i] = (e[i] - ema_value[i + 1]) * factor + ema_value[i + 1]
-    
-    return info.ds[:ct], sma_value, ema_value
-
-def rsi(key, info, win):
-    '''
-    :param key: st name
-    :param info: FT info
-    :param win: win
-    :return: list((date, value), (date, value))  , sorted by date reversed
-    '''
-    ct = len(info.ds) - 1
+def rsi(info, win):
+    ct = len(info.e) - 1
     if ct < win:
         return []
     e = np.asarray(info.e, dtype=np.float32)[:-1]
@@ -90,7 +97,7 @@ def rsi(key, info, win):
         ave_lost = (al + ave_lost * (win - 1)) / win
         rsi_value[i] = 0 if ave_lost == 0 else 100 - 100 / (ave_gain / ave_lost + 1)
     rsi_value = rsi_value[:-win + 1]
-    return info.ds[:ct], rsi_value
+    return rsi_value
 
 if __name__ == '__main__':
     print kernels
