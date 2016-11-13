@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 from common import *
 from data_loader import getFt, Ft
+from fea_kernel import *
+from fea_core import *
 
 def dump(st, fout, ds, predict=False):
     ct = 0
@@ -86,6 +88,7 @@ def genOneFe(info, wins):
         feas += [info[_][d] for _ in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(info.status[d], info.s_status[d],
                              info.wav_status[d], info.e_status[d])
+        
     
     # win fea
     for win in wins:

@@ -33,4 +33,4 @@ class TestFeaKernel(TestCase):
         
         ema_value = ema(ft.e, sma_value, 10)
         ema_expect = np.array([22.24, 22.21, 22.22])
-        np.testing.assert_array_almost_equal(ema_expect, ema_value, decimal=2)
+        np.testing.assert_array_almost_equbal(ema_expect, ema_value, decimal=2)
