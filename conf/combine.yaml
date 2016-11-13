@@ -1,95 +1,115 @@
 self:
   input: 
-    - ans/v2201
-    - ans/v2202
-    - ans/v2203
-    - ans/v2204
-    - ans/v2205
-    - ans/v2206
-    - ans/v2101
-    - ans/v2102
-    - ans/v2103
-    - ans/v2104
-    - ans/v2105
-    - ans/v2106
-  output: ans/self
+    - v2201
+    - v2202
+    - v2203
+    - v2204
+    - v2205
+    - v2206
+    - v2101
+    - v2102
+    - v2103
+    - v2104
+    - v2105
+    - v2106
+  output: self
 
-c4:
+c24d:
+  input:
+    - v2401
+#    - v2402
+    - v2403
+    - v2404
+#    - v2405
+#    - v2406
+
+c24t:
+  input:
+#    - v2401
+#    - v2402
+    - v2403
+    - v2404
+#    - v2405
+    - v2406
+
+c24f:
+  input:
+    - v2401
+    - v2402
+#    - v2403
+#    - v2404
+#    - v2405
+#    - v2406
+
+c4:  # best
   input: 
-    - ans/v2104
-    - ans/v2105
-    - ans/v2301
-    - ans/v2303
-    - ans/v2304
-    - ans/v2306
-#    - ans/v2306
-#    - ans/v2106
-#    - ans/v1503
-#    - ans/v1505
-#    - ans/v1601
-#    - ans/v1603
-#    - ans/v1606
-  output: ans/c4
+    - v2104
+    - v2105
+    - v2301
+    - v2303
+    - v2304
+    - v2306
+  output: c4
 
 c23:
   input: 
-    - ans/v2302
-    - ans/v2301
-    - ans/v2306
-    - ans/v2305
-    - ans/v2303
-    - ans/v2304
-  output: ans/c23
+    - v2302
+    - v2301
+    - v2306
+    - v2305
+    - v2303
+    - v2304
+  output: c23
 
 c21:
   input: 
-    - ans/v2102
-    - ans/v2101
-    - ans/v2103
-    - ans/v2104
-    - ans/v2106
-    - ans/v2105
-  output: ans/c21
+    - v2102
+    - v2101
+    - v2103
+    - v2104
+    - v2106
+    - v2105
+  output: c21
 
 c2123:
   input: 
-    - ans/v2104
-    - ans/v2105
-    - ans/v2302
-    - ans/v2301
-    - ans/v2303
-    - ans/v2304
-    - ans/v2306
-    - ans/v2305
-  output: ans/c2123
+    - v2104
+    - v2105
+    - v2302
+    - v2301
+    - v2303
+    - v2304
+    - v2306
+    - v2305
+  output: c2123
 
 c17:
   input: 
-    - ans/v1701
-    - ans/v1706
-    - ans/v1703
-#    - ans/v1704
-#    - ans/v1705
-#    - ans/v1702
+    - v1701
+    - v1706
+    - v1703
+#    - v1704
+#    - v1705
+#    - v1702
 
-  output: ans/c17
+  output: c17
 
 today:
   input: 
-    - ans/t2101
-    - ans/t2102
-    - ans/t2103
-    - ans/t2104
-    - ans/t2105
-    - ans/t2106
-  output: ans/today
+    - t2101
+    - t2102
+    - t2103
+    - t2104
+    - t2105
+    - t2106
+  output: today
 
 top:
   input: 
-    - ans/t2104
-    - ans/t2105
-    - ans/t2301
-    - ans/t2303
-    - ans/t2304
-    - ans/t2306
-  output: ans/top
+    - t2104
+    - t2105
+    - t2301
+    - t2303
+    - t2304
+    - t2306
+  output: top

@@ -42,13 +42,15 @@ def process(fins, fout, weights=None):
     combine(predictions, fout)
 
 if __name__ == "__main__":
+    model = sys.argv[1]
     with open("conf/combine.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     fins = cfg["input"]
+    fins = map(lambda x: "ans/" + x, fins)
     print fins
     if "weights" in cfg:
         weights = cfg["weights"]
     else:
         weights = [1.0] * len(fins)
-    fout = cfg["output"]
+    fout = "ans/%s" % model
     process(fins, fout, weights)
