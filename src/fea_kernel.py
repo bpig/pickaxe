@@ -25,6 +25,49 @@ def base_fea(values):
     items += [values[13]]  # target
     return items
 
+def cr(info, win):
+    ct = len(info.pe)
+    if ct < win:
+        return []
+    high = np.asarray(info.high, dtype=np.float32)
+    low = np.asarray(info.low, dtype=np.float32)
+    mid = (high + low) / 2
+    pre_mid = mid[1:]
+    h = high[:-1] - pre_mid
+    h[h < 0] = 0
+    l = pre_mid - low[:-1]
+    l[l < 0] = 0
+    ct = len(pre_mid)
+    ans = np.empty(ct - win + 1)
+    for i in range(ct - win + 1):
+        l_sum = l[i:i + win].sum()
+        if l_sum == 0:
+            l_sum = 1
+        ans[i] = h[i:i + win].sum() / l_sum
+    return ans
+
+def br(info, win):
+    ct = len(info.pe)
+    if ct < win:
+        return []
+    pe = np.asarray(info.pe, dtype=np.float32)
+    high = np.asarray(info.high, dtype=np.float32)
+    low = np.asarray(info.low, dtype=np.float32)
+    h = high - pe
+    h[h < 0] = 0
+    l = pe - low
+    l[l < 0] = 0
+    ans = np.empty(ct - win + 1)
+    for i in range(ct - win + 1):
+        l_sum = l[i:i + win].sum()
+        if l_sum == 0:
+            l_sum = 1
+        ans[i] = h[i:i + win].sum() / l_sum
+    return ans
+
+def kdj():
+    pass
+
 def sma(col, win):
     ct = len(col)
     if ct < win:
