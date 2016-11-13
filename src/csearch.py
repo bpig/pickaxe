@@ -24,7 +24,7 @@ if __name__ == "__main__":
     with open("conf/combine.yaml") as fin:
         cfg = yaml.load(fin)[model]
     fins = cfg["input"]
-
+    fins = map(lambda x: "ans/" + x, fins)
     logfile = "log/cb_" + model
     try:
         rd = csv.reader(open(logfile))

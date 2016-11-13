@@ -11,6 +11,12 @@ Ft = collections.namedtuple(
      'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate',
      'status', 's_status', 'wav_status', 'e_status', 'tgt'])
 
+Cc = collections.namedtuple(
+    'Cc',
+    ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',
+     'shares'])
+
+
 # states,正常 0,停盘 1
 # s-status,开盘正常 0,开盘涨停 1,开盘跌停 2
 # wav-status,当天正常 0,当天有涨停 1,当天有跌停 2,当天有涨停又有跌停 3

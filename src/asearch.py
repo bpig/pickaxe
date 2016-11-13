@@ -14,23 +14,29 @@ def printDict(kv):
 
 
 if __name__ == '__main__':
-    rd = csv.reader(open(sys.argv[1]))
+    fin = sys.argv[1]
+    rd = csv.reader(open(fin))
     t3 = defaultdict(list)
     t50 = defaultdict(list)
     for r in rd:
         if not r:
             continue
-        key = "cb"
-        name = r[0]
+        if "cb" in fin:
+            key = "cb"
+            name = r[0]
+        else:
+            key = r[0]
+            name = r[1]
         s3 = float(r[-2])
         s50 = float(r[-1])
         t3[key] += [(name, s3)]
         t50[key] += [(name, s50)]
 
-    print "last 3 select"
-    printDict(t3)
-    print "last 50 select"
-    printDict(t50)
+    if not "cb" in fin:
+        print "last 3 select"
+        printDict(t3)
+        print "last 50 select"
+        printDict(t50)
 
     
     for k in sorted(t3.keys()):

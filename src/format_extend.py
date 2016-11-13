@@ -3,7 +3,7 @@
 from common import *
 from fea_kernel import *
 from fea_core import *
-
+from data_loader import Cc
 def getline(filename):
     for c, l in enumerate(open(filename)):
         l = l.strip()
@@ -19,8 +19,8 @@ def getKv(filename, kv, uniq):
         value = l[pos + 1:].replace("NULL", "0.0")
         value = value.split(",")
         ds = value[0]
-        if ds < "20160000":
-            continue
+        # if ds < "20160000":
+        #     continue
         kid = key + "_" + value[0]
         if kid in uniq:
             continue
@@ -64,56 +64,58 @@ def extend(key, v):
     
     ex = []
     ex += [np.asarray(v[0], dtype=np.float32)]
-    
+
+
+    cc = Cc(*v)
     for i in [3, 5, 7, 10, 15, 26]:
-        emv_value = emv(v, i)
+        emv_value = emv(cc, i)
         
-        cr_value = cr(v, i)
-        br_value = br(v, i)
+        cr_value = cr(cc, i)
+        br_value = br(cc, i)
         
-        sma_value = sma(v.e, i)
-        ema_value = ema(v.e, sma_value, 3)
-        sma_value = fea_length_extend(sma_value, len(v.ds))
-        ema_value = fea_length_extend(ema_value, len(v.ds))
+        sma_value = sma(cc.e, i)
+        ema_value = ema(cc.e, sma_value, 3)
+        sma_value = fea_length_extend(sma_value, len(cc.ds))
+        ema_value = fea_length_extend(ema_value, len(cc.ds))
         
-        _, _, _, boll_value = boll(v, i)
+        _, _, _, boll_value = boll(cc, i)
         
-        rsi_value = rsi(v, i)
-        bias_value = bias(v, i)
-        cci_value = cci(v, i)
+        rsi_value = rsi(cc, i)
+        bias_value = bias(cc, i)
+        cci_value = cci(cc, i)
         
-        osc_value = osc(v, i)
-        psy_value = psy(v, i)
-        wms_value = wms(v, i)
-        obv_value = obv(v, i)
+        osc_value = osc(cc, i)
+        psy_value = psy(cc, i)
+        wms_value = wms(cc, i)
+        obv_value = obv(cc, i)
         ex += [emv_value, cr_value, br_value, sma_value, ema_value, boll_value,
                rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
                obv_value]
     
-    _, _, j_2 = kdj(v, 4, 2, 2)
-    _, _, j_3 = kdj(v, 9, 3, 3)
-    _, _, j_4 = kdj(v, 16, 4, 4)
-    _, _, j_5 = kdj(v, 25, 5, 5)
+    _, _, j_2 = kdj(cc, 4, 2, 2)
+    _, _, j_3 = kdj(cc, 9, 3, 3)
+    _, _, j_4 = kdj(cc, 16, 4, 4)
+    _, _, j_5 = kdj(cc, 25, 5, 5)
     ex += [j_2, j_3, j_4, j_5]
     
-    macd_5 = macd(v, 5, 3, 2)
-    macd_10 = macd(v, 10, 5, 3)
-    macd_15 = macd(v, 15, 7, 5)
-    macd_26 = macd(v, 26, 12, 9)
+    macd_5 = macd(cc, 5, 3, 2)
+    macd_10 = macd(cc, 10, 5, 3)
+    macd_15 = macd(cc, 15, 7, 5)
+    macd_26 = macd(cc, 26, 12, 9)
     ex += [macd_5, macd_10, macd_15, macd_26]
     
-    # ex += [cdp(v)]
+    # ex += [cdp(cc)]
     
-    mtm_4, mtma_4 = mtm(v, 4, 2)
-    mtm_8, mtma_8 = mtm(v, 8, 4)
-    mtm_12, mtma_12 = mtm(v, 12, 6)
-    mtm_20, mtma_20 = mtm(v, 20, 10)
-    mtm_26, mtma_26 = mtm(v, 26, 13)
-    ex += [mtm_4, mtma_4, mtm_8, mtma_8, mtm_12, mtma_12, mtm_20, mtma_20, mtm_26, mtma_26]
+    _, mtma_4 = mtm(cc, 4, 2)
+    _, mtma_8 = mtm(cc, 8, 4)
+    _, mtma_12 = mtm(cc, 12, 6)
+    _, mtma_20 = mtm(cc, 20, 10)
+    _, mtma_26 = mtm(cc, 26, 13)
+    ex += [mtma_4, mtma_8, mtma_12, mtma_20, mtma_26]
     
-    vr_10 = vr(v, 10)
-    vr_15 = vr(v, 15)
-    vr_26 = vr(v, 26)
+    vr_10 = vr(cc, 10)
+    vr_15 = vr(cc, 15)
+    vr_26 = vr(cc, 26)
     ex += [vr_10, vr_15, vr_26]
     
     work_day = range(len(e_rate), 0, -1)
@@ -161,6 +163,8 @@ def dump(kv, filename):
         
         ex_values += [ex]
         ex_keys += [k]
+        if c % 50 == 0:
+            print time.ctime(), c
     
     np.save(filename + ".value.ex", np.asarray(ex_values))
     np.save(filename + ".key.ex", np.asarray(ex_keys))
@@ -190,4 +194,4 @@ if __name__ == "__main__":
     
     fin = "data/" + cfg["raw"]
     fout = "data/" + cfg["data"]
-    process(fin, fout, merge=True)
+    process(fin, fout, merge=False)

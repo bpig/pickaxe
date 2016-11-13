@@ -28,10 +28,11 @@ def base_fea(values):
 def emv(info, win):  # self version
     ct = len(info.e)
     if ct < win:
-        return []
+        return fea_length_extend([], [], len(info.ds))
     e = np.asarray(info.e, dtype=np.float32)
     pe = np.asarray(info.pe, dtype=np.float32)
     volumn = np.asarray(info.volumn, dtype=np.float32)
+    volumn[volumn == 0] = 1
     dis = e - pe
     ans = dis / volumn
     ans_ma = sma(ans, win)
@@ -40,7 +41,7 @@ def emv(info, win):  # self version
 def cr(info, win):
     ct = len(info.pe)
     if ct < win:
-        return []
+        return fea_length_extend([], len(info.ds))
     high = np.asarray(info.high, dtype=np.float32)
     low = np.asarray(info.low, dtype=np.float32)
     mid = (high + low) / 2
@@ -62,7 +63,7 @@ def cr(info, win):
 def br(info, win):
     ct = len(info.pe)
     if ct < win:
-        return []
+        return fea_length_extend([], len(info.ds))
     pe = np.asarray(info.pe, dtype=np.float32)
     high = np.asarray(info.high, dtype=np.float32)
     low = np.asarray(info.low, dtype=np.float32)
@@ -83,15 +84,18 @@ def br(info, win):
 def kdj(info, rsv_win, k_win, d_win):
     ct = len(info.e)
     if ct < rsv_win + k_win + d_win - 2:
-        return []
-    e = info.asarray(info.e, dtype=np.float32)
-    high = info.asarray(info.high, dtype=np.float32)
-    low = info.asarray(info.low, dtype=np.float32)
+        return fea_length_extend([],[],[], len(info.ds))
+    e = np.asarray(info.e, dtype=np.float32)
+    high = np.asarray(info.high, dtype=np.float32)
+    low = np.asarray(info.low, dtype=np.float32)
     rsv = np.empty(ct - rsv_win + 1)
     for i in range(ct - rsv_win + 1):
         high_max = high[i:i + rsv_win].max()
         low_min = low[i:i + rsv_win].min()
-        rsv[i] = (e - high_max) / (high_max - low_min)
+        diff = high_max - low_min
+        if diff == 0:
+            diff = 1
+        rsv[i] = (e[i] - high_max) / diff
     k = sma(rsv, k_win)
     d = sma(k, d_win)
     k = k[:len(d)]
@@ -113,6 +117,8 @@ def sma(col, win):
 
 def ema(col, sma_value, win):
     assert len(col) >= len(sma_value)
+    if len(sma_value) == 0:
+        return []
     ct = len(sma_value)
     col = np.asarray(col[:ct], dtype=np.float32)
     factor = 2.0 / (1 + win)
@@ -123,12 +129,14 @@ def ema(col, sma_value, win):
     return ans
 
 def macd(info, long_win, short_win, m):
+    if len(info.ds) < long_win + short_win + m - 1:
+        return fea_length_extend([], len(info.ds))
     long_ma = sma(info.e, long_win)
     long_ema = ema(info.e, long_ma, long_win)
     
     short_ma = sma(info.e, short_win)
     short_ema = ema(info.e, short_ma, short_win)
-    
+
     diff = short_ema[:len(long_ema)] - long_ema
     
     diff_ma = sma(diff, m)
@@ -138,7 +146,7 @@ def macd(info, long_win, short_win, m):
 def boll(info, win):
     ct = len(info.ds)
     if ct < win:
-        return []
+        return fea_length_extend([],[],[],[], len(info.ds))
     e = np.asarray(info.e, dtype=np.float32)
     
     ct = ct - win + 1
@@ -147,16 +155,20 @@ def boll(info, win):
         e_win = e[i:i + win]
         std = e_win.std()
         mean = e_win.mean()
+        if np.isnan(mean) or np.isinf(mean):
+            print e_win
+            mean = 0
         band_mid[i] = mean
         band_upper[i] = mean + std * 2
         band_lower[i] = mean - std * 2
+    band_mid[band_mid < 0.1] = 0.1
     band_width = (band_upper - band_lower) / band_mid
     return fea_length_extend(band_upper, band_mid, band_lower, band_width, len(info.ds))
 
 def rsi(info, win):
     ct = len(info.e) - 1
     if ct < win:
-        return []
+        return fea_length_extend([], len(info.ds))
     e = np.asarray(info.e, dtype=np.float32)[:-1]
     pe = np.asarray(info.pe, dtype=np.float32)[:-1]
     gain = e - pe
