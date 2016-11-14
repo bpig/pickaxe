@@ -119,35 +119,25 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
     print time.ctime(), "finish load data"
     return Datasets(train=train, test=test)
 
-def get_one_day(filename, uniq, k, f):
-    for l in open(filename):
-        l = l.strip()
-        if not l:
-            continue
-        pos1 = l.find(":")
-        key = l[:pos1]
-        if key in uniq:
-            continue
-        fea = l[pos1 + 1:].split(",")
-        k.append(key)
-        f.append(fea)
-
 def merge_daily(keys, feas, tgts, cfg):
     uniq = set(keys)
-    if "daily_fe" not in cfg:
-        return keys, feas, tgts
     fe_version = cfg["fe"]
     normal = "data/fe/%s/%s" % (fe_version, fe_version)
     mu = np.load(normal + ".mu.npy")
     delta = np.load(normal + ".delta.npy")
     k = []
     f = []
-    daily_fe = "data/" + cfg["daily_fe"] + "/"
+    daily_fe = "data/fe/%s/daily/" % fe_version
     for d in os.listdir(daily_fe):
         if d > 11 and not d.endswith(".fe"):
             continue
         print "load", daily_fe + d
-        get_one_day(daily_fe + d, uniq, k, f)
+        k1, f1, t1 = base_data(daily_fe + d)
+        for i in range(len(k1)):
+            if k1[i] in uniq:
+                continue
+            k.append(k1[i])
+            f.append(f1[i])
     if not k:
         return keys, feas, tgts
     
@@ -155,7 +145,8 @@ def merge_daily(keys, feas, tgts, cfg):
     f = np.asarray(f, dtype=np.float32)
     f = (f - mu) / delta
     t = np.ones(len(k), dtype=np.float32)
-
+    if not keys:
+        return k, f, t
     keys = np.concatenate((keys, k))
     feas = np.concatenate((feas, f))
     tgts = np.concatenate((tgts, t))
@@ -166,18 +157,23 @@ def read_predict_sets(datafile, cfg):
         cfg["cache"] = True
     if "merge" not in cfg:
         cfg["merge"] = False
+    if "nobig" not in cfg:
+        cfg["nobig"] = False
 
     print time.ctime(), "begin load data", datafile
-    keys, feas, tgts = base_data(datafile, cfg["cache"])
-    tgts = tgts.astype(np.float32)
-    feas = feas.astype(np.float32)
-
+    
+    if not cfg["nobig"]:
+        keys, feas, tgts = base_data(datafile, cfg["cache"])
+        tgts = tgts.astype(np.float32)
+        feas = feas.astype(np.float32)
+    else:
+        keys, feas, tgts = [], [], []
     if cfg["merge"]:
         keys, feas, tgts = merge_daily(keys, feas, tgts, cfg)
     
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
-    
+
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"
     return PredictSets(key=keys, fea=feas, tgt=tgts)

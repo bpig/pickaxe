@@ -59,14 +59,12 @@ def genOne(key, info, ds, predict=False):
         # stock is stoped
         if info.status[idx - 1] == 1 or info.status[idx - 2] == 1:
             return ""
-    elif idx != 0:
-        print "index %s of %s must 0" % (ds, key)
-        return ""
+    # elif idx != 0:
+    #     print "index %s of %s must 0" % (ds, key)
+    #     return ""
     
-    windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
-    # windows = [2, 3, 5, 7, 15]  # , 30, 60]
-    # windows = [2, 3, 5, 7, 10, 15, 20]  # , 30, 60]
-    # windows = [2, 3, 5, 7, 10]  # , 30, 60]
+    # windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
+    windows = [2, 3, 5, 7, 15]
     max_win = windows[-1]
     info = Ft(*map(lambda x: x[idx:idx + max_win], info))
     

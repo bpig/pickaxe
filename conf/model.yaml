@@ -1,120 +1,9 @@
-vall:
-  data: all/15/fe
-  # dcache: False
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: vall
-  batch_step: 32
-  epoch: 1
-  pdata: all/15/2016.fe
-  pout: 2016_vall
-
-vall2:
-  data: all/15/fe
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: vall2
-  batch_step: 16
-  epoch: 1
-  pdata: all/15/2016.fe
-  pout: 2016_vall2
-
-gb:
-  data: gb/train.gb
-  net: [64, 64]
-  keep_prob: 0.3
-  model: vall
-  batch_step: 1
-  epoch: 1
-  pdata: gb/2016.gb
-  # pcache: False
-  pout: 2016_gb
-
-w1: # e2, 1.5
-  data: 2010/20/fe
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: w1
-  batch_step: 12
-  epoch: 1
-  pdata: 2010/20/2016.fe
-  pout: 2016_w1
-
-w10:
-  data: 2010/10/fe
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  model: w10
-  batch_step: 10
-  epoch: 1
-  pdata: 2010/10/2016.fe
-  pout: 2016_w10
-  
-comb:
-  pout: 2016_comb        
-
-pc:
-  tout: 2016_pc
-
 v15:
-  fe: f2
+  fe: f0
   data: 2010/15/fe.cmvn
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   batch_step: 10
-  #pdata: 2010/15/2016.fe
-  tdata: predict/today.fe
-  normal: 2010/15/fe
-  daily_fe: predict/cache/
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v16:
-  data: 2010/15/fe.cmvn
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 10
-  pdata: 2010/15/2016.fe
-  tdata: predict/today.fe
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v17:
-  data: fe/fe.15.tr
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 14
-  epoch: 1
-  pdata: fe/fe.15.te
-  tdata: predict/today.fe
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v18:
-  data: fe/11.tr  # 201101 - 201603
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 12
-  epoch: 1
-  pdata: fe/11.te
-  tdata: predict/today.fe
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v19:
-  data: fe/11.tr  # 201201 - 201603
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 10
-  epoch: 1
-  pdata: fe/12.te
-  tdata: predict/today.fe
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v20:
-  data: fe/11.tr  # 201301 - 201603
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 8
-  epoch: 1
-  pdata: fe/13.te
-  tdata: predict/today.fe
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
 v21:
@@ -123,8 +12,6 @@ v21:
   keep_prob: 0.3
   batch_step: 12
   epoch: 1
-  daily_fe: predict/cache
-  tdata: predict/today.fe
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
 v22:
@@ -133,8 +20,6 @@ v22:
   keep_prob: 0.3
   batch_step: 36
   epoch: 1
-  daily_fe: predict/cache
-  tdata: predict/today.fe
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
 v23:
@@ -143,8 +28,6 @@ v23:
   keep_prob: 0.3
   batch_step: 18
   epoch: 1
-  daily_fe: predict/cache
-  tdata: predict/today.fe
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
 v24:  # lr min
@@ -153,6 +36,4 @@ v24:  # lr min
   keep_prob: 0.3
   batch_step: 12
   epoch: 1
-  daily_fe: predict/cache
-  tdata: predict/today.fe
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]

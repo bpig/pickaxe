@@ -1,66 +1,11 @@
-f3:
-  raw: 2013/2013.cc
-  data: 2013/2013.ft
-  train: 2013/15/fe
-  test: 2013/15/2016.fe
-
-test:
-  raw: 2013/2013.cc
-  data: 2013/2013.ft
-  train: test/2016.fe
-
 f0:
-  raw: 2013/2013.cc
-  data: 2013/2013.ft
-  gb: 2013/2013.gb
-  train: 2013/15g/fe
-  test: 2013/15g/2016.fe
-
-fall:
-  raw: all/all.cc
-  data: all/all.ft
-  #gb: all/all.gb
-  train: all/15/fe
-  test: all/15/2016.fe
-
-today:
-  raw: predict/2016-10-21.csv
-  data: predict/today.ft
-  predict: predict/today.fe
-
-gb:
-  train: gb/train.gb
-  test: gb/2016.gb
-        
-w1:
-  raw: 2010/2010.cc
-  data: 2010/2010.ft
-  train: 2010/20/fe
-  test: 2010/20/2016.fe
-
-w2:
-  raw: 2010/2010.cc
-  data: 2010/2010.ft
-  train: 2010/10/fe
-  test: 2010/10/2016.fe
-
-spark:
-  raw: 2010/2010.cc
-  data: 2010/2010.ft
-  train: fe/fe.15.tr
-  test: fe/fe.15.te
-
-v18:
-  train: fe/11.tr
-  test: fe/11.te
-
-v19:
-  train: fe/12.tr
-  test: fe/12.te
-
-v20:
-  train: fe/13.tr
-  test: fe/13.te
+  raw: 2010.cc
+  data: 2010/2016.ft
+  ft: 2010.ft
+  fe: 2010_15fe
+  raw_fe: raw/2010_15/ 
+  train_begin: 20100000
+  train_end: 20160500
 
 f1:
   raw: 2010.cc

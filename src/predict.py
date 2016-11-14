@@ -13,6 +13,9 @@ def getArgs():
                         help="day")
     parser.add_argument("-merge", dest="merge", action="store_true", default=False,
                         help="merge daily")
+    parser.add_argument("-nb", dest="nobig", action="store_true", default=False,
+                        help="no predict big data")
+
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -28,9 +31,10 @@ if __name__ == "__main__":
     else:
         datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
-
-    if "merge" in sys.argv:
-        cfg["merge"] = True
+        if args.merge:
+            cfg["merge"] = True
+        if args.nobig:
+            cfg["nobig"] = True
 
     predSet = read_predict_sets(datafile, cfg)
     
@@ -41,13 +45,11 @@ if __name__ == "__main__":
     keep_prob = 1.0
     classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
     
-    print predSet.fea.dtype
     classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
     
     pp = classifier.predict(predSet.fea, as_iterable=True)
     
     ans = defaultdict(list)
-    
     for c, p in enumerate(pp):
         if p['class'] == 0:
             continue
