@@ -122,9 +122,6 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
 def merge_daily(keys, feas, tgts, cfg):
     uniq = set(keys)
     fe_version = cfg["fe"]
-    normal = "data/fe/%s/%s" % (fe_version, fe_version)
-    mu = np.load(normal + ".mu.npy")
-    delta = np.load(normal + ".delta.npy")
     k = []
     f = []
     daily_fe = "data/fe/%s/daily/" % fe_version
@@ -132,10 +129,11 @@ def merge_daily(keys, feas, tgts, cfg):
         if d > 11 and not d.endswith(".fe"):
             continue
         print "load", daily_fe + d
-        k1, f1, t1 = base_data(daily_fe + d)
+        k1, f1, t1 = base_data(daily_fe + d, cfg["cache"])
         for i in range(len(k1)):
             if k1[i] in uniq:
                 continue
+            uniq.add(k1[i])
             k.append(k1[i])
             f.append(f1[i])
     if not k:
@@ -143,7 +141,6 @@ def merge_daily(keys, feas, tgts, cfg):
     
     k = np.asarray(k)
     f = np.asarray(f, dtype=np.float32)
-    f = (f - mu) / delta
     t = np.ones(len(k), dtype=np.float32)
     if not keys:
         return k, f, t
