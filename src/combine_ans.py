@@ -1,16 +1,13 @@
 # -*- coding:utf-8 -*-
 from common import *
 
-def transform(weight):
-    def _inner(l):
-        x = l.split("_")
-        return x[0], float(x[1]) * weight, x[2]
-    
-    return _inner
+def transform(l):
+    x = l.split("_")
+    return x[0], float(x[1]), x[2]
 
 def loadFile(fins):
     kv = defaultdict(list)
-    for (fin, weight) in fins:
+    for fin in fins:
         for l in open(fin):
             l = l.strip()
             if not l:
@@ -18,7 +15,7 @@ def loadFile(fins):
             pos = l.find(",")
             ds = l[:pos]
             items = l[pos + 1:].split(",")
-            items = map(transform(weight), items)
+            items = map(transform, items)
             kv[ds] += [items]
     return kv
 
@@ -35,22 +32,16 @@ def combine(predictions, fout):
         cw = map(lambda x: x[0] + "_" + str(x[1]) + "_0.0", cw)
         fout.write(k + "," + ",".join(cw) + "\n")
 
-def process(fins, fout, weights=None):
-    if not weights:
-        weights = [1.0] * len(fins)
-    predictions = loadFile(zip(fins, weights))
+def process(fins, fout):
+    predictions = loadFile(fins)
     combine(predictions, fout)
 
 if __name__ == "__main__":
-    model = sys.argv[1]
+    prefix = sys.argv[1][:3]
+    key = sys.argv[1][1:]
     with open("conf/combine.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
-    fins = cfg["input"]
-    fins = map(lambda x: "ans/" + x, fins)
+        subs = str(yaml.load(fin)[key])
+    fins = map(lambda x: ("ans/%s0" % prefix) + x, subs)
     print fins
-    if "weights" in cfg:
-        weights = cfg["weights"]
-    else:
-        weights = [1.0] * len(fins)
-    fout = "ans/%s" % model
-    process(fins, fout, weights)
+    fout = "ans/%s" % sys.argv[1]
+    process(fins, fout)
