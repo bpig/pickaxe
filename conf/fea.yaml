@@ -97,3 +97,12 @@ f4:
   train_begin: 20100000
   train_end: 20160500
 
+f5:
+  raw: 2010.cc
+  data: 2010/2016.ft
+  ft: 2010.ft  # spark
+  fe: 2010_15fe_new # spark
+  raw_fe: raw/2010_15new/  # local
+  train_begin: 20100000
+  train_end: 20160500
+

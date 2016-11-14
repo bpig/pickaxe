@@ -1,13 +1,15 @@
 set -x
 
-#python src/gen_predict_fea.py  $1 #20161102
+python src/gen_predict_fea.py v21  $1 #20161102
 
-python src/predict.py -m v2301 -ds 20161110
-python src/predict.py -m v2302 -ds 20161110
-python src/predict.py -m v2303 -ds 20161110
-python src/predict.py -m v2304 -ds 20161110
-python src/predict.py -m v2305 -ds 20161110
-python src/predict.py -m v2306 -ds 20161110
+d=$1
+
+python src/predict.py -m v2101 -ds $d
+python src/predict.py -m v2102 -ds $d
+python src/predict.py -m v2103 -ds $d
+python src/predict.py -m v2104 -ds $d
+python src/predict.py -m v2105 -ds $d
+python src/predict.py -m v2106 -ds $d
 
 #python src/combine_ans.py today
 

@@ -20,7 +20,7 @@ def daySpan(d1, d2):
 
 def genBasic(vals):
     vals = np.asarray(vals, dtype=np.float32)
-    res = [np.mean(vals), np.std(vals), max(vals), min(vals)]
+    res = [vals.sum(), np.mean(vals), np.std(vals), max(vals), min(vals)]
     # if len(vals) > 7:
     #     res += [stats.skewtest(vals)]
     # if len(vals) > 20:

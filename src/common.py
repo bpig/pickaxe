@@ -34,7 +34,7 @@ except:
 # from scipy import stats
 
 class TimeLog:
-    def __init__(self, name):
+    def __init__(self, name=""):
         self.n = name
     
     def __enter__(self):
