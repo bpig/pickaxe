@@ -130,7 +130,7 @@ def ema(col, sma_value, win):
 
 def macd(info, long_win, short_win, m):
     if len(info.ds) < long_win + short_win + m - 1:
-        return fea_length_extend([], len(info.ds))
+        return fea_length_extend([], [], [], len(info.ds))
     long_ma = sma(info.e, long_win)
     long_ema = ema(info.e, long_ma, long_win)
     
@@ -141,29 +141,26 @@ def macd(info, long_win, short_win, m):
     
     diff_ma = sma(diff, m)
     diff_ema = ema(diff, diff_ma, m)
-    return fea_length_extend(diff_ema, len(info.ds))
+    return fea_length_extend(diff, diff_ma, diff_ema, len(info.ds))
 
 def boll(info, win):
     ct = len(info.ds)
     if ct < win:
-        return fea_length_extend([],[],[],[], len(info.ds))
+        return fea_length_extend([],[], len(info.ds))
     e = np.asarray(info.e, dtype=np.float32)
     
     ct = ct - win + 1
-    band_mid, band_upper, band_lower = np.empty((3, ct))
-    for i in range(ct - win + 1):
+    band_rate, band_std = np.empty((2, ct))
+    for i in range(ct):
         e_win = e[i:i + win]
         std = e_win.std()
         mean = e_win.mean()
-        if np.isnan(mean) or np.isinf(mean):
-            print e_win
-            mean = 0
-        band_mid[i] = mean
-        band_upper[i] = mean + std * 2
-        band_lower[i] = mean - std * 2
-    band_mid[band_mid < 0.1] = 0.1
-    band_width = (band_upper - band_lower) / band_mid
-    return fea_length_extend(band_upper, band_mid, band_lower, band_width, len(info.ds))
+        if mean == 0:
+            band_rate[i] = 0
+        else:
+            band_rate[i] = std / mean 
+        band_std[i] = std
+    return fea_length_extend(band_rate, band_std, len(info.ds))
 
 def rsi(info, win):
     ct = len(info.e) - 1

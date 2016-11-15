@@ -62,7 +62,7 @@ def fea_length_extend(*args):
     new_ans = []
     for i in range(len(ans)):
         item = np.zeros(ct)
-        item[:len(ans[i])] = ans[i]
+        item[:len(ans[i])] = np.asarray(ans[i])
         new_ans += [item]
     if len(new_ans) == 1:
         return new_ans[0]

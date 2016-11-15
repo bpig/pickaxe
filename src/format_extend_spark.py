@@ -25,10 +25,10 @@ def cal(lt):
     lt, aux, ex = format_extend.extend("no_use", lt)
 
     lt = map(lambda x: "_".join(x), lt)
-    lt = "_".join(lt)
+    lt = ",".join(lt)
 
     aux = map(lambda x: "_".join(x), aux)
-    aux = "_".join(aux)
+    aux = ",".join(aux)
 
     f = StringIO()
     ex = np.asarray(ex)

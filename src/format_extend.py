@@ -64,11 +64,11 @@ def extend(key, v):
     e_status = map(getStatus, e_rate)
     
     ex = []
-    ex += [np.asarray(v[0], dtype=np.float32)]
+    ex += [np.asarray(v[0], dtype=np.float64)]
     
     cc = Cc(*v)
     for i in [3, 5, 7, 10, 15, 26]:
-        emv_value = emv(cc, i)
+        emv_value, emv_ma = emv(cc, i)
         
         cr_value = cr(cc, i)
         br_value = br(cc, i)
@@ -78,7 +78,7 @@ def extend(key, v):
         sma_value = fea_length_extend(sma_value, len(cc.ds))
         ema_value = fea_length_extend(ema_value, len(cc.ds))
         
-        _, _, _, boll_value = boll(cc, i)
+        boll_rate, boll_std = boll(cc, i)
         
         rsi_value = rsi(cc, i)
         bias_value = bias(cc, i)
@@ -88,30 +88,24 @@ def extend(key, v):
         psy_value = psy(cc, i)
         wms_value = wms(cc, i)
         obv_value = obv(cc, i)
-        ex += [emv_value, cr_value, br_value, sma_value, ema_value, boll_value,
+        ex += [emv_value, emv_ma, cr_value, br_value, sma_value, ema_value, 
+               boll_rate, boll_std,
                rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
                obv_value]
     
-    _, _, j_2 = kdj(cc, 4, 2, 2)
-    _, _, j_3 = kdj(cc, 9, 3, 3)
-    _, _, j_4 = kdj(cc, 16, 4, 4)
-    _, _, j_5 = kdj(cc, 25, 5, 5)
-    ex += [j_2, j_3, j_4, j_5]
+    for (a, b, c) in [(4,2,2), (9,3,3), (16,4,4), (25,5,5)]:
+        k, d, j = kdj(cc, 4, 2, 2)
+        ex += [k, d, j]
     
-    macd_5 = macd(cc, 5, 3, 2)
-    macd_10 = macd(cc, 10, 5, 3)
-    macd_15 = macd(cc, 15, 7, 5)
-    macd_26 = macd(cc, 26, 12, 9)
-    ex += [macd_5, macd_10, macd_15, macd_26]
+    for (l, s, m) in [(5,3,2), (10, 5,3), (15,7,5), (26,12,9)]:
+        diff, diff_ma, diff_ema = macd(cc, 26, 12, 9)
+        ex += [diff, diff_ma, diff_ema]
     
     # ex += [cdp(cc)]
-    
-    _, mtma_4 = mtm(cc, 4, 2)
-    _, mtma_8 = mtm(cc, 8, 4)
-    _, mtma_12 = mtm(cc, 12, 6)
-    _, mtma_20 = mtm(cc, 20, 10)
-    _, mtma_26 = mtm(cc, 26, 13)
-    ex += [mtma_4, mtma_8, mtma_12, mtma_20, mtma_26]
+
+    for (a, b) in [(4, 2), (8,4), (12, 6), (20,10), (26,13)]:
+        mtm_value, mtma = mtm(cc, 26, 13)
+        ex += [mtm_value, mtma]
     
     vr_10 = vr(cc, 10)
     vr_15 = vr(cc, 15)
@@ -147,13 +141,6 @@ def dump(kv, filename):
         v = sorted(v, key=lambda x: x[0], reverse=True)
         v = zip(*v)
         v, aux, ex = extend(k, v)
-        
-        # for debug
-        # d = zip(*v)
-        # for l in d:
-        #     key = k + "_" + l[0]
-        #     value = ",".join(l[1:])
-        #     fdebug.write(key + "," + value + "\n")
         
         # normal output
         v = map(lambda x: "_".join(x), v)

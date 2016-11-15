@@ -3,41 +3,7 @@
 from common import *
 from pyspark import SparkConf
 from pyspark import SparkContext
-from data_loader import Ft
-import fea
 import yaml
-
-def genOneFe(info, wins):
-    feas = fea.genOneFe(info, wins)
-    tgt = info.tgt[0]
-    assert tgt > 0
-    feas += [tgt]
-    info = map(str, feas)
-    return ",".join(info)
-
-def process(line):
-    pos = line.find(",")
-    key = line[:pos]
-    value = line[pos + 1:]
-    items = value.split(",")
-    items = map(lambda x: x.split("_"), items)
-    ds = items[0]
-    wins = [2, 3, 5, 7, 15]
-    maxWin = wins[-1]
-    
-    ct = len(ds) - 2 - maxWin
-    if ct < 0:
-        return key, []
-    
-    feas = []
-    for i in range(2, ct + 2):
-        info = Ft(*map(lambda x: x[i:i + maxWin], items))
-        # stock is stoped
-        if items[15][i - 1] == '1' or items[15][i - 2] == '1':
-            continue
-        fe = genOneFe(info, wins)
-        feas += [(key + "_" + info.ds[0], fe)]
-    return key, feas
 
 def getSC(appName='aux'):
     sconf = SparkConf().set("spark.hadoop.validateOutputSpecs", "false") \
@@ -45,7 +11,6 @@ def getSC(appName='aux'):
         .set("spark.kryoserializer.buffer.max", "2000")
     sc = SparkContext(appName=appName, conf=sconf)
     sc.addPyFile("src/data_loader.py")
-    sc.addPyFile("src/fea.py")
     sc.addPyFile("src/common.py")
     return sc
 
@@ -59,22 +24,26 @@ def select(tb, te):
 
 def trans(content):
     value = content.split(",")[:-1]
-    return np.asarray(value).astype(np.float32)
+    arr = np.asarray(value).astype(np.float64)
+    return arr 
 
-def cal(iterator):
-    x = next(iterator)
-    xx = x * x
-    for y in iterator:
-        x += y
-        xx += y * y
-    yield x, xx
+def cal(total):
+    def _inter(iterator):
+        n = next(iterator)
+        x = n / total
+        xx = n * n / total
+        for y in iterator:
+            x += y / total
+            xx += y * y / total
+        yield x, xx
+    return _inter
 
 def normal(mu, delta):
     def _inter(x):
         k, v = x
         value = v.split(",")
         tgt = value[-1]
-        value = np.asarray(value[:-1]).astype(np.float32)
+        value = np.asarray(value[:-1]).astype(np.float64)
         value = (value - mu) / delta
         fea = ",".join(map(str, list(value) + [tgt]))
         return k, fea
@@ -85,7 +54,8 @@ if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
     sc = getSC()
-    fin = "htk/" + cfg["fe"]
+    fin = "htk/fe/%s" % model
+
     ft = sc.sequenceFile(fin)
     tb = cfg["train_begin"]
     te = cfg["train_end"]
@@ -93,24 +63,28 @@ if __name__ == "__main__":
     ft.cache()
     ct = ft.count()
     print ct
-    ft = ft.mapPartitions(cal).reduce(lambda x, y: (x[0] + y[0], x[1] + y[1]))
+
+    ft = ft.mapPartitions(cal(ct))
+    ft = ft.reduce(lambda x, y: (x[0] + y[0], x[1] + y[1]))
 
     mu, delta = ft
-    mu /= ct
-    delta = delta / ct - mu * mu
+    delta = delta - mu * mu
     delta = np.maximum(delta, 0)
-
     delta **= .5
-    delta += 1
-    print len(mu), len(delta)
+    delta[delta==0] = 1
+
+    print mu
+    print delta
+
+    print len(mu)
     np.save("md/" + model + ".mu.npy", mu)
     np.save("md/" + model + ".delta.npy", delta)
 
     print "begin normal"
-    fout = fin + "n"
+    # fout = fin + "n"
 
-    ft = sc.sequenceFile(fin)
-    ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
+    # ft = sc.sequenceFile(fin)
+    # ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
     
 
 

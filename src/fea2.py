@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from common import *
-from data_loader import getFt, getFtEx
+from data_loader import Ft, getFt, getFtEx
 
 def getBaseInfo(fin):
     st = getFt(fin)
@@ -42,6 +42,7 @@ def genOneStock(key, info, ex, ds=None):
     ans = []
     for idx in select:
         feas = []
+        #assert len(info) == 20, len(info)
         feas += [info[row][idx] for row in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
         feas += oneHotStatus(info.status[idx], info.s_status[idx],
                              info.wav_status[idx], info.e_status[idx])
@@ -49,7 +50,7 @@ def genOneStock(key, info, ex, ds=None):
         ds = info.ds[idx]
         tgt = info.tgt[idx]
         feas += [tgt]
-        info = map(str, feas)
-        content = (key + "_" + ds, ",".join(info))
+        feas = map(str, feas)
+        content = (key + "_" + ds, ",".join(feas))
         ans += [content]
     return ans
