@@ -35,11 +35,11 @@ def process(fin, filterNew=False, nohigh=True, output=True):
     stock = getFt("data/2010/2016.ft")
     aux = getFt("data/2010/2016.ft.aux", Aux)
     
-    # ft = aux['603090.SH']
-    # ft2 = stock['603090.SH']
-    # idx = ft.ds.index("20161103")
-    # print idx, int(ft.work_day[idx]), ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
-    
+#    ft = aux['600380.SH']
+#    ft2 = stock['600380.SH']
+#    idx = ft.ds.index("20161111")
+#    print idx, ft2.ds[:idx+1], ft2.status[:idx+1]#, ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
+#    sys.exit(1)
     st2016 = set(map(str.strip, open("data/2016.st")))
     
     for ds, ans in sorted(getAns(fin)):

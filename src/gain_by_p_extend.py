@@ -6,7 +6,7 @@ from data_loader import getFt, getAns
 import filter_by_rule
 
 def gain(predict, stock, numStock, ds, output, x):
-    money = [1] * x
+    money = [1.0 / x] * x
     month = ["init"]
     rate = [1.0]
     
@@ -88,7 +88,7 @@ def gain(predict, stock, numStock, ds, output, x):
             print "%s %.3f" % (m, r2 / r1)
     return sum(money)
 
-def process(predictFile, numStock, start=None, period=200, output=True, x=2):
+def process(predictFile, numStock, start=None, period=200, output=True, x=4):
     stock = getFt("data/2010/2016.ft")
     predict = dict(getAns(predictFile))
     
@@ -114,6 +114,8 @@ def getArgs():
                         help="filter new")
     parser.add_argument("-c", dest="c", default=50, type=int, 
                         help="cal count")
+    parser.add_argument("-x", dest="x", default=2, type=int, 
+                        help="day")
     parser.add_argument("-d", dest="d", action="store_true", default=False,
                         help="direct, no filter")
     parser.add_argument("-hi", dest="h", action="store_true", default=False,
@@ -128,4 +130,4 @@ if __name__ == "__main__":
         filter_by_rule.process(tgt, args.fn, nohigh=not args.h)
         tgt += ".filter"
     
-    process(tgt, args.c)
+    process(tgt, args.c, x=args.x)

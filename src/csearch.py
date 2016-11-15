@@ -11,7 +11,7 @@ def searchCb(cb):
     combine_ans.process(cb, fout)
     gain50 = gain_by_p.process(fout, 50, output=False)
     gain3 = gain_by_p.process(fout, 3, output=False)
-    
+
     cb = getCbKey(cb)
     value = "%s,%.5f,%.5f\n" % (cb, gain3, gain50)
     print "==" * 10
@@ -20,19 +20,19 @@ def searchCb(cb):
     return value
 
 if __name__ == "__main__":
-    model = sys.argv[1]
+    key = sys.argv[1]
     with open("conf/combine.yaml") as fin:
-        cfg = yaml.load(fin)[model]
-    fins = cfg["input"]
-    fins = map(lambda x: "ans/" + x, fins)
-    logfile = "log/cb_" + model
+        subs = str(yaml.load(fin)[key])
+    fins = map(lambda x: ("ans/v%s0" % key[:2]) + x, subs)
+
+    logfile = "log/cb_" + key
     try:
         rd = csv.reader(open(logfile))
         keys = set([r[0] for r in rd])
     except:
         keys = set()
 
-    fout = open("log/cb_" + model, "a")
+    fout = open(logfile, "a")
     
     for i in range(2, len(fins) + 1):
         for cb in itertools.combinations(fins, i):
