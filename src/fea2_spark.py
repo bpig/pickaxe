@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     rdd = ft.join(ex)
     
-    fout = "htk/fe/%s" % model
+    fout = "htk/fe/%s/raw" % model
     
     fe = rdd.map(genOneStock).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
