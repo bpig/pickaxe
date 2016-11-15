@@ -4,6 +4,7 @@ from common import *
 from fea_kernel import *
 from fea_core import *
 from data_loader import Cc
+
 def getline(filename):
     for c, l in enumerate(open(filename)):
         l = l.strip()
@@ -64,8 +65,7 @@ def extend(key, v):
     
     ex = []
     ex += [np.asarray(v[0], dtype=np.float32)]
-
-
+    
     cc = Cc(*v)
     for i in [3, 5, 7, 10, 15, 26]:
         emv_value = emv(cc, i)
@@ -124,13 +124,14 @@ def extend(key, v):
         if status[i] == 0:
             continue
         if s_status[i] != 0 or e_status[i] != 0 or wav_status[i] != 0:
-            print "strange %s_%s %d %d %d %d" % (key, v[0][i], status[i], s_status[i], wav_status[i], e_status[i])
+            print "strange %s_%s %d %d %d %d" % \
+                  (key, v[0][i], status[i], s_status[i], wav_status[i], e_status[i])
     
-    buy = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[5]))
-    sell = map(lambda (x, y): float(y) if x != 1 else -1.0, zip(status, v[8]))
+    buy = map(lambda x, y: float(y) if x != 1 else -1.0, status, v[5])
+    sell = map(lambda x, y: float(y) if x != 1 else -1.0, status, v[8])
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
-    tgt = map(lambda (x, y): -1.0 if x < 0 or y < 0 else y / x, zip(buy, sell))
+    tgt = map(lambda x, y: -1.0 if x < 0 or y < 0 else y / x, buy, sell)
     v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, tgt]
     v = map(lambda x: map(str, x), v)
     work_day = map(str, work_day)
