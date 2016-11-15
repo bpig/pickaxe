@@ -6,6 +6,7 @@ from pyspark import SparkContext
 from fea_kernel import *
 from fea_core import *
 import format_extend
+import yaml
 
 def getKv(line):
     if "code" in line or not line:
@@ -15,20 +16,24 @@ def getKv(line):
     
     value = line[pos + 1:].replace("NULL", "0.0")
     return key, value
-    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
-    #  -1    0    1      2       3     4  5    6    7   8      9        10
-    
-    # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
-    # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
 
-def ft(lt):
+def cal(lt):
     lt = map(lambda x: x.split(","), lt)
     lt = sorted(lt, key=lambda x: x[0], reverse=True)
     lt = zip(*lt)
-    lt, aux, ex = format_extend.extend(k, lt)
+
+    lt, aux, ex = format_extend.extend("no_use", lt)
+
     lt = map(lambda x: "_".join(x), lt)
+    lt = "_".join(lt)
+
     aux = map(lambda x: "_".join(x), aux)
+    aux = "_".join(aux)
+
     f = StringIO()
+    ex = np.asarray(ex)
+    for i in range(len(ex)):
+        ex[i] = np.nan_to_num(ex[i])
     np.save(f, ex)
     return lt, aux, bytearray(f.getvalue())
 
@@ -50,15 +55,15 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[model]
     sc = getSC()
     fin = "htk/" + cfg["raw"]
-    ft = sc.textFile(fin, 500)
-    ft = ft.map(getKv).filter(len).groupByKey().mapValues(ft)
-    ft.cache()
+    rdd = sc.textFile(fin, 500)
+    rdd = rdd.map(getKv).filter(len).groupByKey().mapValues(cal)
+    rdd.cache()
     
     fout_ex = "htk/ft/%s/ex" % model
-    ft.map(lambda x, y: (x, y[2])).saveAsSequenceFile(fout_ex)
+    rdd.map(lambda (x, y): (x, y[2])).saveAsSequenceFile(fout_ex)
     
     fout_aux = "htk/ft/%s/aux" % model
-    ft.map(lambda x, y: (x, y[1])).saveAsSequenceFile(fout_aux)
+    rdd.map(lambda (x, y): (x, y[1])).saveAsSequenceFile(fout_aux)
     
     fout = "htk/ft/%s/ft" % model
-    ft.map(lambda x, y: (x, y[0])).saveAsSequenceFile(fout)
+    rdd.map(lambda (x, y): (x, y[0])).saveAsSequenceFile(fout)
