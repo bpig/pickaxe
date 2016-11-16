@@ -34,7 +34,9 @@ if __name__ == "__main__":
     
     for l in open(fin):
         key, items = parseLine(l)
+        print key,
         seq = " "
         if args.c > 10:
             seq = "\n"
-        print key, seq.join(map(str, items[:args.c]))
+            print 
+        print seq.join(map(str, items[:args.c]))
