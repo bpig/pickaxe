@@ -108,8 +108,8 @@ def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
         tgts = tgts.reshape([ct, 1])
     point = int(len(keys) * .9)
     
-    tr_x = feas
-    tr_y = tgts
+    tr_x = feas[:point]
+    tr_y = tgts[:point]
     
     te_x = feas[point:]
     te_y = tgts[point:]
