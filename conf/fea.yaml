@@ -69,3 +69,8 @@ f7:
   train_begin: 20100000
   train_end: 20160500
 
+f7:
+  raw: 2010.cc
+  train_begin: 20100000
+  train_end: 20160500
+
