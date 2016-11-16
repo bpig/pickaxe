@@ -55,8 +55,19 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[model]
     sc = getSC()
     fin = "htk/fe/%s/raw" % model
-
+    mu_file = "md/%s.mu.npy" % model
+    delta_file = "md/%s.delta.npy" % model
     ft = sc.sequenceFile(fin)
+
+    if len(sys.argv) == 3:
+        fout = "htk/fe/%s/cmvn_p" % model
+        mu = np.load(mu_file)
+        delta = np.load(delta_file)
+        ds = cfg["test_end"]
+        ft = ft.filter(select(ds, 22000000))
+        ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
+        sys.exit(0)
+
     tb = cfg["train_begin"]
     te = cfg["train_end"]
     ft = ft.filter(select(tb, te)).values().map(trans)
@@ -77,8 +88,8 @@ if __name__ == "__main__":
     print delta
 
     print len(mu)
-    np.save("md/" + model + ".mu.npy", mu)
-    np.save("md/" + model + ".delta.npy", delta)
+    np.save(mu_file, mu)
+    np.save(delta_file, delta)
 
     print time.ctime(), "begin normal"
     fout = "htk/fe/%s/cmvn" % model
