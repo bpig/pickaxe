@@ -7,7 +7,7 @@ from jsq_estimator import JSQestimator
 
 def getArgs():
     parser = ArgumentParser(description="Predict")
-    parser.add_argument("-m", dest="m", 
+    parser.add_argument("-t", dest="m", 
                         help="model")
     parser.add_argument("-ds", dest="ds", 
                         help="day")

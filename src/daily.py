@@ -23,39 +23,31 @@ def parseLine(l):
     key = l[:pos]
     items = [_.split("_")[0] for _ in l[pos + 1:].split(",")]
     weight = [float(_.split("_")[1]) for _ in l[pos + 1:].split(",")]
-    return key, items, weight
+    return key, zip(items, weight)
 
 if __name__ == "__main__":
     fin = "ans/" + sys.argv[1]
     
     filter_by_rule.process(fin, filterNew=True, output=False)
     
-    if len(sys.argv) == 3:
-        ct = int(sys.argv[2])
-    else:
-        ct = 100
-    
     l = next(open(fin + ".filter"))
-    key, items, weight = parseLine(l)
-    
-    items = items[:ct]
-    weight = weight[:ct]
-    weight = np.asarray(weight)
-    
-    wmin = weight.min()
-    wmax = weight.max()
-    weight = (weight - wmin) / (wmax - wmin)
-    weight[0] -= 0.00001
-    weight[-1] = 0.00001
+    key, pairs = parseLine(l)
+    top = filter(lambda (item, weight):weight == 1.0, pairs)
+    tail = filter(lambda (item, weight):weight != 1.0, pairs)
 
-    #if ct == 100:
-        # point = 33
-        # i1 = list(items[:point])
-        # random.shuffle(i1)
-        #items = i1 + items[point:]
-
+    print key, len(top), len(tail)
+    top = map(lambda (item, weight): item, top)
+    tail = map(lambda (item, weight): item, tail)
+    random.shuffle(top)
+    random.shuffle(tail)
+    
+    ct = 100
+    items = top[:60] + tail[:40]
+    assert len(items) == 100
+    weight = map(lambda _:random.random(), items)
+    weight = sorted(weight, reverse=True)
+    
     print ",".join(["", "code", "weight"])
     for i in range(ct):
         print ",".join(map(str, (i + 1, items[i], weight[i])))
-        
-        # print "stop", stop, "one", one, "new", n
+

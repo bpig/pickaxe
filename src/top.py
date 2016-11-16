@@ -17,7 +17,7 @@ def getArgs():
                         help="target")
     parser.add_argument("-f", dest="f", action="store_true", default=False,
                         help="filter")
-    parser.add_argument("-c", dest="ct", default=6, type=int, 
+    parser.add_argument("-c", dest="c", default=6, type=int, 
                         help="cal count")
     parser.add_argument("-d", dest="d", action="store_true", default=False,
                         help="direct, no filter")
@@ -34,4 +34,7 @@ if __name__ == "__main__":
     
     for l in open(fin):
         key, items = parseLine(l)
-        print key, " ".join(map(str, items[:args.ct]))
+        seq = " "
+        if args.c > 10:
+            seq = "\n"
+        print key, seq.join(map(str, items[:args.c]))

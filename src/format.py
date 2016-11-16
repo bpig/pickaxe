@@ -125,5 +125,5 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[model]
     
     fin = "data/" + cfg["raw"]
-    fout = "data/" + cfg["data"]
+    fout = "data/2010/2016.ft"
     process(fin, fout, model, merge=True)
