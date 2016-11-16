@@ -164,7 +164,7 @@ def mergeCc(cc, dailydt):
             if not f.endswith("csv"):
                 continue
             print "merge", f
-            for l in open(cc):
+            for l in open(f):
                 l = l.strip()
                 if not l:
                     continue
@@ -183,7 +183,6 @@ if __name__ == "__main__":
     os.system("mkdir -p data/daily/cache")
     
     dailydt = "data/daily/"
-    
     cc = "data/2010.cc"
     
     with CD(dailydt):

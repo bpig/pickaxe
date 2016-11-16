@@ -5,7 +5,7 @@ from common import *
 from data_loader import getFt, getAns
 import filter_by_rule
 
-def gain(predict, stock, numStock, ds, output):
+def gain(predict, stock, numStock, ds, output, detail):
     money = [0.5, 0.5]
     month = ["init"]
     rate = [1.0]
@@ -40,7 +40,8 @@ def gain(predict, stock, numStock, ds, output):
             index -= 1  # the day after tomorrow
             # stop or -10 low
             mark = False
-            while index >= 0 and (info.status[index] == '1' or info.e_status[index] == '2'):
+            while index >= 0 and \
+                  (info.status[index] == '1' or info.e_status[index] == '2'):
                 index -= 1
                 mark = True
             if mark:
@@ -53,8 +54,6 @@ def gain(predict, stock, numStock, ds, output):
                 print "warning, %s low everyday" % key
                 index = 0
             outPrice = float(info.e[index])
-            #buy.write(key + "_" + rec.tgt + ",")
-            #buy.write(key + ",")
             increase += outPrice / inPrice
             buy.write("%s_%.3f," % (key, outPrice / inPrice))
             count += 1
@@ -73,7 +72,11 @@ def gain(predict, stock, numStock, ds, output):
                    "{bg:>7.3f} -> {ed:>7.3f} {hi} {lo} {stop} {ct} {lack}").format(
                        ds=d, total=total, rate=ed / bg, 
                        bg=bg, ed=ed, hi=high, lo=low, stop=stop, 
-                       ct=len(predict[d]), lack=lack) #, buy.getvalue()[:-1]
+                       ct=len(predict[d]), lack=lack),
+            if detail:
+                print buy.getvalue()[:-1]
+            else:
+                print
 
         key = d[:-2]
         if key not in month:
@@ -87,7 +90,7 @@ def gain(predict, stock, numStock, ds, output):
             print "%s %.3f" % (m, r2 / r1)
     return sum(money)
 
-def process(predictFile, numStock, start=None, period=200, output=True):
+def process(predictFile, numStock, start=None, output=True, detail=False):
     stock = getFt("data/2010/2016.ft")
     predict = dict(getAns(predictFile))
     
@@ -96,9 +99,9 @@ def process(predictFile, numStock, start=None, period=200, output=True):
         idx = 0
     else:
         idx = ds.index(start)
-    ds = ds[idx:idx + period]
+    ds = ds[idx:]
     
-    money = gain(predict, stock, numStock, ds, output)
+    money = gain(predict, stock, numStock, ds, output, detail)
     if output:
         print "after %d days:" % len(ds)
         print "final: %.3f" % money
@@ -117,6 +120,10 @@ def getArgs():
                         help="direct, no filter")
     parser.add_argument("-hi", dest="h", action="store_true", default=False,
                         help="high line ok")
+    parser.add_argument("-v", dest="v", action="store_true", default=False,
+                        help="verbose")
+    parser.add_argument("-ds", dest="ds", default=None,
+                        help="start time")
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -127,4 +134,6 @@ if __name__ == "__main__":
         filter_by_rule.process(tgt, args.fn, nohigh=not args.h)
         tgt += ".filter"
     
-    process(tgt, args.c)
+    process(tgt, args.c, start=args.ds, detail=args.v)
+
+

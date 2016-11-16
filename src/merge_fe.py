@@ -4,6 +4,14 @@ __date__ = "10/31/16"
 
 from common import *
 
+def getArgs():
+    parser = ArgumentParser(description="Merge")
+    parser.add_argument("-m", dest="model", required=True,
+                        help="fea model")
+    parser.add_argument("-ds", dest="ds", default=None,
+                        help="start time")
+    return parser.parse_args()
+
 def np_save(prefix, key, fea, tgt):
     key = np.asarray(key)
     fea = np.asarray(fea, dtype=np.float32)
@@ -12,11 +20,40 @@ def np_save(prefix, key, fea, tgt):
     np.save(prefix + ".fea", fea)
     np.save(prefix + ".tgt", tgt)
 
-if __name__ == '__main__':
-    model = sys.argv[1]
-    with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[model]
+def mergeForPredict(model, ds):
+    fin = "raw/%s_p" % model
+    tgt = "data/fe/%s/" % model
+    fe = tgt + `ds` + ".fe"
 
+    os.system("mkdir -p %s" % tgt)
+    print "model {m}, predict {ds}".format(m=model, ds=ds)
+    files = os.listdir(fin)
+    files = sorted(files)
+    print "total %d files" % len(files)
+    
+    keys, feas, tgts = [], [], []
+    for c, l in enumerate(files):
+        if "dumper.list" in l:
+            continue
+        tgt = fin + "/" + l
+        d = int(l.split("_")[1])
+
+        if d != ds:
+            continue
+        key = l
+        values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
+        tgt = 0.0
+        fea = values[:-1]
+
+        keys += [key]
+        feas += [fea]
+        tgts += [tgt]
+
+    print "predict:", len(keys), len(feas[0])
+    with TimeLog():
+        np_save(fe, keys, feas, tgts)
+
+def mergeForTrain(model):
     fin = "raw/%s" % model
     tgt = "data/fe/%s/" % model
     tr = tgt + "train"
@@ -26,9 +63,10 @@ if __name__ == '__main__':
 
     tr_begin = int(cfg["train_begin"])
     tr_end = int(cfg["train_end"])
+    te_end = int(cfg["test_end"])
 
-    print "model {m}, train {tb} - {te}, test {te} - now".format(
-        m=model, tb=tr_begin, te=tr_end)
+    print "model {m}, train {tb} - {te}, test {te} - {e}".format(
+        m=model, tb=tr_begin, te=tr_end, e = te_end)
 
     files = os.listdir(fin)
     files = sorted(files)
@@ -57,7 +95,7 @@ if __name__ == '__main__':
             tr_key += [l]
             tr_fea += [values]
             tr_tgt += [tgt]
-        elif ds >= tr_end:
+        elif tr_end <= ds < te_end:
             te_key += [l]
             te_fea += [values]
             te_tgt += [tgt]
@@ -68,12 +106,19 @@ if __name__ == '__main__':
             print time.ctime(), c
 
     print "train:", len(tr_key), len(tr_fea[0])
-    print "test:", len(te_key), len(tr_fea[0])
+    print "test:", len(te_key), len(te_fea[0])
     with TimeLog():
         np_save(tr, tr_key, tr_fea, tr_tgt)
     with TimeLog():
         np_save(te, te_key, te_fea, te_tgt)
 
 
-    
-
+if __name__ == '__main__':
+    args = getArgs()
+    model = args.model
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[model]
+    if not args.ds:
+        mergeForTrain(model)
+    else:
+        mergeForPredict(model, args.ds)
