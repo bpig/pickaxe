@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     fout = open(logfile, "a")
     
-    for i in range(2, len(fins) + 1):
+    for i in range(1, len(fins) + 1):
         for cb in itertools.combinations(fins, i):
             print cb
             if getCbKey(cb) in keys:

@@ -17,7 +17,7 @@ if __name__ == '__main__':
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
 
-    fin = cfg["raw_fe"]
+    fin = "raw/%s" % model
     tgt = "data/fe/%s/" % model
     tr = tgt + "train"
     te = tgt + "test"
@@ -27,7 +27,8 @@ if __name__ == '__main__':
     tr_begin = int(cfg["train_begin"])
     tr_end = int(cfg["train_end"])
 
-    print "model {m}, train {tb} - {te}, test {te} - now".format(m=model, tb=tr_begin, te=tr_end)
+    print "model {m}, train {tb} - {te}, test {te} - now".format(
+        m=model, tb=tr_begin, te=tr_end)
 
     files = os.listdir(fin)
     files = sorted(files)
@@ -49,15 +50,19 @@ if __name__ == '__main__':
         values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
         tgt = values[-1]
         values = values[:-1]
+        if float(tgt) < 0:
+            continue
 
-        if ds < tr_end:
+        if tr_begin < ds < tr_end:
             tr_key += [l]
             tr_fea += [values]
             tr_tgt += [tgt]
-        else:
+        elif ds >= tr_end:
             te_key += [l]
             te_fea += [values]
             te_tgt += [tgt]
+        else:
+            continue
 
         if c % 10000 == 0:
             print time.ctime(), c
