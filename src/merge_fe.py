@@ -8,7 +8,7 @@ def getArgs():
     parser = ArgumentParser(description="Merge")
     parser.add_argument("-m", dest="model", required=True,
                         help="fea model")
-    parser.add_argument("-ds", dest="ds", default=None,
+    parser.add_argument("-ds", dest="ds", default=None, type=int,
                         help="start time")
     return parser.parse_args()
 
@@ -22,7 +22,7 @@ def np_save(prefix, key, fea, tgt):
 
 def mergeForPredict(model, ds):
     fin = "raw/%s_p" % model
-    tgt = "data/fe/%s/" % model
+    tgt = "data/fe/%s/daily" % model
     fe = tgt + `ds` + ".fe"
 
     os.system("mkdir -p %s" % tgt)
