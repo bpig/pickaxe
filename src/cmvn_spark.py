@@ -54,7 +54,7 @@ if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
     sc = getSC()
-    fin = "htk/fe/%s" % model
+    fin = "htk/fe/%s/raw" % model
 
     ft = sc.sequenceFile(fin)
     tb = cfg["train_begin"]
@@ -80,11 +80,11 @@ if __name__ == "__main__":
     np.save("md/" + model + ".mu.npy", mu)
     np.save("md/" + model + ".delta.npy", delta)
 
-    print "begin normal"
-    # fout = fin + "n"
+    print time.ctime(), "begin normal"
+    fout = "htk/fe/%s/cmvn" % model
 
-    # ft = sc.sequenceFile(fin)
-    # ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
+    ft = sc.sequenceFile(fin)
+    ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
     
 
 
