@@ -5,7 +5,7 @@ from pyspark import SparkConf
 from pyspark import SparkContext
 from fea_kernel import *
 from fea_core import *
-import format_extend
+import format2
 import yaml
 
 def getKv(line):
@@ -22,7 +22,7 @@ def cal(lt):
     lt = sorted(lt, key=lambda x: x[0], reverse=True)
     lt = zip(*lt)
 
-    lt, aux, ex = format_extend.extend("no_use", lt)
+    lt, aux, ex = format2.extend("no_use", lt)
 
     lt = map(lambda x: "_".join(x), lt)
     lt = ",".join(lt)
