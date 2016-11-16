@@ -57,7 +57,15 @@ f6:
   # ft: htk/ft/f6/ft
   # ft_ex: htk/ft/f6/ex
   # fe: htk/fe/f6/
-  raw_fe: raw/2010_15new/  # local
+  train_begin: 20100000
+  train_end: 20160500
+
+f7:
+  raw: 2010.cc
+  # ft_aux: htk/ft/f6/aux
+  # ft: htk/ft/f6/ft
+  # ft_ex: htk/ft/f6/ex
+  # fe: htk/fe/f6/
   train_begin: 20100000
   train_end: 20160500
 

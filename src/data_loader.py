@@ -11,6 +11,13 @@ Ft = collections.namedtuple(
      'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate',
      'status', 's_status', 'wav_status', 'e_status', 'tgt'])
 
+Ft2 = collections.namedtuple(
+    'Ft',
+    ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',
+     'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate',
+     'status', 's_status', 'wav_status', 'e_status', 'a_rate', 'v_rate', 'tgt'])
+
+
 Cc = collections.namedtuple(
     'Cc',
     ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',

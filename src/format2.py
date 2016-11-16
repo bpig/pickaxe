@@ -52,8 +52,10 @@ def getWavStatus((h_rate, l_rate)):
     return 0
 
 def extend(key, v):
-    for i in [4, 5, 6, 7, 8, 9]:
+    for i in [2, 3, 4, 5, 6, 7, 8, 9]:
         v[i] = map(float, v[i])
+    a_rate = map(lambda x, y: 0 if x == 0 else y / x, v[3][1:], v[3][:-1]) + [0]
+    v_rate = map(lambda x, y: 0 if x == 0 else y / x, v[2][1:], v[2][:-1]) + [0]
     s_rate = map(lambda x, y: y / x, v[4], v[5])
     h_rate = map(lambda x, y: y / x, v[4], v[6])
     l_rate = map(lambda x, y: y / x, v[4], v[7])
@@ -126,7 +128,8 @@ def extend(key, v):
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda x, y: -1.0 if x < 0 or y < 0 else y / x, buy, sell)
-    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, tgt]
+    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, 
+          a_rate, v_rate, tgt]
     v = map(lambda x: map(str, x), v)
     work_day = map(str, work_day)
     return v, [v[0], work_day], ex

@@ -3,7 +3,7 @@
 from common import *
 from pyspark import SparkConf
 from pyspark import SparkContext
-from data_loader import Ft
+from data_loader import Ft, Ft2
 import fea2
 import yaml
 
@@ -12,7 +12,7 @@ def genOneStock(kv):
 
     info = info.split(",")
     info = map(lambda x: x.split("_"), info)
-    info = Ft(*info)
+    info = Ft2(*info)
 
     f = StringIO(ex)
     ex = np.load(f)

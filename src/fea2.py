@@ -30,6 +30,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     return arr1 + arr2 + arr3 + arr4
 
 def genOneStock(key, info, ex, ds=None):
+    win = 15
     if ds:
         if ds in info.ds:
             select = [info.ds.index(ds)]
@@ -37,15 +38,17 @@ def genOneStock(key, info, ex, ds=None):
             print "ds %s is not available" % ds
             return []
     else:
-        select = range(len(info.ds))
+        select = range(len(info.ds) - win)
     
     ans = []
     for idx in select:
         feas = []
         #assert len(info) == 20, len(info)
-        feas += [info[row][idx] for row in [1, 2, 3, 9, 10, 11, 12, 13, 14]]
-        feas += oneHotStatus(info.status[idx], info.s_status[idx],
-                             info.wav_status[idx], info.e_status[idx])
+        for i in range(win):
+            feas += [info[row][idx-i] 
+                     for row in [1, 2, 3, 9, 10, 11, 12, 13, 14, 19, 20]]
+            feas += oneHotStatus(info.status[idx-i], info.s_status[idx-i],
+                                 info.wav_status[idx-i], info.e_status[idx-i])
         feas += [ex[row][idx] for row in range(1, len(ex))]
         ds = info.ds[idx]
         tgt = info.tgt[idx]
