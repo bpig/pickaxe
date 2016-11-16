@@ -88,12 +88,12 @@ def base_data(datafile, cache=True):
         keys = np.load(keyfile)
         feas = np.load(feafile)
         tgts = np.load(tgtfile)
-    else:
-        print "no cache", keyfile
-        keys, feas, tgts = loadFea(datafile)
-        np.save(keyfile, keys)
-        np.save(feafile, feas)
-        np.save(tgtfile, tgts)
+    # else:
+    #     print "no cache", keyfile
+    #     keys, feas, tgts = loadFea(datafile)
+    #     np.save(keyfile, keys)
+    #     np.save(feafile, feas)
+    #     np.save(tgtfile, tgts)
     return keys, feas, tgts
 
 def read_data_sets(datafile, division=1.002, cache=True, reshape=False):
