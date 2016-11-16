@@ -6,7 +6,7 @@ from common import *
 
 def getArgs():
     parser = ArgumentParser(description="Merge")
-    parser.add_argument("-m", dest="model", required=True,
+    parser.add_argument("-t", dest="model", required=True,
                         help="fea model")
     parser.add_argument("-ds", dest="ds", default=None, type=int,
                         help="start time")
@@ -89,10 +89,10 @@ def mergeForTrain(model):
         values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
         tgt = values[-1]
         values = values[:-1]
-        if float(tgt) < 0:
-            continue
 
         if tr_begin < ds < tr_end:
+            if float(tgt) < 0:
+                continue
             tr_key += [l]
             tr_fea += [values]
             tr_tgt += [tgt]
@@ -106,13 +106,14 @@ def mergeForTrain(model):
         if c % 10000 == 0:
             print time.ctime(), c
 
-    print "train:", len(tr_key), len(tr_fea[0])
-    print "test:", len(te_key), len(te_fea[0])
-    with TimeLog():
-        np_save(tr, tr_key, tr_fea, tr_tgt)
-    with TimeLog():
-        np_save(te, te_key, te_fea, te_tgt)
-
+    if tr_fea:
+        print "train:", len(tr_key), len(tr_fea[0])
+        with TimeLog():
+            np_save(tr, tr_key, tr_fea, tr_tgt)
+    if te_fea:
+        print "test:", len(te_key), len(te_fea[0])
+        with TimeLog():
+            np_save(te, te_key, te_fea, te_tgt)
 
 if __name__ == '__main__':
     args = getArgs()

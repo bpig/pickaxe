@@ -31,9 +31,39 @@ def checkContent(fe_version):
             if c % 10000 == 0:
                 print c + 1, len(mark)
 
+def checkDs(fe_version, ds):
+    te = "data/fe/%s/test" % fe_version
+    print te
+    te_k, te_f, te_t = mlp_feeder.base_data(te)
+    ds = "data/fe/%s/daily/%s.fe" % (fe_version, ds)
+    print ds
+    ds_k, ds_f, ds_t = mlp_feeder.base_data(ds)
+    for i in range(len(ds_f)):
+        k = ds_k[i]
+        #print k
+        idx = np.where(te_k == k)[0][0]
+        tf = te_f[idx]
+        df = ds_f[i]
+        # tgt = "raw/f8/000001.SZ_20161114"
+        # v = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)[:-1]
+        # if np.array_equal(v, tf):
+        #     print "v equal tf"
+        # if np.array_equal(v, df):
+        #     print "v equal df"
+
+        if not np.array_equal(tf, df):
+            print te_k[idx], ds_k[i]
+            select = tf != df
+            # print df
+            # print df[select]
+            for j in range(len(te_f)):
+                if np.array_equal(df, te_f[j]):
+                    print te_k[j], ds_k[i]
+                    break
+#        sys.exit(1)
 
 if __name__ == "__main__":
-    fe_version = sys.argv[1]
-    checkContent(fe_version)
+    fe_version = "f8"
+    checkDs(fe_version, "20161116")
 
     
