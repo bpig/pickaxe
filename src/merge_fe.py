@@ -22,7 +22,7 @@ def np_save(prefix, key, fea, tgt):
 
 def mergeForPredict(model, ds):
     fin = "raw/%s_p" % model
-    tgt = "data/fe/%s/daily" % model
+    tgt = "data/fe/%s/daily/" % model
     fe = tgt + `ds` + ".fe"
 
     os.system("mkdir -p %s" % tgt)
@@ -50,6 +50,7 @@ def mergeForPredict(model, ds):
         tgts += [tgt]
 
     print "predict:", len(keys), len(feas[0])
+    print "save to", fe
     with TimeLog():
         np_save(fe, keys, feas, tgts)
 
