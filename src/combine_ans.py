@@ -75,4 +75,4 @@ if __name__ == "__main__":
     process(fins, "ans/" + fout)
 
     if args.g:
-        os.system("python src/gain_by_p.py -t %s" % fout)
+        os.system("python src/gain.py -t %s" % fout)

@@ -33,18 +33,12 @@ if __name__ == "__main__":
     
     l = next(open(fin + ".filter"))
     key, pairs = parseLine(l)
-    top = filter(lambda (item, weight):weight == 1.0, pairs)
-    tail = filter(lambda (item, weight):weight != 1.0, pairs)
 
-    print key, len(top), len(tail)
-    top = map(lambda (item, weight): item, top)
-    tail = map(lambda (item, weight): item, tail)
-    random.shuffle(top)
-    random.shuffle(tail)
-    
     ct = 100
-    items = top[:60] + tail[:40]
-    assert len(items) == 100
+    items = map(lambda (item, weight): item, pairs)[:ct]
+    
+    print key
+    assert len(items) == ct
     weight = map(lambda _:random.random(), items)
     weight = sorted(weight, reverse=True)
     

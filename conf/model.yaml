@@ -14,46 +14,6 @@ v21:
   epoch: 1
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
-v22:
-  fe: f2
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 36
-  epoch: 1
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v23:
-  fe: f3
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 18
-  epoch: 1
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v24:  # lr min
-  fe: f1
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 12
-  epoch: 1
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v31:
-  fe: f6
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 12
-  epoch: 1
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
-v32:
-  fe: f7
-  net: [2048, 1024, 1024]
-  keep_prob: 0.3
-  batch_step: 12
-  epoch: 1
-  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
-
 v33:
   fe: f8
   net: [2048, 1024, 1024]

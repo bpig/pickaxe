@@ -16,41 +16,6 @@ f1:
   train_begin: 20100000
   train_end: 20160500
 
-f2:
-  raw: 2010.cc
-  ft: 2010.ft
-  fe: 2010_60fe
-  raw_fe: raw/2010_60/ 
-  train_begin: 20100000
-  train_end: 20160500
-
-f3:
-  raw: 2010.cc
-  data: 2010/2016.ft
-  ft: 2010.ft  # spark
-  fe: 2010_120fe # spark
-  raw_fe: raw/2010_120/  # local
-  train_begin: 20100000
-  train_end: 20160500
-
-f4:
-  raw: 2010.cc
-  data: ex/2010.ft
-  ft: 2010.ft  # spark
-  fe: 2010_120fe # spark
-  raw_fe: raw/2010_120/  # local
-  train_begin: 20100000
-  train_end: 20160500
-
-f5:
-  raw: 2010.cc
-  data: 2010/2016.ft
-  ft: 2010.ft  # spark
-  fe: 2010_15fe_new # spark
-  raw_fe: raw/2010_15new/  # local
-  train_begin: 20100000
-  train_end: 20160500
-
 f6:
   raw: 2010.cc
   # ft_aux: htk/ft/f6/aux

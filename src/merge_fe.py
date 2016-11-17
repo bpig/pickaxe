@@ -123,6 +123,7 @@ if __name__ == '__main__':
     model = args.model
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
+
     if args.download:
         cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn raw/{m}".format(m=model)
         os.system(cmd)

@@ -5,7 +5,7 @@ import combine_ans
 import gain
 
 def getCbKey(cb):
-    return "+".join(map(os.path.basename, cb))
+    return "+".join(sorted(map(os.path.basename, cb)))
 
 def searchCb(cb):
     fout = "cb.tmp"
@@ -31,13 +31,19 @@ def allSearch(fins, fout):
             fout.flush()
     os.system("rm -f cb.tmp")
 
-def quickSearch(fins, fout, q):
+def quickSearch(fins, fout, q, kv):
     queue = []
     while fins:
         tmp = []
         for f in fins:
             cb = queue + [f]
-            _, g3, g50 = searchCb(cb)
+            key = getCbKey(cb)
+            if key in kv:
+                g3, g50 = kv[key]
+            else:
+                cb, g3, g50 = searchCb(cb)
+                fout.write(cb)
+                fout.flush()
             if q == "t":
                 tmp += [(f, g3)]
             else:
@@ -50,7 +56,7 @@ def quickSearch(fins, fout, q):
 
 def getArgs():
     parser = ArgumentParser(description="Combine")
-    parser.add_argument("-t", dest="tgt", require=True,
+    parser.add_argument("-t", dest="tgt", required=True,
                         help="target")
     parser.add_argument("-a", dest="a", default="cs_tmp",
                         help="ans")
@@ -61,17 +67,24 @@ def getArgs():
 if __name__ == "__main__":
     args = getArgs()
     fins = combine_ans.getInput(args.tgt)
-    logfile = "log/" + args.a
+    if args.q == "t":
+        logfile = "log/cs_top" 
+    elif args.q == "d":
+        logfile = "log/cs_daily" 
+    else:
+        logfile = "log/" + args.a
     print "fin", fins
     print "fout", logfile
     
     try:
         rd = csv.reader(open(logfile))
-        keys = set([r[0] for r in rd])
+        kv = dict([("+".join(sorted(r[0].split("+"))), 
+                    (float(r[1]), float(r[2]))) for r in rd])
     except:
-        keys = set()
+        kv = {}
     fout = open(logfile, "a")
     if args.q:
-        quickSearch(fins, fout, args.q)
+        print "quich search"
+        quickSearch(fins, fout, args.q, kv)
     else:
-        allSearch(fins, fout)
+        allSearch(fins, fout, kv)
