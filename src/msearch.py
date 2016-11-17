@@ -112,3 +112,4 @@ if __name__ == "__main__":
         for line in ans:
             fout.write(line)
         fout.write("\n")
+        fout.flush()
