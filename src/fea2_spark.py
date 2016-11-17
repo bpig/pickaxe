@@ -9,14 +9,14 @@ import yaml
 
 def genOneStock(kv):
     key, (info, ex) = kv
-
+    
     info = info.split(",")
     info = map(lambda x: x.split("_"), info)
     info = Ft2(*info)
-
+    
     f = StringIO(ex)
     ex = np.load(f)
-
+    
     return fea2.genOneStock(key, info, ex)
 
 def getSC(appName='aux'):
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     
     fin = "htk/ft/%s/ft" % model
     ft = sc.sequenceFile(fin)
-
+    
     rdd = ft.join(ex)
     
     fout = "htk/fe/%s/raw" % model

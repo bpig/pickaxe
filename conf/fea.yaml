@@ -67,8 +67,8 @@ f7:
   test_end: 20161020
 
 f8:
-  raw: 2010.cc
+  raw: 2010_ori.cc
   train_begin: 20100000
   train_end: 20160500
-  test_end: 20161220
+  test_end: 20161020
 

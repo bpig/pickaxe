@@ -43,12 +43,12 @@ def genOneStock(key, info, ex, ds=None):
     ans = []
     for idx in select:
         feas = []
-        #assert len(info) == 20, len(info)
+        # assert len(info) == 20, len(info)
         for i in range(win):
-            feas += [info[row][idx-i] 
+            feas += [info[row][idx - i]
                      for row in [1, 2, 3, 9, 10, 11, 12, 13, 14, 19, 20]]
-            feas += oneHotStatus(info.status[idx-i], info.s_status[idx-i],
-                                 info.wav_status[idx-i], info.e_status[idx-i])
+            feas += oneHotStatus(info.status[idx - i], info.s_status[idx - i],
+                                 info.wav_status[idx - i], info.e_status[idx - i])
         feas += [ex[row][idx] for row in range(1, len(ex))]
         ds = info.ds[idx]
         tgt = info.tgt[idx]

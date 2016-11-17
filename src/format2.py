@@ -42,7 +42,7 @@ def getStatus(rate):
         return 1
     return 0
 
-def getWavStatus((h_rate, l_rate)):
+def getWavStatus(h_rate, l_rate):
     if h_rate >= 1.099 and l_rate <= 0.901:
         return 3
     elif l_rate <= 0.901:
@@ -62,14 +62,15 @@ def extend(key, v):
     e_rate = map(lambda x, y: y / x, v[4], v[8])
     status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
     s_status = map(getStatus, s_rate)
-    wav_status = map(getWavStatus, zip(h_rate, l_rate))
+    wav_status = map(getWavStatus, h_rate, l_rate)
     e_status = map(getStatus, e_rate)
     
     ex = []
     ex += [np.asarray(v[0], dtype=np.float64)]
     
     cc = Cc(*v)
-    for i in [3, 5, 7, 10, 15, 26]:
+    # for i in [3, 5, 7, 10, 15, 26]:
+    for i in [26]:
         emv_value, emv_ma = emv(cc, i)
         
         cr_value = cr(cc, i)
@@ -95,24 +96,28 @@ def extend(key, v):
                rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
                obv_value]
     
-    for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4), (25, 5, 5)]:
+    # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4), (25, 5, 5)]:
+    for (a, b, c) in [(4, 2, 2)]:
         k, d, j = kdj(cc, a, b, c)
         ex += [k, d, j]
     
-    for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5), (26, 12, 9)]:
+    # for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5), (26, 12, 9)]:
+    for (l, s, m) in [(5, 3, 2)]:
         diff, diff_ma, diff_ema = macd(cc, l, s, m)
         ex += [diff, diff_ma, diff_ema]
     
     # ex += [cdp(cc)]
     
-    for (a, b) in [(4, 2), (8, 4), (12, 6), (20, 10), (26, 13)]:
+    # for (a, b) in [(4, 2), (8, 4), (12, 6), (20, 10), (26, 13)]:
+    for (a, b) in [(4, 2)]:
         mtm_value, mtma = mtm(cc, a, b)
         ex += [mtm_value, mtma]
     
     vr_10 = vr(cc, 10)
     vr_15 = vr(cc, 15)
     vr_26 = vr(cc, 26)
-    ex += [vr_10, vr_15, vr_26]
+    # ex += [vr_10, vr_15, vr_26]
+    ex += [vr_10]
     
     work_day = range(len(e_rate), 0, -1)
     
