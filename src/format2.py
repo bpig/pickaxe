@@ -90,23 +90,23 @@ def extend(key, v):
         psy_value = psy(cc, i)
         wms_value = wms(cc, i)
         obv_value = obv(cc, i)
-        ex += [emv_value, emv_ma, cr_value, br_value, sma_value, ema_value, 
+        ex += [emv_value, emv_ma, cr_value, br_value, sma_value, ema_value,
                boll_rate, boll_std,
                rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
                obv_value]
     
-    for (a, b, c) in [(4,2,2), (9,3,3), (16,4,4), (25,5,5)]:
-        k, d, j = kdj(cc, 4, 2, 2)
+    for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4), (25, 5, 5)]:
+        k, d, j = kdj(cc, a, b, c)
         ex += [k, d, j]
     
-    for (l, s, m) in [(5,3,2), (10, 5,3), (15,7,5), (26,12,9)]:
-        diff, diff_ma, diff_ema = macd(cc, 26, 12, 9)
+    for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5), (26, 12, 9)]:
+        diff, diff_ma, diff_ema = macd(cc, l, s, m)
         ex += [diff, diff_ma, diff_ema]
     
     # ex += [cdp(cc)]
-
-    for (a, b) in [(4, 2), (8,4), (12, 6), (20,10), (26,13)]:
-        mtm_value, mtma = mtm(cc, 26, 13)
+    
+    for (a, b) in [(4, 2), (8, 4), (12, 6), (20, 10), (26, 13)]:
+        mtm_value, mtma = mtm(cc, a, b)
         ex += [mtm_value, mtma]
     
     vr_10 = vr(cc, 10)
@@ -128,7 +128,7 @@ def extend(key, v):
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda x, y: -1.0 if x < 0 or y < 0 else y / x, buy, sell)
-    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status, 
+    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status,
           a_rate, v_rate, tgt]
     v = map(lambda x: map(str, x), v)
     work_day = map(str, work_day)
