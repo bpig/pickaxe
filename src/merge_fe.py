@@ -10,6 +10,8 @@ def getArgs():
                         help="fea model")
     parser.add_argument("-ds", dest="ds", default=None, type=int,
                         help="start time")
+    parser.add_argument("-d", dest="download", action="store_true", default=False,
+                        help="download from spark")
     return parser.parse_args()
 
 def np_save(prefix, key, fea, tgt):
@@ -120,6 +122,11 @@ if __name__ == '__main__':
     model = args.model
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
+    if args.download:
+        cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn raw/{m}".format(m=model)
+        os.system(cmd)
+        sys.exit(1)
+
     if not args.ds:
         mergeForTrain(model)
     else:

@@ -62,8 +62,17 @@ def checkDs(fe_version, ds):
                     break
 #        sys.exit(1)
 
+def checkTarget(fe_version):
+    te = "data/fe/%s/test" % fe_version
+    te_k, te_f, te_t = mlp_feeder.base_data(te)
+
+    print te_f[0][-3:]
+    print te_t[0]
+
+
 if __name__ == "__main__":
     fe_version = "f8"
-    checkDs(fe_version, "20161116")
+    #checkDs(fe_version, "20161116")
+    checkTarget(fe_version)
 
     
