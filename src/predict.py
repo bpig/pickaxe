@@ -1,3 +1,4 @@
+#!/bin/env python
 from common import *
 from sklearn import metrics
 import tensorflow as tf

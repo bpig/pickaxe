@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from unittest import TestCase
-import src.gain_by_p as gain
+import src.gain as gain
 
 class TestProcess(TestCase):
     def test_process(self):

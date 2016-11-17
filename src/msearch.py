@@ -6,7 +6,7 @@ from common import *
 from mlp_feeder import read_predict_sets
 from simple import kernel
 from jsq_estimator import JSQestimator
-import gain_by_p
+import gain
 
 def getCheckPoint(model_dir):
     checkPointFile = model_dir + "/checkpoint"
@@ -78,8 +78,8 @@ def searchModel(model, keys):
         
         genAns(pp, foutFile, predSet)
 
-        gain50 = gain_by_p.process(foutFile, 50, output=False)
-        gain3 = gain_by_p.process(foutFile, 3, output=False)
+        gain50 = gain.process(foutFile, 50, output=False)
+        gain3 = gain.process(foutFile, 3, output=False)
 
         value = "%s,%s,%.5f,%.5f\n" % (model, version, gain3, gain50)
         print "==" * 10
