@@ -1,3 +1,4 @@
+#!/bin/env python
 # -*- coding:utf-8 -*-
 from collections import Counter
 
@@ -106,7 +107,6 @@ def process(predictFile, numStock, start=None, output=True, detail=False):
         print "after %d days:" % len(ds)
         print "final: %.3f" % money
     return money
-
 
 def getArgs():
     parser = ArgumentParser(description="Gain")

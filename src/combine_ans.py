@@ -1,3 +1,4 @@
+#!/bin/env python
 # -*- coding:utf-8 -*-
 from common import *
 
@@ -36,12 +37,42 @@ def process(fins, fout):
     predictions = loadFile(fins)
     combine(predictions, fout)
 
+def getArgs():
+    parser = ArgumentParser(description="Combine")
+    parser.add_argument("-t", dest="tgt", default=None,
+                        help="target")
+    parser.add_argument("-a", dest="a", default="tmp",
+                        help="ans")
+    parser.add_argument("-p", dest="p", default=None,
+                        help="combine for predict")
+    parser.add_argument("-g", dest="g", action="store_true", default=False,
+                        help="cal gain")
+    return parser.parse_args()
+
+def getInput(tgt):
+    fins = []
+    for value in tgt.split("+"):
+        key, subs = value.split(",")
+        for n in subs:
+            fins += ["ans/" + key + "0" + n]
+    return fins
+
 if __name__ == "__main__":
-    prefix = sys.argv[1][:3]
-    key = sys.argv[1][1:]
-    with open("conf/combine.yaml") as fin:
-        subs = str(yaml.load(fin)[key])
-    fins = map(lambda x: ("ans/%s0" % prefix) + x, subs)
-    print fins
-    fout = "ans/%s" % sys.argv[1]
-    process(fins, fout)
+    args = getArgs()
+    if args.p:
+        key = args.p
+        with open("conf/combine.yaml") as fin:
+            tgt = str(yaml.load(fin)[key])
+        fout = key
+    else:
+        assert args.tgt
+        tgt = args.tgt
+        fout = args.a
+
+    fins = getInput(tgt)
+    print "fins", fins
+    print "fout", fout
+    process(fins, "ans/" + fout)
+
+    if args.g:
+        os.system("python src/gain_by_p.py -t %s" % fout)
