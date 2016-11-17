@@ -45,10 +45,11 @@ def genOneStock(key, info, ex, ds=None):
         feas = []
         # assert len(info) == 20, len(info)
         for i in range(win):
-            feas += [info[row][idx - i]
+            n = idx + i
+            feas += [info[row][n]
                      for row in [1, 2, 3, 9, 10, 11, 12, 13, 14, 19, 20]]
-            feas += oneHotStatus(info.status[idx - i], info.s_status[idx - i],
-                                 info.wav_status[idx - i], info.e_status[idx - i])
+            feas += oneHotStatus(info.status[n], info.s_status[n],
+                                 info.wav_status[n], info.e_status[n])
         feas += [ex[row][idx] for row in range(1, len(ex))]
         ds = info.ds[idx]
         tgt = info.tgt[idx]
