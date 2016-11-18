@@ -146,3 +146,14 @@ def obv(info, win):
         else:
             value[i] = value[i + 1]
     return fea_length_extend(value, len(info.ds))
+
+def vvv(info, win):
+    ct = len(info.ds)
+    if ct < win:
+        return fea_length_extend([], len(info.ds))
+    v = np.asarray(info.volumn, dtype=np.float32)
+    value = np.empty(ct)
+    for i in range(ct - win + 1):
+        mean_v = v[i:i + win].mean()
+        value[i] = v[i] / mean_v
+    return fea_length_extend(value, len(info.ds))
