@@ -6,17 +6,17 @@ __date__ = "11/2/16"
 from common import *
 from data_loader import getAns, getFt, Aux, formatAns
 
-def filterByStop(ds, stock):
+def filterByStop(ds, aux):
     def _inter(_):
-        ft = stock[_.code]
+        ft = aux[_.code]
         idx = ft.ds.index(ds)
         return ft.status[idx] == '0'
     
     return _inter
 
-def filterByHighLine(ds, stock):
+def filterByHighLine(ds, aux):
     def _inter(_):
-        ft = stock[_.code]
+        ft = aux[_.code]
         idx = ft.ds.index(ds)
         return not (ft.high[idx] == ft.low[idx] \
                     and float(ft.e[idx]) > float(ft.pe[idx]))
@@ -33,7 +33,6 @@ def filterByNew(ds, aux):
 
 def process(fin, newSt=False, high=False, st=False, output=True):
     fout = open(fin + ".filter", "w")
-    stock = getFt(FT_FILE)
     aux = getFt(AUX_FILE, Aux)
     
 #    ft = aux['600380.SH']
@@ -46,7 +45,7 @@ def process(fin, newSt=False, high=False, st=False, output=True):
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
 
-        ans = filter(filterByStop(ds, stock), ans)
+        ans = filter(filterByStop(ds, aux), ans)
         ct += [len(ans)]
         
         if not st:
@@ -54,7 +53,7 @@ def process(fin, newSt=False, high=False, st=False, output=True):
             ct += [len(ans)]
 
         if not high:
-            ans = filter(filterByHighLine(ds, stock), ans)
+            ans = filter(filterByHighLine(ds, aux), ans)
             ct += [len(ans)]
         
         if not newSt:

@@ -3,7 +3,7 @@
 from collections import Counter
 
 from common import *
-from data_loader import getFt, getAns
+from data_loader import getFt, getAns, Aux
 import filter_by_rule
 
 def gain(predict, stock, numStock, ds, output, detail):
@@ -92,7 +92,7 @@ def gain(predict, stock, numStock, ds, output, detail):
     return sum(money)
 
 def process(predictFile, numStock, start=None, output=True, detail=False):
-    stock = getFt(FT_FILE)
+    stock = getFt(AUX_FILE, Aux)
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())

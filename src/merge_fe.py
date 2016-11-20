@@ -58,8 +58,7 @@ def mergeFt(fin, fout):
     for f in files:
         if "dumper.list" in f:
             continue
-        f = fin + f
-        fout.write(f + "," + open(f).read() + "\n")
+        fout.write(f + "," + open(fin + f).read() + "\n")
 
 def mergeForTrain(model):
     fin = "raw/%s" % model

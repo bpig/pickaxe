@@ -4,7 +4,11 @@ __date__ = "11/2/16"
 
 from common import *
 
-Aux = collections.namedtuple('Aux', ['ds', 'work_day'])
+Aux = collections.namedtuple(
+    'Aux', 
+    ['ds', 'work_day', 'pe', 's', 'high',
+     'low', 'e', 'status', 's_status', 'e_status'])
+
 Ft = collections.namedtuple(
     'Ft',
     ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',
@@ -56,7 +60,7 @@ def getFtKv(fin):
         items = map(lambda x: x.split("_"), items)
         yield key, items
 
-def getFt(fin, dtype=Ft):
+def getFt(fin, dtype=Ft2):
     kv = {}
     for k, v in getFtKv(fin):
         kv[k] = dtype(*v)

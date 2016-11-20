@@ -131,7 +131,8 @@ def extend(key, v):
           a_rate, v_rate, tgt]
     v = map(lambda x: map(str, x), v)
     work_day = map(str, work_day)
-    return v, [v[0], work_day], ex
+    aux = [v[0], work_day, v[4], v[5], v[6], v[7], v[8], v[15], v[16], v[18]]
+    return v, aux, ex
 
 def dump(kv, filename):
     fout = open(filename, "w")
