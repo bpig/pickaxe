@@ -95,13 +95,28 @@ def getkeys(logfile):
     except:
         return set()
 
+def getArgs():
+    parser = ArgumentParser(description="Ms")
+    parser.add_argument("-t", dest="t", required=True,
+                        help="model")
+    parser.add_argument("-a", dest="a", required=True, default="",
+                        help="ans")
+    return parser.parse_args()
+
+def getInput(tgt):
+    fins = []
+    for value in tgt.split("+"):
+        key, subs = value.split(",")
+        for n in subs:
+            fins += [key + "0" + n]
+    return fins
+
 if __name__ == "__main__":
-    begin = int(sys.argv[1])
-    end = int(sys.argv[2])
-    model = ["v" + `_` for _ in range(begin, end + 1)]
+    args = getArgs()
+    model = getInput(args.t)
     print model
 
-    logfile = sys.argv[3]
+    logfile = "log/" + args.a
     keys = getkeys(logfile)
 
     fout = open(logfile, "a")

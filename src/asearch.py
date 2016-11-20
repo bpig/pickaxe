@@ -13,9 +13,15 @@ def printDict(kv):
             print n + "_" + "%.4f" % s,
         print 
 
+def getArgs():
+    parser = ArgumentParser(description="As")
+    parser.add_argument("-t", dest="t", required=True,
+                        help="model")
+    return parser.parse_args()
 
 if __name__ == '__main__':
-    fin = sys.argv[1]
+    args = getArgs()
+    fin = "log/" + args.t
     rd = csv.reader(open(fin))
     t3 = defaultdict(list)
     t50 = defaultdict(list)

@@ -9,7 +9,7 @@ def getCbKey(cb):
     return "+".join(sorted(map(os.path.basename, cb)))
 
 def searchCb(cb):
-    fout = "cb.tmp"
+    fout = "log/cb.tmp"
     combine_ans.process(cb, fout)
 
     filter_by_rule.process(fout, filterNew=True, output=False)
@@ -33,7 +33,6 @@ def allSearch(fins, fout):
             cb, _, _ = searchCb(cb)
             fout.write(cb)
             fout.flush()
-    os.system("rm -f cb.tmp")
 
 def quickSearch(fins, fout, q, kv):
     queue = []
@@ -92,3 +91,5 @@ if __name__ == "__main__":
         quickSearch(fins, fout, args.q, kv)
     else:
         allSearch(fins, fout, kv)
+
+    os.system("rm -f log/cb.tmp")
