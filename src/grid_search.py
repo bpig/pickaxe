@@ -28,8 +28,8 @@ def train(data, net, keep_prob, model):
     bs = int(data.train.num_examples / 30)
     print "small example:", bs, data.test.num_examples
 
-    batch_x, batch_y = data.train.next_batch(bs)
     for i in range(10):
+        batch_x, batch_y = data.train.next_batch(bs)
         classifier.fit(batch_x, batch_y, steps=100)
     
         te_acc = pred(classifier, data.test.feas[:bs], data.test.tgts[:bs])

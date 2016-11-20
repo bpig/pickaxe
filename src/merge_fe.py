@@ -119,7 +119,7 @@ def getArgs():
                         help="fea model")
     parser.add_argument("-ds", dest="ds", default=None, type=int,
                         help="start time")
-    parser.add_argument("-d", dest="download", action="store_true", default=False,
+    parser.add_argument("-d", dest="download", default="",
                         help="download from spark")
     parser.add_argument("-m", dest="m", action="store_true", default=False,
                         help="merge for train")
