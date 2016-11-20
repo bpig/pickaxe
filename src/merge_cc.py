@@ -212,7 +212,7 @@ if __name__ == "__main__":
     if args.u:
         cmd = "hdfs dfs -rmr htk/2010.cc"
         os.system(cmd)
-        cmd = "hdfs dfs -put %s htk/2010.cc" % cc
+        cmd = "hdfs dfs -put data/total.cc htk/2010.cc"
         os.system(cmd)
 
     

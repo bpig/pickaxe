@@ -64,6 +64,7 @@ if __name__ == "__main__":
     
     if len(sys.argv) == 3:
         fout = "htk/fe/%s/cmvn_p" % model
+        print fout
         mu = np.load(mu_file)
         delta = np.load(delta_file)
         interval = cfg["predict"]
