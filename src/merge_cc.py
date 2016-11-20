@@ -179,19 +179,40 @@ def mergeCc(cc, dailydt):
                 c += 1
     print "total merge", c
 
+def getArgs():
+    parser = ArgumentParser(description="Merge")
+    parser.add_argument("-ds", dest="ds", default="",
+                        help="today date")
+    parser.add_argument("-u", dest="u", action="store_true", default=False,
+                        help="update to hdfs")
+    parser.add_argument("-m", dest="m", action="store_true", default=False,
+                        help="merge cc")
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    today = sys.argv[1]
+    args = getArgs()
+    today = args.ds
     os.system("mkdir -p data/daily/cache")
     
     dailydt = "data/daily/"
     cc = "data/2010.cc"
+
+    if today:
+        with CD(dailydt):
+            csv = "%s.csv" % today
+            if not os.path.exists(csv):
+                dates = download(today)
+                print dates
+                genCsv(dates, csv)
+            else:
+                print "%s in cache" % csv
+    if args.m:
+        mergeCc(cc, dailydt)
+
+    if args.u:
+        cmd = "hdfs dfs -rmr htk/2010.cc"
+        os.system(cmd)
+        cmd = "hdfs dfs -put %s htk/2010.cc" % cc
+        os.system(cmd)
+
     
-    with CD(dailydt):
-        csv = "%s.csv" % today
-        if not os.path.exists(csv):
-            dates = download(today)
-            print dates
-            genCsv(dates, csv)
-        else:
-            print "%s in cache" % csv
-    mergeCc(cc, dailydt)

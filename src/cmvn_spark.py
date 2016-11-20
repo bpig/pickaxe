@@ -66,8 +66,8 @@ if __name__ == "__main__":
         fout = "htk/fe/%s/cmvn_p" % model
         mu = np.load(mu_file)
         delta = np.load(delta_file)
-        te_interval = cfg["test"]
-        ft = ft.filter(select(te_interval))
+        interval = cfg["predict"]
+        ft = ft.filter(select(interval))
         ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
         sys.exit(0)
     
