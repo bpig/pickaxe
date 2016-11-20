@@ -46,10 +46,7 @@ if __name__ == "__main__":
 
     idx = int(model[-2:])
     division = cfg["division"][idx]
-    if "dcache" in cfg:
-        data = read_data_sets(datafile, division, cfg["dcache"])
-    else:
-        data = read_data_sets(datafile, division)
+    data = read_data_sets(datafile, division)
 
     print "model={m}, data={d}".format(d=datafile, m=model)
 

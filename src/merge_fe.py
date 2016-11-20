@@ -16,20 +16,22 @@ def np_save(prefix, key, fea, tgt):
 def mergeForPredict(model, ds):
     fin = "raw/%sp" % model
     tgt = "data/fe/%s/daily/" % model
-    fe = tgt + `ds` + ".fe"
+    fe = tgt + ds + ".fe"
     
     os.system("mkdir -p %s" % tgt)
     print "model {m}, predict {ds}".format(m=model, ds=ds)
     files = os.listdir(fin)
     files = sorted(files)
     print "total %d files" % len(files)
-    
+
+    ct = len(ds)
+    ds = int(ds)
     keys, feas, tgts = [], [], []
     for c, l in enumerate(files):
         if "dumper.list" in l:
             continue
         tgt = fin + "/" + l
-        d = int(l.split("_")[1])
+        d = int(l.split("_")[1][:ct])
         
         if d != ds:
             continue
@@ -46,6 +48,18 @@ def mergeForPredict(model, ds):
     print "save to", fe
     with TimeLog():
         np_save(fe, keys, feas, tgts)
+
+def mergeFt(fin, fout):
+    files = os.listdir(fin)
+    files = sorted(files)
+    print "total %d files" % len(files)
+    print fin, "->", fout
+    fout = open(fout, "w")
+    for f in files:
+        if "dumper.list" in f:
+            continue
+        f = fin + f
+        fout.write(f + "," + open(f).read() + "\n")
 
 def mergeForTrain(model):
     fin = "raw/%s" % model
@@ -105,19 +119,23 @@ def mergeForTrain(model):
 def download(tgt, model):
     if tgt == "p":
         cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn_p raw/{m}p".format(m=model)
+        os.system(cmd)
     elif tgt == "t":
         cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn raw/{m}".format(m=model)
+        os.system(cmd)
     elif tgt == "ft":
         cmd = "java -jar raw/smsr_dumper htk/ft/{m}/ft raw/{m}t".format(m=model)
+        os.system(cmd)
+        cmd = "java -jar raw/smsr_dumper htk/ft/{m}/aux raw/{m}x".format(m=model)
+        os.system(cmd)
     else:
         return
-    os.system(cmd)
 
 def getArgs():
     parser = ArgumentParser(description="Merge")
     parser.add_argument("-t", dest="model", required=True,
                         help="fea model")
-    parser.add_argument("-ds", dest="ds", default=None, type=int,
+    parser.add_argument("-ds", dest="ds", default="",
                         help="start time")
     parser.add_argument("-d", dest="download", default="",
                         help="download from spark")
@@ -138,3 +156,9 @@ if __name__ == '__main__':
     
     if args.m:
         mergeForTrain(model)
+
+    if args.download == "ft":
+        ft = "raw/%st/" % model
+        mergeFt(ft, FT_FILE)
+        aux = "raw/%sx/" % model
+        mergeFt(aux, AUX_FILE)

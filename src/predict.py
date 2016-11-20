@@ -32,12 +32,8 @@ if __name__ == "__main__":
     else:
         datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
-        if args.merge:
-            cfg["merge"] = True
-        if args.nobig:
-            cfg["nobig"] = True
 
-    predSet = read_predict_sets(datafile, cfg)
+    predSet = read_predict_sets(datafile)
     
     model_dir = "model/" + model
     

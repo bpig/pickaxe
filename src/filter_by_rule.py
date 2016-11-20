@@ -33,8 +33,8 @@ def filterByNew(ds, aux):
 
 def process(fin, newSt=False, high=False, st=False, output=True):
     fout = open(fin + ".filter", "w")
-    stock = getFt("data/2010/2016.ft")
-    aux = getFt("data/2010/2016.ft.aux", Aux)
+    stock = getFt(FT_FILE)
+    aux = getFt(AUX_FILE, Aux)
     
 #    ft = aux['600380.SH']
 #    ft2 = stock['600380.SH']
