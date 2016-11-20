@@ -120,6 +120,8 @@ def getArgs():
                         help="direct, no filter")
     parser.add_argument("-hi", dest="h", action="store_true", default=False,
                         help="high line ok")
+    parser.add_argument("-st", dest="st", action="store_true", default=False,
+                        help="2016 st")
     parser.add_argument("-v", dest="v", action="store_true", default=False,
                         help="verbose")
     parser.add_argument("-ds", dest="ds", default="",
@@ -133,7 +135,7 @@ if __name__ == "__main__":
     if args.d or "filter" in tgt:
         process(tgt, args.c, start=args.ds, detail=args.v)
     else:
-        filter_by_rule.process(tgt, args.n, args.h)
+        filter_by_rule.process(tgt, args.n, args.h, args.st)
         tgt += ".filter"
         process(tgt, args.c, start=args.ds, detail=args.v)
     

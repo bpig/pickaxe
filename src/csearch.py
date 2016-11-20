@@ -14,7 +14,8 @@ def searchCb(cb):
 
     filter_by_rule.process(fout, output=False)
     gain50 = gain.process(fout+".filter", 50, output=False)
-    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
+#    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
+#    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
     gain3 = gain.process(fout+".filter", 3, output=False)
 #    gain3 = gain.process(fout, 3, output=False)
     

@@ -29,7 +29,7 @@ def parseLine(l):
 if __name__ == "__main__":
     fin = "ans/" + sys.argv[1]
     
-    filter_by_rule.process(fin, filterNew=True, output=False)
+    filter_by_rule.process(fin, output=False)
     
     l = next(open(fin + ".filter"))
     key, pairs = parseLine(l)
