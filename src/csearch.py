@@ -12,10 +12,11 @@ def searchCb(cb):
     fout = "log/cb.tmp"
     combine_ans.process(cb, fout)
 
-    filter_by_rule.process(fout, filterNew=True, output=False)
+    filter_by_rule.process(fout, output=False)
     gain50 = gain.process(fout+".filter", 50, output=False)
-    filter_by_rule.process(fout, filterNew=False, output=False)
+    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
     gain3 = gain.process(fout+".filter", 3, output=False)
+#    gain3 = gain.process(fout, 3, output=False)
     
     cb = getCbKey(cb)
     value = "%s,%.5f,%.5f\n" % (cb, gain3, gain50)

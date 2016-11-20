@@ -112,8 +112,8 @@ def getArgs():
     parser = ArgumentParser(description="Gain")
     parser.add_argument("-t", dest="tgt", required=True,
                         help="target")
-    parser.add_argument("-fn", dest="fn", action="store_true", default=False,
-                        help="filter new")
+    parser.add_argument("-n", dest="n", action="store_true", default=False,
+                        help="new stock")
     parser.add_argument("-c", dest="c", default=50, type=int, 
                         help="cal count")
     parser.add_argument("-d", dest="d", action="store_true", default=False,
@@ -122,7 +122,7 @@ def getArgs():
                         help="high line ok")
     parser.add_argument("-v", dest="v", action="store_true", default=False,
                         help="verbose")
-    parser.add_argument("-ds", dest="ds", default=None,
+    parser.add_argument("-ds", dest="ds", default="",
                         help="start time")
     return parser.parse_args()
 
@@ -130,10 +130,13 @@ if __name__ == "__main__":
     args = getArgs()
     tgt = "ans/" + args.tgt
 
-    if not args.d and not "filter" in tgt:
-        filter_by_rule.process(tgt, args.fn, nohigh=not args.h)
+    if args.d or "filter" in tgt:
+        process(tgt, args.c, start=args.ds, detail=args.v)
+    else:
+        filter_by_rule.process(tgt, args.n, args.h)
         tgt += ".filter"
+        process(tgt, args.c, start=args.ds, detail=args.v)
     
-    process(tgt, args.c, start=args.ds, detail=args.v)
+    
 
 

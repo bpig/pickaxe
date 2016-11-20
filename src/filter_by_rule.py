@@ -31,7 +31,7 @@ def filterByNew(ds, aux):
     
     return _inter
 
-def process(fin, filterNew=False, nohigh=True, output=True):
+def process(fin, newSt=False, high=False, st=False, output=True):
     fout = open(fin + ".filter", "w")
     stock = getFt("data/2010/2016.ft")
     aux = getFt("data/2010/2016.ft.aux", Aux)
@@ -45,18 +45,19 @@ def process(fin, filterNew=False, nohigh=True, output=True):
     
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
-        
-        ans = filter(lambda _: _.code not in st2016, ans)
-        ct += [len(ans)]
-        
+
         ans = filter(filterByStop(ds, stock), ans)
         ct += [len(ans)]
+        
+        if not st:
+            ans = filter(lambda _: _.code not in st2016, ans)
+            ct += [len(ans)]
 
-        if nohigh:
+        if not high:
             ans = filter(filterByHighLine(ds, stock), ans)
             ct += [len(ans)]
         
-        if filterNew:
+        if not newSt:
             ans = filter(filterByNew(ds, aux), ans)
             ct += [len(ans)]
         
@@ -71,11 +72,11 @@ def getArgs():
     parser = ArgumentParser(description="Filter")
     parser.add_argument("-t", dest="tgt", required=True,
                         help="target")
-    parser.add_argument("-fn", dest="fn", action="store_true", default=False,
-                        help="filter new")
+    parser.add_argument("-n", dest="new", action="store_true", default=False,
+                        help="st new")
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = getArgs()
     tgt = "ans/" + args.tgt
-    process(tgt, args.fn)
+    process(tgt, args.n)
