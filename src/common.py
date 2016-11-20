@@ -78,6 +78,9 @@ def dsInInterval(ds, interval):
             return True
     return False
 
+FT_FILE = "raw/st.ft"
+AUX_FILE = "raw/st.aux"
+
 if __name__ == '__main__':
     def a():
         return fea_length_extend(np.ones(4), np.ones(3), 5)

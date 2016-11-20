@@ -92,7 +92,7 @@ def gain(predict, stock, numStock, ds, output, detail):
     return sum(money)
 
 def process(predictFile, numStock, start=None, output=True, detail=False):
-    stock = getFt("data/2010/2016.ft")
+    stock = getFt(FT_FILE)
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())
