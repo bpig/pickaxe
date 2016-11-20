@@ -5,16 +5,6 @@ __date__ = "10/31/16"
 
 from common import *
 
-def getArgs():
-    parser = ArgumentParser(description="Merge")
-    parser.add_argument("-t", dest="model", required=True,
-                        help="fea model")
-    parser.add_argument("-ds", dest="ds", default=None, type=int,
-                        help="start time")
-    parser.add_argument("-d", dest="download", action="store_true", default=False,
-                        help="download from spark")
-    return parser.parse_args()
-
 def np_save(prefix, key, fea, tgt):
     key = np.asarray(key)
     fea = np.asarray(fea, dtype=np.float32)
@@ -24,10 +14,10 @@ def np_save(prefix, key, fea, tgt):
     np.save(prefix + ".tgt", tgt)
 
 def mergeForPredict(model, ds):
-    fin = "raw/%s_p" % model
+    fin = "raw/%sp" % model
     tgt = "data/fe/%s/daily/" % model
     fe = tgt + `ds` + ".fe"
-
+    
     os.system("mkdir -p %s" % tgt)
     print "model {m}, predict {ds}".format(m=model, ds=ds)
     files = os.listdir(fin)
@@ -40,18 +30,18 @@ def mergeForPredict(model, ds):
             continue
         tgt = fin + "/" + l
         d = int(l.split("_")[1])
-
+        
         if d != ds:
             continue
         key = l
         values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
         tgt = 0.0
         fea = values[:-1]
-
+        
         keys += [key]
         feas += [fea]
         tgts += [tgt]
-
+    
     print "predict:", len(keys), len(feas[0])
     print "save to", fe
     with TimeLog():
@@ -62,53 +52,47 @@ def mergeForTrain(model):
     tgt = "data/fe/%s/" % model
     tr = tgt + "train"
     te = tgt + "test"
-
+    
     os.system("mkdir -p %s" % tgt)
-
-    tr_begin = int(cfg["train_begin"])
-    tr_end = int(cfg["train_end"])
-    te_end = int(cfg["test_end"])
-
-    print "model {m}, train {tb} - {te}, test {te} - {e}".format(
-        m=model, tb=tr_begin, te=tr_end, e = te_end)
-
+    
+    tr_interval = getInterval(cfg["train"])
+    te_interval = getInterval(cfg["test"])
+    
+    print "model", model, "train", tr_interval, "test", te_interval
+    
     files = os.listdir(fin)
     files = sorted(files)
     print "total %d files" % len(files)
-
+    
     tr_key, te_key = [], []
     tr_fea, te_fea = [], []
     tr_tgt, te_tgt = [], []
-    for c, l in enumerate(files):
-        if "dumper.list" in l:
+    for c, key in enumerate(files):
+        if "dumper.list" in key:
             continue
-        tgt = fin + "/" + l
-        ds = int(l.split("_")[1])
-
-        if ds < tr_begin:
-            continue
-            
-        key = l
+        tgt = fin + "/" + key
+        ds = int(key.split("_")[1])
+        
         values = np.fromstring(open(tgt).read(), sep=",", dtype=np.float32)
         tgt = values[-1]
         values = values[:-1]
-
-        if tr_begin < ds < tr_end:
+        
+        if dsInInterval(ds, tr_interval):
             if float(tgt) < 0:
                 continue
-            tr_key += [l]
+            tr_key += [key]
             tr_fea += [values]
             tr_tgt += [tgt]
-        elif tr_end <= ds < te_end:
-            te_key += [l]
+        elif dsInInterval(ds, te_interval):
+            te_key += [key]
             te_fea += [values]
             te_tgt += [tgt]
         else:
             continue
-
+        
         if c % 10000 == 0:
             print time.ctime(), c
-
+    
     if tr_fea:
         print "train:", len(tr_key), len(tr_fea[0])
         with TimeLog():
@@ -118,18 +102,39 @@ def mergeForTrain(model):
         with TimeLog():
             np_save(te, te_key, te_fea, te_tgt)
 
+def download(tgt, model):
+    if tgt == "p":
+        cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn_p raw/{m}p".format(m=model)
+    elif tgt == "t":
+        cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn raw/{m}".format(m=model)
+    elif tgt == "ft":
+        cmd = "java -jar raw/smsr_dumper htk/ft/{m}/ft raw/{m}t".format(m=model)
+    else:
+        return
+    os.system(cmd)
+
+def getArgs():
+    parser = ArgumentParser(description="Merge")
+    parser.add_argument("-t", dest="model", required=True,
+                        help="fea model")
+    parser.add_argument("-ds", dest="ds", default=None, type=int,
+                        help="start time")
+    parser.add_argument("-d", dest="download", action="store_true", default=False,
+                        help="download from spark")
+    parser.add_argument("-m", dest="m", action="store_true", default=False,
+                        help="merge for train")
+    return parser.parse_args()
+
 if __name__ == '__main__':
     args = getArgs()
     model = args.model
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
-
-    if args.download:
-        cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn raw/{m}".format(m=model)
-        os.system(cmd)
-        sys.exit(1)
-
-    if not args.ds:
-        mergeForTrain(model)
-    else:
+    
+    download(args.download, model)
+    
+    if args.ds:
         mergeForPredict(model, args.ds)
+    
+    if args.m:
+        mergeForTrain(model)

@@ -37,3 +37,11 @@ v35:
   batch_step: 1
   epoch: 1
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
+
+v36:
+  fe: f6
+  net: [512, 256]
+  keep_prob: 0.3
+  batch_step: 10
+  epoch: 1
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]

@@ -68,6 +68,16 @@ def fea_length_extend(*args):
         return new_ans[0]
     return new_ans
 
+def getInterval(interval):
+    lt = interval.split(",")
+    return [map(int, _.split("-")) for _ in lt]
+
+def dsInInterval(ds, interval):
+    for (bg, ed) in interval:
+        if bg <= ds < ed:
+            return True
+    return False
+
 if __name__ == '__main__':
     def a():
         return fea_length_extend(np.ones(4), np.ones(3), 5)

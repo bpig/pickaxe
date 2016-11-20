@@ -14,18 +14,19 @@ def getSC(appName='aux'):
     sc.addPyFile("src/common.py")
     return sc
 
-def select(tb, te):
+def select(interval):
+    lt = getInterval(interval)
+    
     def _inter(kv):
         ds = int(kv[0].split("_")[1])
-        if tb < ds < te:
-            return True
-        return False
+        return dsInInterval(ds, lt)
+    
     return _inter
 
 def trans(content):
     value = content.split(",")[:-1]
     arr = np.asarray(value).astype(np.float64)
-    return arr 
+    return arr
 
 def cal(total):
     def _inter(iterator):
@@ -36,6 +37,7 @@ def cal(total):
             x += y / total
             xx += y * y / total
         yield x, xx
+    
     return _inter
 
 def normal(mu, delta):
@@ -47,6 +49,7 @@ def normal(mu, delta):
         value = (value - mu) / delta
         fea = ",".join(map(str, list(value) + [tgt]))
         return k, fea
+    
     return _inter
 
 if __name__ == "__main__":
@@ -58,45 +61,46 @@ if __name__ == "__main__":
     mu_file = "md/%s.mu.npy" % model
     delta_file = "md/%s.delta.npy" % model
     ft = sc.sequenceFile(fin)
-
+    
     if len(sys.argv) == 3:
         fout = "htk/fe/%s/cmvn_p" % model
         mu = np.load(mu_file)
         delta = np.load(delta_file)
-        ds = cfg["test_end"]
-        ft = ft.filter(select(ds, 22000000))
+        te_interval = cfg["test"]
+        ft = ft.filter(select(te_interval))
         ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
         sys.exit(0)
-
-    tb = cfg["train_begin"]
-    te = cfg["train_end"]
-    ft = ft.filter(select(tb, te)).values().map(trans)
+    
+    tr_interval = cfg["train"]
+    ft = ft.filter(select(tr_interval)).values().map(trans)
     ft.cache()
     ct = ft.count()
     print ct
-
+    
     ft = ft.mapPartitions(cal(ct))
     ft = ft.reduce(lambda x, y: (x[0] + y[0], x[1] + y[1]))
-
+    
     mu, delta = ft
     delta = delta - mu * mu
     delta = np.maximum(delta, 0)
     delta **= .5
-    delta[delta==0] = 1
-
+    delta[delta == 0] = 1
+    
     print mu
     print delta
-
+    
     print len(mu)
     np.save(mu_file, mu)
     np.save(delta_file, delta)
-
+    
     print time.ctime(), "begin normal"
     fout = "htk/fe/%s/cmvn" % model
-
-    ft = sc.sequenceFile(fin)
-    ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
     
-
+    ft = sc.sequenceFile(fin)
+    interval = tr_interval
+    if "test" in cfg:
+        interval += "," + cfg["test"]
+    ft = ft.filter(select(interval))
+    ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
 
 # spark-submit  --num-executors 500 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

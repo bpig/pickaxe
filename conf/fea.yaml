@@ -18,31 +18,22 @@ f1:
 
 f6:
   raw: 2010.cc
-  # ft_aux: htk/ft/f6/aux
-  # ft: htk/ft/f6/ft
-  # ft_ex: htk/ft/f6/ex
-  # fe: htk/fe/f6/
-  train_begin: 20100000
-  train_end: 20160500
+  train: 20100000-20141200,20160200-20160900
+  test: 20160900-20161100
 
 f7:
   raw: 2010.cc
-  train_begin: 20100000
-  train_end: 20160500
-  test_end: 20161020
+  train: 20100000-20160500
+  test: 20160500-20161100
 
 f8:
-  raw: 2010_ori.cc
-  train_begin: 20100000
-  train_end: 20160500
-  test_end: 20161020
+  raw: 2010.cc
+  train: 20100000-20160500
+  test: 20160500-20161100
 
 f9:
   raw: 2010.cc
-#  train: 20100000-20141120,20160300-20160900
-#  test: 20160900-20161100
-  train_begin: 20160200
-  train_end: 20160900
-  test_end: 20161100
+  train: 20160200-20160900
+  test: 20160900-20161100
 
 
