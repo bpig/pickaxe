@@ -3,6 +3,7 @@
 from common import *
 import combine_ans
 import gain
+import filter_by_rule
 
 def getCbKey(cb):
     return "+".join(sorted(map(os.path.basename, cb)))
@@ -10,8 +11,11 @@ def getCbKey(cb):
 def searchCb(cb):
     fout = "cb.tmp"
     combine_ans.process(cb, fout)
-    gain50 = gain.process(fout, 50, output=False)
-    gain3 = gain.process(fout, 3, output=False)
+
+    filter_by_rule.process(fout, filterNew=True, output=False)
+    gain50 = gain.process(fout+".filter", 50, output=False)
+    filter_by_rule.process(fout, filterNew=False, output=False)
+    gain3 = gain.process(fout+".filter", 3, output=False)
     
     cb = getCbKey(cb)
     value = "%s,%.5f,%.5f\n" % (cb, gain3, gain50)
@@ -51,7 +55,7 @@ def quickSearch(fins, fout, q, kv):
         tmp = sorted(tmp, key=lambda (x, y): -y)
         select = tmp[0][0]
         queue += [select]
-        print queue, tmp[0][1]
+        print sorted(queue), tmp[0][1]
         fins.remove(select)
 
 def getArgs():

@@ -27,10 +27,16 @@ def kernel(net, keep_prob):
         return {'class': tf.argmax(prediction, 1), 'prob': prediction}, loss, train_op
     return _model
 
+def getArgs():
+    parser = ArgumentParser(description="Predict")
+    parser.add_argument("-t", dest="m", 
+                        help="model")
+    return parser.parse_args()
+
 if __name__ == "__main__":
     tf.logging.set_verbosity(tf.logging.INFO)
-
-    model = sys.argv[1]
+    args = getArgs()
+    model = args.m    
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
 

@@ -21,3 +21,19 @@ v33:
   batch_step: 12
   epoch: 1
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
+
+v34:
+  fe: f9
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  batch_step: 2
+  epoch: 1
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
+
+v35:
+  fe: f9
+  net: [512, 256]
+  keep_prob: 0.3
+  batch_step: 1
+  epoch: 1
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
