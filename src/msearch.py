@@ -57,7 +57,7 @@ def searchModel(model, keys):
     datafile = "data/fe/%s/test" % fe_version    
 
     foutFile = "ans/" + model
-    predSet = read_predict_sets(datafile, {})
+    predSet = read_predict_sets(datafile)
     net = cfg["net"]
     keep_prob = 1.0
     
@@ -101,6 +101,8 @@ def getArgs():
                         help="model")
     parser.add_argument("-a", dest="a", required=True, default="",
                         help="ans")
+    parser.add_argument("-g", dest="g", default="",
+                        help="gpu id")
     return parser.parse_args()
 
 def getInput(tgt):
@@ -113,9 +115,10 @@ def getInput(tgt):
 
 if __name__ == "__main__":
     args = getArgs()
+    if args.g:
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     model = getInput(args.t)
     print model
-
     logfile = "log/" + args.a
     keys = getkeys(logfile)
 
