@@ -29,18 +29,12 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def genOneStock(key, info, ex, ds=None):
-    win = 15
-    if ds:
-        if ds in info.ds:
-            select = [info.ds.index(ds)]
-        else:
-            print "ds %s is not available" % ds
-            return []
-    else:
-        select = range(len(info.ds) - win)
-    
+def genOneStock(key, info, ex):
+    if len(info.ds) < 120:
+        return []
+    select = range(len(info.ds) - 120 + 1)
     ans = []
+    win = 15
     for idx in select:
         feas = []
         # assert len(info) == 20, len(info)

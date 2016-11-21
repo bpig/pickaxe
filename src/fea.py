@@ -104,7 +104,7 @@ def genOneFe(info, wins):
 
 def process(fin, fout, ds=None):
     np.seterr(all='raise')
-    st = getFt(fin)
+    st = getFt(fin, Ft)
     dates = set(chain(*map(lambda x: x.ds, st.values())))
     dates = sorted(dates)
     

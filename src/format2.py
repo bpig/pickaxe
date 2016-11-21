@@ -69,14 +69,14 @@ def extend(key, v):
     ex += [np.asarray(v[0], dtype=np.float64)]
     
     cc = Cc(*v)
-    for i in [3, 5, 7, 10, 15, 26, 60, 120]:
+    for i in [3, 5, 7, 10, 15, 30, 60, 120]:
         emv_value, emv_ma = emv(cc, i)
         
         cr_value = cr(cc, i)
         br_value = br(cc, i)
         
         sma_value = sma(cc.e, i)
-        ema_value = ema(cc.e, sma_value, 3)
+        ema_value = ema(cc.e, sma_value, i)
         sma_value = fea_length_extend(sma_value, len(cc.ds))
         ema_value = fea_length_extend(ema_value, len(cc.ds))
         
@@ -132,6 +132,8 @@ def extend(key, v):
     v = map(lambda x: map(str, x), v)
     work_day = map(str, work_day)
     aux = [v[0], work_day, v[4], v[5], v[6], v[7], v[8], v[15], v[16], v[18]]
+    for i in range(len(aux)):
+        aux[i] = aux[i][-150:]
     return v, aux, ex
 
 def dump(kv, filename):
