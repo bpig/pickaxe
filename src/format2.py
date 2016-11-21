@@ -133,7 +133,7 @@ def extend(key, v):
     work_day = map(str, work_day)
     aux = [v[0], work_day, v[4], v[5], v[6], v[7], v[8], v[15], v[16], v[18]]
     for i in range(len(aux)):
-        aux[i] = aux[i][-150:]
+        aux[i] = aux[i][:150]
     return v, aux, ex
 
 def dump(kv, filename):
