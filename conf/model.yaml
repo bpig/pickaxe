@@ -50,6 +50,6 @@ v37:
   fe: f5
   net: [512, 256]
   keep_prob: 0.3
-  batch_step: 10
+  batch_step: 8
   epoch: 1
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]

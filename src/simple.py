@@ -31,11 +31,16 @@ def getArgs():
     parser = ArgumentParser(description="Predict")
     parser.add_argument("-t", dest="m", 
                         help="model")
+    parser.add_argument("-g", dest="g", default="",
+                        help="gpu id")
     return parser.parse_args()
 
 if __name__ == "__main__":
     tf.logging.set_verbosity(tf.logging.INFO)
     args = getArgs()
+    if args.g:
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
+
     model = args.m    
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]

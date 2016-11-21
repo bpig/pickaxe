@@ -12,15 +12,14 @@ def getArgs():
                         help="model")
     parser.add_argument("-ds", dest="ds", 
                         help="day")
-    parser.add_argument("-merge", dest="merge", action="store_true", default=False,
-                        help="merge daily")
-    parser.add_argument("-nb", dest="nobig", action="store_true", default=False,
-                        help="no predict big data")
-
+    parser.add_argument("-g", dest="g", default="",
+                        help="gpu id")
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = getArgs()
+    if args.g:
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     model = args.m
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]

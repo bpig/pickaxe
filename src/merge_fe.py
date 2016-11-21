@@ -118,17 +118,15 @@ def mergeForTrain(model):
 def download(tgt, model):
     if tgt == "p":
         cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn_p raw/{m}p".format(m=model)
-        os.system(cmd)
     elif tgt == "t":
         cmd = "java -jar raw/smsr_dumper htk/fe/{m}/cmvn raw/{m}".format(m=model)
-        os.system(cmd)
     elif tgt == "ft":
         cmd = "java -jar raw/smsr_dumper htk/ft/{m}/ft raw/{m}t".format(m=model)
-        os.system(cmd)
+    elif tgt == "aux":
         cmd = "java -jar raw/smsr_dumper htk/ft/{m}/aux raw/{m}x".format(m=model)
-        os.system(cmd)
     else:
         return
+    os.system(cmd)
 
 def getArgs():
     parser = ArgumentParser(description="Merge")
@@ -159,5 +157,6 @@ if __name__ == '__main__':
     if args.download == "ft":
         ft = "raw/%st/" % model
         mergeFt(ft, FT_FILE)
+    if args.download == "aux":
         aux = "raw/%sx/" % model
         mergeFt(aux, AUX_FILE)
