@@ -68,11 +68,11 @@ if __name__ == "__main__":
         assert args.tgt
         tgt = args.tgt
         fout = args.a
-
+    
     fins = getInput(tgt)
     print "fins", fins
     print "fout", fout
     process(fins, "ans/" + fout)
-
+    
     if args.g:
         os.system("python src/gain.py -t %s" % fout)

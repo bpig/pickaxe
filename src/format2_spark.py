@@ -21,15 +21,15 @@ def cal(lt):
     lt = map(lambda x: x.split(","), lt)
     lt = sorted(lt, key=lambda x: x[0], reverse=True)
     lt = zip(*lt)
-
+    
     lt, aux, ex = format2.extend("no_use", lt)
-
+    
     lt = map(lambda x: "_".join(x), lt)
     lt = ",".join(lt)
-
+    
     aux = map(lambda x: "_".join(x), aux)
     aux = ",".join(aux)
-
+    
     f = StringIO()
     ex = np.asarray(ex)
     for i in range(len(ex)):
@@ -58,12 +58,12 @@ if __name__ == "__main__":
     rdd = sc.textFile(fin, 500)
     rdd = rdd.map(getKv).filter(len).groupByKey().mapValues(cal)
     rdd.cache()
-
+    
     fout_ex = "htk/ft/%s/ex" % model
     rdd.map(lambda (x, y): (x, y[2])).saveAsSequenceFile(fout_ex)
-
+    
     fout_aux = "htk/ft/%s/aux" % model
     rdd.map(lambda (x, y): (x, y[1])).saveAsSequenceFile(fout_aux)
-
+    
     fout = "htk/ft/%s/ft" % model
     rdd.map(lambda (x, y): (x, y[0])).saveAsSequenceFile(fout)

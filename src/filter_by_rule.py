@@ -35,23 +35,23 @@ def process(fin, newSt=False, high=False, st=False, output=True):
     fout = open(fin + ".filter", "w")
     aux = getFt(AUX_FILE, Aux)
     
-#    ft = aux['600380.SH']
-#    ft2 = stock['600380.SH']
-#    idx = ft.ds.index("20161111")
-#    print idx, ft2.ds[:idx+1], ft2.status[:idx+1]#, ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
-#    sys.exit(1)
+    #    ft = aux['600380.SH']
+    #    ft2 = stock['600380.SH']
+    #    idx = ft.ds.index("20161111")
+    #    print idx, ft2.ds[:idx+1], ft2.status[:idx+1]#, ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
+    #    sys.exit(1)
     st2016 = set(map(str.strip, open("data/2016.st")))
     
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
-
+        
         ans = filter(filterByStop(ds, aux), ans)
         ct += [len(ans)]
         
         if not st:
             ans = filter(lambda _: _.code not in st2016, ans)
             ct += [len(ans)]
-
+        
         if not high:
             ans = filter(filterByHighLine(ds, aux), ans)
             ct += [len(ans)]

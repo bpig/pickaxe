@@ -84,7 +84,7 @@ def br(info, win):
 def kdj(info, rsv_win, k_win, d_win):
     ct = len(info.e)
     if ct < rsv_win + k_win + d_win - 2:
-        return fea_length_extend([],[],[], len(info.ds))
+        return fea_length_extend([], [], [], len(info.ds))
     e = np.asarray(info.e, dtype=np.float32)
     high = np.asarray(info.high, dtype=np.float32)
     low = np.asarray(info.low, dtype=np.float32)
@@ -136,7 +136,7 @@ def macd(info, long_win, short_win, m):
     
     short_ma = sma(info.e, short_win)
     short_ema = ema(info.e, short_ma, short_win)
-
+    
     diff = short_ema[:len(long_ema)] - long_ema
     
     diff_ma = sma(diff, m)
@@ -146,7 +146,7 @@ def macd(info, long_win, short_win, m):
 def boll(info, win):
     ct = len(info.ds)
     if ct < win:
-        return fea_length_extend([],[], len(info.ds))
+        return fea_length_extend([], [], len(info.ds))
     e = np.asarray(info.e, dtype=np.float32)
     
     ct = ct - win + 1
@@ -158,7 +158,7 @@ def boll(info, win):
         if mean == 0:
             band_rate[i] = 0
         else:
-            band_rate[i] = std / mean 
+            band_rate[i] = std / mean
         band_std[i] = std
     return fea_length_extend(band_rate, band_std, len(info.ds))
 

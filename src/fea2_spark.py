@@ -48,9 +48,6 @@ if __name__ == "__main__":
     fin_ex = "htk/ft/%s/ex" % model
     ex = sc.sequenceFile(fin_ex)
     
-    # fin_aux = "htk/ft/%s/aux" % model
-    # aux = sc.sequenceFile(fin_aux)
-    
     fin = "htk/ft/%s/ft" % model
     ft = sc.sequenceFile(fin)
     

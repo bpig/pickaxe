@@ -11,13 +11,13 @@ def getCbKey(cb):
 def searchCb(cb):
     fout = "log/cb.tmp"
     combine_ans.process(cb, fout)
-
+    
     filter_by_rule.process(fout, output=False)
-    gain50 = gain.process(fout+".filter", 50, output=False)
-#    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
-#    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
-    gain3 = gain.process(fout+".filter", 3, output=False)
-#    gain3 = gain.process(fout, 3, output=False)
+    gain50 = gain.process(fout + ".filter", 50, output=False)
+    #    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
+    #    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
+    gain3 = gain.process(fout + ".filter", 3, output=False)
+    #    gain3 = gain.process(fout, 3, output=False)
     
     cb = getCbKey(cb)
     value = "%s,%.5f,%.5f\n" % (cb, gain3, gain50)
@@ -26,11 +26,11 @@ def searchCb(cb):
     print
     return value, gain3, gain50
 
-def allSearch(fins, fout):
+def allSearch(fins, fout, kv):
     for i in range(1, len(fins) + 1):
         for cb in itertools.combinations(fins, i):
             print cb
-            if getCbKey(cb) in keys:
+            if getCbKey(cb) in kv:
                 continue
             cb, _, _ = searchCb(cb)
             fout.write(cb)
@@ -73,9 +73,9 @@ if __name__ == "__main__":
     args = getArgs()
     fins = combine_ans.getInput(args.tgt)
     if args.q == "t":
-        logfile = "log/cs_top" 
+        logfile = "log/cs_top"
     elif args.q == "d":
-        logfile = "log/cs_daily" 
+        logfile = "log/cs_daily"
     else:
         logfile = "log/" + args.a
     print "fin", fins
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     
     try:
         rd = csv.reader(open(logfile))
-        kv = dict([("+".join(sorted(r[0].split("+"))), 
+        kv = dict([("+".join(sorted(r[0].split("+"))),
                     (float(r[1]), float(r[2]))) for r in rd])
     except:
         kv = {}
@@ -93,5 +93,5 @@ if __name__ == "__main__":
         quickSearch(fins, fout, args.q, kv)
     else:
         allSearch(fins, fout, kv)
-
+    
     os.system("rm -f log/cb.tmp")

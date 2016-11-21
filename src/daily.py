@@ -26,23 +26,31 @@ def parseLine(l):
     weight = [float(_.split("_")[1]) for _ in l[pos + 1:].split(",")]
     return key, zip(items, weight)
 
+def getArgs():
+    parser = ArgumentParser(description="Gain")
+    parser.add_argument("-t", dest="tgt", required=True,
+                        help="target")
+    parser.add_argument("-f", dest="f", action="store_true", default=False,
+                        help="filter")
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    fin = "ans/" + sys.argv[1]
+    args = getArgs()
+    fin = "ans/" + args.tgt
     
     filter_by_rule.process(fin, output=False)
     
     l = next(open(fin + ".filter"))
     key, pairs = parseLine(l)
-
+    
     ct = 100
     items = map(lambda (item, weight): item, pairs)[:ct]
     
     print key
     assert len(items) == ct
-    weight = map(lambda _:random.random(), items)
+    weight = map(lambda _: random.random(), items)
     weight = sorted(weight, reverse=True)
     
     print ",".join(["", "code", "weight"])
     for i in range(ct):
         print ",".join(map(str, (i + 1, items[i], weight[i])))
-

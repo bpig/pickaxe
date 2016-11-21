@@ -5,7 +5,7 @@ __date__ = "11/2/16"
 from common import *
 
 Aux = collections.namedtuple(
-    'Aux', 
+    'Aux',
     ['ds', 'work_day', 'pe', 's', 'high',
      'low', 'e', 'status', 's_status', 'e_status'])
 
@@ -23,12 +23,10 @@ Ft2 = collections.namedtuple(
      'status', 's_status', 'wav_status', 'e_status', 'a_rate',
      'v_rate', 'tgt'])
 
-
 Cc = collections.namedtuple(
     'Cc',
     ['ds', 'rate', 'volumn', 'amount', 'pe', 's', 'high', 'low', 'e', 'turnover',
      'shares'])
-
 
 # states,正常 0,停盘 1
 # s-status,开盘正常 0,开盘涨停 1,开盘跌停 2

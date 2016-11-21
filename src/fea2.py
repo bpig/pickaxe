@@ -2,19 +2,6 @@
 from common import *
 from data_loader import Ft, getFt, getFtEx
 
-def getBaseInfo(fin):
-    st = getFt(fin)
-    ex = getFtEx(fin)
-    assert set(st.keys()) == set(ex.keys())
-    for key in st.keys():
-        yield key, st[key], ex[key]
-
-def process(ds=None):
-    ans = []
-    for key, info, exinfo in getBaseInfo():
-        ans += genOneStock(key, info, exinfo, ds)
-    return ans
-
 def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr1 = [0] * 2
     arr1[int(status)] = 1

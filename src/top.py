@@ -16,22 +16,16 @@ def getArgs():
     parser = ArgumentParser(description="Gain")
     parser.add_argument("-t", dest="tgt", required=True,
                         help="target")
-    parser.add_argument("-f", dest="f", action="store_true", default=False,
-                        help="filter")
-    parser.add_argument("-c", dest="c", default=6, type=int, 
-                        help="cal count")
     parser.add_argument("-d", dest="d", action="store_true", default=False,
-                        help="direct, no filter")
-    parser.add_argument("-hi", dest="h", action="store_true", default=False,
-                        help="high line ok")
+                        help="direct")
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = getArgs()
     fin = "ans/" + args.tgt
-    if args.f:
+    if not args.d:
         filter_by_rule.process(fin)
-        fin = fin + ".filter"
+        fin += ".filter"
     
     for l in open(fin):
         key, items = parseLine(l)
@@ -39,5 +33,5 @@ if __name__ == "__main__":
         seq = " "
         if args.c > 10:
             seq = "\n"
-            print 
+            print
         print seq.join(map(str, items[:args.c]))
