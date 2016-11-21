@@ -45,8 +45,12 @@ def getArgs():
                         help="ans")
     parser.add_argument("-p", dest="p", default=None,
                         help="combine for predict")
-    parser.add_argument("-g", dest="g", action="store_true", default=False,
-                        help="cal gain")
+    parser.add_argument("-c", dest="c", type=int, default=50,
+                        help="ct")
+    parser.add_argument("-d", dest="d", action="store_true", default=False,
+                        help="direct, no filter")
+    parser.add_argument("-v", dest="v", action="store_true", default=False,
+                        help="verbose")
     return parser.parse_args()
 
 def getInput(tgt):
@@ -74,5 +78,7 @@ if __name__ == "__main__":
     print "fout", fout
     process(fins, "ans/" + fout)
     
-    if args.g:
-        os.system("python src/gain.py -t %s" % fout)
+    if args.c:
+        direct = "-d" if args.d else ""
+        verbose = "-v" if args.v else ""
+        os.system("python src/gain.py -t %s -c %d %s %s" % (fout, args.c, direct, verbose))

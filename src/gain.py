@@ -17,7 +17,7 @@ def gain(predict, stock, numStock, ds, output, detail):
         ii = i % 2
         high, low, stop = 0, 0, 0
         for rec in predict[d]:
-            # if len(predict[d]) < 1000:
+            # if len(predict[d]) < 100:
             #     break
             if count == numStock:
                 break
@@ -96,11 +96,14 @@ def process(predictFile, numStock, start=None, output=True, detail=False):
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())
+    start = "20160901"
     if not start or start not in ds:
         idx = 0
     else:
         idx = ds.index(start)
     ds = ds[idx:]
+    # i2 = ds.index("20161019")
+    # ds = ds[:i2+1]
     
     money = gain(predict, stock, numStock, ds, output, detail)
     if output:
