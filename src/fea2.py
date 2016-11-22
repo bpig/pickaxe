@@ -31,6 +31,21 @@ def genStatus(status):
             ct2[0], ct2[1] + ct2[3], ct2[2] + ct2[3], ct2[3],
             ct3[0], ct3[1], ct3[2]]
 
+def oneHotStatus(status, sstatus, wavstatus, estatus):
+    arr1 = [0] * 2
+    arr1[int(status)] = 1
+    arr2 = [0] * 3
+    arr2[int(sstatus)] = 1
+    arr3 = [0] * 4
+    arr3[int(wavstatus)] = 1
+    if int(wavstatus) == 3:
+        arr3[1] = 1
+        arr3[2] = 1
+        arr3[3] = 1
+    arr4 = [0] * 3
+    arr4[int(estatus)] = 1
+    return arr1 + arr2 + arr3 + arr4
+
 @register_kernel
 def f1(key, info, ex):
     omit = 30
@@ -64,27 +79,26 @@ def f2(key, info, ex):
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 20
+    win = 15
     for idx in select:
         feas = []
         for i in range(win):
             n = idx + i
             feas += [info[row][n]
-                     for row in [1, 11, 12, 13, 14, 19, 20]]            
+                     for row in [1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 19, 20]]            
         for i in range(1, win):
             n = idx + i
             feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
                      for row in [2, 3, 5, 6, 7, 8, 9]]
 
-        #windows = [1, 2, 3, 5, 7, 15, 20]
-        windows = [5, 10, 15, 20]
+        windows = [5, 10, 15]
         for w in windows:
-            #items = map(lambda x: x[idx:idx+win], info)
-            #feas += genStatus(items[15:19])
             rates = info[1][idx:idx+win]
             feas += rateCount(rates)
 
-        feas += [ex[row][idx] for row in range(1, len(ex))]
+        for i in range(win):
+            n = idx + i
+            feas += [ex[row][n] for row in range(1, len(ex))]
         ds = info.ds[idx]
         tgt = info.tgt[idx]
         feas += [tgt]

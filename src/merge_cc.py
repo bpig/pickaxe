@@ -214,5 +214,7 @@ if __name__ == "__main__":
         os.system(cmd)
         cmd = "hdfs dfs -put data/total.cc htk/2010.cc"
         os.system(cmd)
+        cmd = "hdfs dfs -ls htk"
+        os.system(cmd)
 
     
