@@ -77,17 +77,18 @@ if __name__ == "__main__":
     for epoch in range(epochs):
         for i in range(batch_step):
             batch_x, batch_y = data.train.next_batch(batch_size)
-            classifier.fit(batch_x, batch_y, steps=100)
+            classifier.fit(batch_x, batch_y, steps=1)
             print time.ctime(), "batch_step", i
     
         # te_acc = pred(classifier, data.test.feas, data.test.tgts)
-
         # tr_acc = pred(classifier, data.train.feas[:ct], data.train.tgts[:ct])
-        # print time.ctime(), "finish epoch %d, train acc %.6f, test acc %.6f" \
+        # print time.ctime(), "epoch %d, train acc %.6f, test acc %.6f" \
         #     % (epoch, tr_acc, te_acc)
 
         tr_acc = pred(classifier, data.test.feas, data.test.tgts)
+        print
         print time.ctime(), "finish epoch %d, train acc %.6f" % (epoch, tr_acc)
+        print
 
 
 

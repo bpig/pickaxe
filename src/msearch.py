@@ -3,6 +3,7 @@ __author__ = "shuai.li(286287737@qq.com)"
 __date__ = "11/3/16"
 
 from common import *
+from sklearn import metrics
 from mlp_feeder import read_predict_sets
 from simple import kernel
 from jsq_estimator import JSQestimator
@@ -47,6 +48,14 @@ def genAns(pp, foutFile, predSet):
         st = map(lambda x: "_".join(x), st)
         fout.write(ds + "," + ",".join(st) + "\n")
 
+def pred(classifier, feas, tgts):
+    y_predicted = [p['class'] for p in classifier.predict(feas, as_iterable=True)]
+    y_predicted = np.asarray(y_predicted)
+    idx = (y_predicted==1)
+    print
+    print len(y_predicted[idx])
+    return metrics.accuracy_score(tgts[idx], y_predicted[idx]), len(y_predicted[idx])
+
 def searchModel(model, keys):
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
@@ -62,6 +71,9 @@ def searchModel(model, keys):
     keep_prob = 1.0
     
     versions = getCheckPoint(model_dir)
+    idx = int(model[-2:])
+    division = cfg["division"][idx]        
+    tgts = np.asarray(map(lambda x: 0 if x < division else 1, predSet.tgt))
 
     ans = []
     for version in versions:
@@ -72,16 +84,11 @@ def searchModel(model, keys):
         
         classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
         
-        classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
-        
-        pp = classifier.predict(predSet.fea, as_iterable=True)
-        
-        genAns(pp, foutFile, predSet)
+        classifier.fit(predSet.fea, np.ones(len(predSet.fea), dtype=np.int), steps=0)
 
-        gain50 = gain.process(foutFile, 50, output=False)
-        gain3 = gain.process(foutFile, 3, output=False)
+        te_acc, l1 = pred(classifier, predSet.fea, tgts)
 
-        value = "%s,%s,%.5f,%.5f\n" % (model, version, gain3, gain50)
+        value = "%s,%s,%d,%.5f\n" % (model, version, l1, te_acc)
         print "==" * 10
         print value,
         print

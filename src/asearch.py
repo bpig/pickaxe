@@ -25,6 +25,7 @@ if __name__ == '__main__':
     rd = csv.reader(open(fin))
     t3 = defaultdict(list)
     t50 = defaultdict(list)
+    acc = defaultdict(list)
     for r in rd:
         if not r:
             continue
@@ -34,10 +35,20 @@ if __name__ == '__main__':
         else:
             key = r[0]
             name = r[1]
-        s3 = float(r[-2])
-        s50 = float(r[-1])
-        t3[key] += [(name, s3)]
-        t50[key] += [(name, s50)]
+        if "acc" in fin:
+            score = float(r[-1])
+            acc[key] += [(name, score)]
+        else:
+            s3 = float(r[-2])
+            s50 = float(r[-1])
+            t3[key] += [(name, s3)]
+            t50[key] += [(name, s50)]
+
+    if "acc" in fin:
+        for k in sorted(acc.keys()):
+            acc[k] = sorted(acc[k], key=lambda x: x[1])
+        printDict(acc)
+        sys.exit(1)
 
     if not "cb" in fin:
         print "last 3 select"

@@ -93,9 +93,6 @@ def read_predict_sets(datafile):
     keys, feas, tgts = base_data(datafile)
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
-    
-    tgts = tgts.astype(np.float32)
-    feas = feas.astype(np.float32)
 
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype
     print time.ctime(), "finish load data"

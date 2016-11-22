@@ -54,10 +54,10 @@ v37:
   epoch: 1
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
-v38:
-  fe: f4
-  net: [512, 256]
+v38: # diff lr with v36
+  fe: f6
+  net: [2048, 1024, 1024]
   keep_prob: 0.3
-  batch_step: 8
-  epoch: 1
+  batch_step: 10
+  epoch: 50
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
