@@ -31,7 +31,7 @@ def filterByNew(ds, aux):
     
     return _inter
 
-def process(fin, newSt=False, high=False, st=False, output=True):
+def process(fin, newSt=False, high=False, st=False, output=False):
     fout = open(fin + ".filter", "w")
     aux = getFt(AUX_FILE, Aux)
     

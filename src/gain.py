@@ -96,7 +96,7 @@ def process(predictFile, numStock, start=None, output=True, detail=False):
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())
-    start = "20160901"
+#    start = "20160901"
     if not start or start not in ds:
         idx = 0
     else:

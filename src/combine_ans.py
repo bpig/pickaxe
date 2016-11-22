@@ -82,3 +82,4 @@ if __name__ == "__main__":
         direct = "-d" if args.d else ""
         verbose = "-v" if args.v else ""
         os.system("python src/gain.py -t %s -c %d %s %s" % (fout, args.c, direct, verbose))
+    print " ".join(sys.argv)
