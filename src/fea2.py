@@ -85,7 +85,8 @@ def f2(key, info, ex):
         for i in range(win):
             n = idx + i
             feas += [info[row][n]
-                     for row in [1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 19, 20]]            
+                     for row in [1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 19, 20]]
+
         for i in range(1, win):
             n = idx + i
             feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]

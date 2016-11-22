@@ -69,7 +69,7 @@ def extend(key, v):
     ex += [np.asarray(v[0], dtype=np.float64)]
     
     cc = Cc(*v)
-    for i in [3, 5, 7, 10, 15, 30, 60, 120]:
+    for i in [3, 5, 7, 10, 15]:
         emv_value, emv_ma = emv(cc, i)
         
         cr_value = cr(cc, i)
@@ -95,21 +95,21 @@ def extend(key, v):
                rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
                obv_value]
     
-    for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4), (25, 5, 5), (49, 7, 7)]:
+    for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
         k, d, j = kdj(cc, a, b, c)
         ex += [k, d, j]
     
-    for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5), (26, 12, 9), (52, 26, 13)]:
+    for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5)]:
         diff, diff_ma, diff_ema = macd(cc, l, s, m)
-        ex += [diff, diff_ma, diff_ema]
+        ex += [diff]
     
     # ex += [cdp(cc)]
     
-    for (a, b) in [(4, 2), (8, 4), (12, 6), (20, 10), (26, 13), (52, 26)]:
+    for (a, b) in [(4, 2), (8, 4), (12, 6)]:
         mtm_value, mtma = mtm(cc, a, b)
         ex += [mtm_value, mtma]
     
-    for a in [10, 15, 26, 52]:
+    for a in [10, 15]:
         vr_value = vr(cc, a)
         ex += [vr_value]
     
