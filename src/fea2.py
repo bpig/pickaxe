@@ -8,6 +8,19 @@ def register_kernel(func):
     kernels[func.__name__] = func
     return func
 
+def rateCount(rates):
+    def trans(x):
+        x = 10 * x
+        x = min(10.0, x)
+        x = max(-10.0, x)
+        x += 10
+        return int(x)
+    rates = map(trans, rates)
+    ans = [0] * 21
+    for r in rates:
+        ans[r] += 1
+    return ans
+
 def genStatus(status):
     ct0 = Counter(map(int, status[0]))
     ct1 = Counter(map(int, status[1]))
@@ -63,10 +76,13 @@ def f2(key, info, ex):
             feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
                      for row in [2, 3, 5, 6, 7, 8, 9]]
 
-        windows = [1, 2, 3, 5, 7, 15, 20]
+        #windows = [1, 2, 3, 5, 7, 15, 20]
+        windows = [5, 10, 15, 20]
         for w in windows:
-            items = map(lambda x: x[idx:idx+win], info)
-            feas += genStatus(items[15:19])
+            #items = map(lambda x: x[idx:idx+win], info)
+            #feas += genStatus(items[15:19])
+            rates = info[1][idx:idx+win]
+            feas += rateCount(rates)
 
         feas += [ex[row][idx] for row in range(1, len(ex))]
         ds = info.ds[idx]
