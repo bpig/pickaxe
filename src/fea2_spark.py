@@ -13,7 +13,7 @@ def genOneStock(func):
     
         info = info.split(",")
         info = map(lambda x: x.split("_"), info)
-        for i in range(len(info)):
+        for i in range(1, len(info)):
             info[i] = map(float, info[i])
         info = Ft2(*info)
     
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     fout = "htk/fe/%s/raw" % model
 
     feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f1
+    print feaFunc
     fe = rdd.map(genOneStock(feaFunc)).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
