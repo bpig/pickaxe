@@ -7,17 +7,21 @@ from data_loader import Ft, Ft2
 import fea2
 import yaml
 
-def genOneStock(kv):
-    key, (info, ex) = kv
+def genOneStock(func):
+    def _inter(kv):
+        key, (info, ex) = kv
     
-    info = info.split(",")
-    info = map(lambda x: x.split("_"), info)
-    info = Ft2(*info)
+        info = info.split(",")
+        info = map(lambda x: x.split("_"), info)
+        for i in range(len(info)):
+            info[i] = map(float, info[i])
+        info = Ft2(*info)
     
-    f = StringIO(ex)
-    ex = np.load(f)
-    
-    return fea2.genOneStock(key, info, ex)
+        f = StringIO(ex)
+        ex = np.load(f)
+        
+        return func(key, info, ex)
+    return _inter
 
 def getSC(appName='aux'):
     sconf = SparkConf().set("spark.hadoop.validateOutputSpecs", "false") \
@@ -54,8 +58,9 @@ if __name__ == "__main__":
     rdd = ft.join(ex)
     
     fout = "htk/fe/%s/raw" % model
-    
-    fe = rdd.map(genOneStock).filter(len).flatMap(lambda x: x)
+
+    feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f1
+    fe = rdd.map(genOneStock(feaFunc)).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
 # spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

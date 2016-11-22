@@ -3,13 +3,6 @@
 # __date__ = "2016/10/13"
 from common import *
 
-kernels = {}
-
-def register_kernel(func):
-    kernels[func.__name__] = func
-    return func
-
-@register_kernel
 def base_fea(values):
     pe = np.array(values[4])
     items = []
