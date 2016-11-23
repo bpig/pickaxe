@@ -69,7 +69,7 @@ def extend(key, v):
     ex += [np.asarray(v[0], dtype=np.float64)]
     
     cc = Cc(*v)
-    for i in [3, 5, 7, 10, 15]:
+    for i in [5, 10, 15]:
         emv_value, emv_ma = emv(cc, i)
         
         cr_value = cr(cc, i)
@@ -80,7 +80,7 @@ def extend(key, v):
         sma_value = fea_length_extend(sma_value, len(cc.ds))
         ema_value = fea_length_extend(ema_value, len(cc.ds))
         
-        boll_rate, boll_std = boll(cc, i)
+#        boll_rate, boll_std = boll(cc, i)
         
         rsi_value = rsi(cc, i)
         bias_value = bias(cc, i)
@@ -91,7 +91,7 @@ def extend(key, v):
         wms_value = wms(cc, i)
         obv_value = obv(cc, i)
         ex += [emv_value, emv_ma, cr_value, br_value, sma_value, ema_value,
-               boll_rate, boll_std,
+#               boll_rate, boll_std,
                rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
                obv_value]
     
