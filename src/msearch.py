@@ -8,6 +8,7 @@ from mlp_feeder import read_predict_sets
 from simple import kernel
 from jsq_estimator import JSQestimator
 import gain
+import filter_by_rule
 
 def getCheckPoint(model_dir):
     checkPointFile = model_dir + "/checkpoint"
@@ -52,8 +53,6 @@ def pred(classifier, feas, tgts):
     y_predicted = [p['class'] for p in classifier.predict(feas, as_iterable=True)]
     y_predicted = np.asarray(y_predicted)
     idx = (y_predicted==1)
-    print
-    print len(y_predicted[idx])
     return metrics.accuracy_score(tgts[idx], y_predicted[idx]), len(y_predicted[idx])
 
 def searchModel(model, keys):
@@ -70,7 +69,7 @@ def searchModel(model, keys):
     net = cfg["net"]
     keep_prob = 1.0
     
-    versions = getCheckPoint(model_dir)
+    versions = getCheckPoint(model_dir)[-50:]
     idx = int(model[-2:])
     division = cfg["division"][idx]        
     tgts = np.asarray(map(lambda x: 0 if x < division else 1, predSet.tgt))
@@ -88,7 +87,13 @@ def searchModel(model, keys):
 
         te_acc, l1 = pred(classifier, predSet.fea, tgts)
 
-        value = "%s,%s,%d,%.5f\n" % (model, version, l1, te_acc)
+        pp = classifier.predict(predSet.fea, as_iterable=True)
+        f = "log/msearch_ans"
+        genAns(pp, f, predSet)
+        filter_by_rule.process(f)
+        money = gain.process(f + ".filter", 50, output=False)
+
+        value = "%s,%s,%d,%.5f,%.5f\n" % (model, version, l1, money, te_acc)
         print "==" * 10
         print value,
         print

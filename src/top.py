@@ -18,6 +18,8 @@ def getArgs():
                         help="target")
     parser.add_argument("-d", dest="d", action="store_true", default=False,
                         help="direct")
+    parser.add_argument("-c", dest="c", default=5, type=int, 
+                        help="cal count")
     return parser.parse_args()
 
 if __name__ == "__main__":

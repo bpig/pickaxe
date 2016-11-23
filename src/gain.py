@@ -52,7 +52,7 @@ def gain(predict, stock, numStock, ds, output, detail):
                     low += 1
             
             if index < 0:
-                print "warning, %s low everyday" % key
+                #print "warning, %s low everyday" % key
                 index = 0
             outPrice = float(info.e[index])
             increase += outPrice / inPrice
@@ -68,16 +68,15 @@ def gain(predict, stock, numStock, ds, output, detail):
             lack = "lack(%d)" % count
         
         total = sum(money)
-        if output:
+        if detail:
             print ("{ds} {total:>7.3f} {rate:>5.3f} " +
                    "{bg:>7.3f} -> {ed:>7.3f} {hi} {lo} {stop} {ct} {lack}").format(
                        ds=d, total=total, rate=ed / bg, 
                        bg=bg, ed=ed, hi=high, lo=low, stop=stop, 
                        ct=len(predict[d]), lack=lack),
-            if detail:
-                print buy.getvalue()[:-1]
-            else:
-                print
+            if numStock == 3:
+                print buy.getvalue()[:-1],
+            print
 
         key = d[:-2]
         if key not in month:

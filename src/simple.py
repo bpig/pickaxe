@@ -56,8 +56,8 @@ if __name__ == "__main__":
     print "model={m}, data={d}".format(d=datafile, m=model)
 
     config = learn.estimators.run_config.RunConfig(
-        log_device_placement=False, save_summary_steps=100,
-        save_checkpoints_secs=600, keep_checkpoint_max=2000)
+        log_device_placement=False, save_summary_steps=1000,
+        save_checkpoints_secs=1500, keep_checkpoint_max=500)
 
     model_dir = "model/" + model
 
