@@ -41,7 +41,10 @@ if __name__ == "__main__":
     if args.g:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.g
 
-    model = args.m    
+    model, idx = args.m.split(",")
+    model = model + "0" + idx
+    idx = int(idx)
+
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
 
@@ -49,13 +52,13 @@ if __name__ == "__main__":
 
     datafile = "data/fe/%s/train" % fe_version
 
-    idx = int(model[-2:])
     division = cfg["division"][idx]
     data = read_data_sets(datafile, division)
 
     print "model={m}, data={d}".format(d=datafile, m=model)
 
     config = learn.estimators.run_config.RunConfig(
+        gpu_memory_fraction=0.33,
         log_device_placement=False, save_summary_steps=1000,
         save_checkpoints_secs=1500, keep_checkpoint_max=500)
 

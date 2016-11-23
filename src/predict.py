@@ -20,7 +20,10 @@ if __name__ == "__main__":
     args = getArgs()
     if args.g:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.g
-    model = args.m
+
+    model, idx = args.m.split(",")
+    model = model + "0" + idx
+    
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
 
