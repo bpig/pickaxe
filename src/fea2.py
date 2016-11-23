@@ -107,3 +107,31 @@ def f2(key, info, ex):
         content = (key + "_" + ds, ",".join(feas))
         ans += [content]
     return ans
+
+@register_kernel
+def f3(key, info, ex):
+    omit = 30
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    win = 15
+    for idx in select:
+        feas = []
+        for i in range(win):
+            n = idx + i
+            feas += [info[row][n]
+                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
+
+        windows = [3, 5, 10, 15]
+        for w in windows:
+            rates = info[1][idx:idx+win]
+            feas += rateCount(rates)
+
+        ds = info.ds[idx]
+        tgt = info.tgt[idx]
+        feas += [tgt]
+        feas = map(str, feas)
+        content = (key + "_" + ds, ",".join(feas))
+        ans += [content]
+    return ans
