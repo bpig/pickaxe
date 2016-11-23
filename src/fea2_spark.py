@@ -28,7 +28,6 @@ def getSC(appName='aux'):
         .set("spark.akka.frameSize", "1000") \
         .set("spark.kryoserializer.buffer.max", "1000")
     sc = SparkContext(appName=appName, conf=sconf)
-    sc.addPyFile("src/data_loader.py")
     sc.addPyFile("src/fea2.py")
     sc.addPyFile("src/common.py")
     return sc

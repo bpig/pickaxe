@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 from common import *
-from data_loader import Ft, getFt, getFtEx
 
 kernels = {}
 
@@ -10,16 +9,20 @@ def register_kernel(func):
 
 def rateCount(rates):
     def trans(x):
-        x = 10 * x
-        x = min(10.0, x)
-        x = max(-10.0, x)
-        x += 10
-        return int(x)
+        x = int(x + 10)
+        x = min(10, x)
+        x = max(-10, x)
+        return x
     rates = map(trans, rates)
     ans = [0] * 21
     for r in rates:
         ans[r] += 1
     return ans
+
+def genBasic(vals):
+    vals = np.asarray(vals, dtype=np.float32)
+    res = [np.mean(vals), np.std(vals), max(vals), min(vals)]
+    return res
 
 def genStatus(status):
     ct0 = Counter(map(int, status[0]))
@@ -94,7 +97,7 @@ def f2(key, info, ex):
 
         windows = [5, 10, 15]
         for w in windows:
-            rates = info[1][idx:idx+win]
+            rates = info[1][idx:idx+w]
             feas += rateCount(rates)
 
         for i in range(win):
@@ -110,7 +113,7 @@ def f2(key, info, ex):
 
 @register_kernel
 def f3(key, info, ex):
-    omit = 30
+    omit = 60
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
@@ -122,11 +125,19 @@ def f3(key, info, ex):
             n = idx + i
             feas += [info[row][n]
                      for row in [2, 3, 5, 6, 7, 8, 9, 10]]
+            feas += [info[row][n]
+                     for row in [1, 11, 12, 13, 14, 19, 20]]
 
-        windows = [3, 5, 10, 15]
+        for i in range(1, win):
+            n = idx + i
+            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                     for row in [2, 3, 5, 6, 7, 8, 9]]
+
+        windows = [2, 3, 5, 7, 15]
         for w in windows:
-            rates = info[1][idx:idx+win]
-            feas += rateCount(rates)
+            feas += rateCount(info[1][idx:idx+w])
+            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+                feas += genBasic(info[i][idx:idx+w])
 
         ds = info.ds[idx]
         tgt = info.tgt[idx]
