@@ -69,7 +69,7 @@ def searchModel(model, keys):
     net = cfg["net"]
     keep_prob = 1.0
     
-    versions = getCheckPoint(model_dir)[-50:]
+    versions = getCheckPoint(model_dir)[-30:]
     idx = int(model[-2:])
     division = cfg["division"][idx]        
     tgts = np.asarray(map(lambda x: 0 if x < division else 1, predSet.tgt))

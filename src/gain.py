@@ -52,7 +52,7 @@ def gain(predict, stock, numStock, ds, output, detail):
                     low += 1
             
             if index < 0:
-                #print "warning, %s low everyday" % key
+                print "warning, %s low everyday" % key
                 index = 0
             outPrice = float(info.e[index])
             increase += outPrice / inPrice
