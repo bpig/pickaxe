@@ -30,6 +30,8 @@ def getArgs():
     parser = ArgumentParser(description="Gain")
     parser.add_argument("-t", dest="tgt", required=True,
                         help="target")
+    parser.add_argument("-ds", dest="ds", required=True,
+                        help="date")
     parser.add_argument("-f", dest="f", action="store_true", default=False,
                         help="filter")
     return parser.parse_args()
@@ -40,13 +42,17 @@ if __name__ == "__main__":
     
     filter_by_rule.process(fin, output=False)
     
-    l = next(open(fin + ".filter"))
-    key, pairs = parseLine(l)
+    for l in open(fin + ".filter"):
+        key, pairs = parseLine(l)
+        if key == args.ds:
+            break
+
+    if key != args.ds:
+        print "not %s" % args.ds
     
     ct = 100
     items = map(lambda (item, weight): item, pairs)[:ct]
     
-    print key
     assert len(items) == ct
     weight = map(lambda _: random.random(), items)
     weight = sorted(weight, reverse=True)
