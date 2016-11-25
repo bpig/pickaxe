@@ -26,8 +26,8 @@ from argparse import ArgumentParser
 import itertools
 
 try:
-    import pandas as pd
     import yaml
+    import pandas as pd
 except:
     pass
 

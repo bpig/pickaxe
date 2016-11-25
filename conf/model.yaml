@@ -35,7 +35,7 @@ v43:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   batch_step: 50
-  epoch: 20
+  epoch: 10
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
 v44:
@@ -43,6 +43,21 @@ v44:
   net: [2048, 1024, 1024]
   keep_prob: 0.3
   batch_step: 200
-  epoch: 15
+  epoch: 10
   division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
 
+v45:
+  fe: f13
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  batch_step: 50
+  epoch: 10
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]
+
+v46:
+  fe: f16
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  batch_step: 50
+  epoch: 8
+  division: [1.002, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06]

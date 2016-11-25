@@ -73,7 +73,24 @@ def read_data_sets(datafile, division=1.002):
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype, "division", division
     tgts = np.asarray(map(lambda x: 0 if x < division else 1, tgts))
-
+    
+    t = tgts == 1
+    part = t.sum()
+    
+    perm = np.random.permutation(ct)
+    select = np.zeros(ct)
+    select[t] = 1
+    for idx in perm:
+        if t[idx]:
+            continue
+        select[idx] = 1
+        part -= 1
+        if part == 0:
+            break
+    tgts = tgts[select.astype(np.bool)]
+    keys = keys[select.astype(np.bool)]
+    feas = feas[select.astype(np.bool)]
+    print ct, "->", len(keys)
     point = int(len(keys) * .9)
     
     tr_x = feas[:point]
