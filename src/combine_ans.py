@@ -51,6 +51,8 @@ def getArgs():
                         help="direct, no filter")
     parser.add_argument("-v", dest="v", action="store_true", default=False,
                         help="verbose")
+    parser.add_argument("-g", dest="g", default="",
+                        help="gpu id")
     return parser.parse_args()
 
 def getInput(tgt):

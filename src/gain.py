@@ -74,7 +74,7 @@ def gain(predict, stock, numStock, ds, output, detail):
                        ds=d, total=total, rate=ed / bg, 
                        bg=bg, ed=ed, hi=high, lo=low, stop=stop, 
                        ct=len(predict[d]), lack=lack),
-            if numStock == 3:
+            if numStock <= 6:
                 print buy.getvalue()[:-1],
             print
 
@@ -95,7 +95,7 @@ def process(predictFile, numStock, start=None, output=True, detail=False):
     predict = dict(getAns(predictFile))
     
     ds = sorted(predict.keys())
-#    start = "20160901"
+    #start = "20161123"
     if not start or start not in ds:
         idx = 0
     else:

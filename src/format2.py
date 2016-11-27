@@ -69,49 +69,56 @@ def extend(key, v):
     ex += [np.asarray(v[0], dtype=np.float64)]
     
     cc = Cc(*v)
-    for i in [5, 10, 15]:
-        emv_value, emv_ma = emv(cc, i)
+#    for i in [5, 10, 15]:
+    for i in [2, 5]:
+        # emv_value, emv_ma = emv(cc, i)
         
-        cr_value = cr(cc, i)
-        br_value = br(cc, i)
+        # cr_value = cr(cc, i)
+        # br_value = br(cc, i)
         
         sma_value = sma(cc.e, i)
         ema_value = ema(cc.e, sma_value, i)
         sma_value = fea_length_extend(sma_value, len(cc.ds))
         ema_value = fea_length_extend(ema_value, len(cc.ds))
-        
-#        boll_rate, boll_std = boll(cc, i)
-        
-        rsi_value = rsi(cc, i)
         bias_value = bias(cc, i)
-        cci_value = cci(cc, i)
+        v_value = vvv(cc, i)
+        # boll_rate, boll_std = boll(cc, i)
         
-        osc_value = osc(cc, i)
-        psy_value = psy(cc, i)
-        wms_value = wms(cc, i)
-        obv_value = obv(cc, i)
-        ex += [emv_value, emv_ma, cr_value, br_value, sma_value, ema_value,
-#               boll_rate, boll_std,
-               rsi_value, bias_value, cci_value, osc_value, psy_value, wms_value,
-               obv_value]
+        # rsi_value = rsi(cc, i)
+
+        # cci_value = cci(cc, i)
+        
+        # osc_value = osc(cc, i)
+        # psy_value = psy(cc, i)
+        # wms_value = wms(cc, i)
+        # obv_value = obv(cc, i)
+        ex += [
+            #emv_value, emv_ma, cr_value, br_value, 
+            sma_value, ema_value, bias_value, v_value,
+            # boll_rate, boll_std, 
+            # rsi_value, cci_value, osc_value, psy_value, wms_value,
+            # obv_value
+        ]
     
-    for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
+    # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
+    for (a, b, c) in [(4, 2, 2)]:
         k, d, j = kdj(cc, a, b, c)
         ex += [k, d, j]
     
-    for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5)]:
+    # for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5)]:
+    for (l, s, m) in [(5, 3, 2)]:
         diff, diff_ma, diff_ema = macd(cc, l, s, m)
         ex += [diff]
     
     # ex += [cdp(cc)]
     
-    for (a, b) in [(4, 2), (8, 4), (12, 6)]:
-        mtm_value, mtma = mtm(cc, a, b)
-        ex += [mtm_value, mtma]
+    # for (a, b) in [(4, 2), (8, 4), (12, 6)]:
+    #     mtm_value, mtma = mtm(cc, a, b)
+    #     ex += [mtm_value, mtma]
     
-    for a in [10, 15]:
-        vr_value = vr(cc, a)
-        ex += [vr_value]
+    # for a in [10, 15]:
+    #     vr_value = vr(cc, a)
+    #     ex += [vr_value]
     
     work_day = range(len(e_rate), 0, -1)
     
