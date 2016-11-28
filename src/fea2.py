@@ -186,3 +186,43 @@ def f4(key, info, ex):
         content = (key + "_" + ds, ",".join(feas))
         ans += [content]
     return ans
+
+@register_kernel
+def f5(key, info, ex):
+    omit = 60
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    win = 15
+    for idx in select:
+        feas = []
+        if np.any(np.asarray(info.volumn) == 0):
+            continue
+        if np.any(np.asarray(info.amount) == 0):
+            continue
+        for i in range(win):
+            n = idx + i
+            feas += [info[row][n]
+                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
+            feas += [info[row][n]
+                     for row in [1, 11, 12, 13, 14, 19, 20]]
+
+        for i in range(1, win):
+            n = idx + i
+            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                     for row in [2, 3, 5, 6, 7, 8, 9]]
+
+        windows = [2, 3, 5, 7, 15]
+        for w in windows:
+            feas += rateCount(info[1][idx:idx+w])
+            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+                feas += genBasic(info[i][idx:idx+w])
+
+        ds = info.ds[idx]
+        tgt = info.tgt[idx]
+        feas += [tgt]
+        feas = map(str, feas)
+        content = (key + "_" + ds, ",".join(feas))
+        ans += [content]
+    return ans

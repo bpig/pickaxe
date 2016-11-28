@@ -70,6 +70,7 @@ def extend(key, v):
     
     cc = Cc(*v)
 #    for i in [5, 10, 15]:
+    base_ex = []
     for i in [2, 5]:
         # emv_value, emv_ma = emv(cc, i)
         
@@ -92,14 +93,22 @@ def extend(key, v):
         # psy_value = psy(cc, i)
         # wms_value = wms(cc, i)
         # obv_value = obv(cc, i)
-        ex += [
-            #emv_value, emv_ma, cr_value, br_value, 
+        base_ex += [
             sma_value, ema_value, bias_value, v_value,
+            #emv_value, emv_ma, cr_value, br_value, 
             # boll_rate, boll_std, 
             # rsi_value, cci_value, osc_value, psy_value, wms_value,
             # obv_value
         ]
-    
+    base_ex += [base_ex[0] / base_ex[4]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
+    base_ex += [base_ex[1] / base_ex[5]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
+    base_ex += [base_ex[2] / base_ex[6]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
+    base_ex += [base_ex[3] / base_ex[7]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
+    ex += base_ex
     # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
     for (a, b, c) in [(4, 2, 2)]:
         k, d, j = kdj(cc, a, b, c)
