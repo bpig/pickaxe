@@ -101,9 +101,13 @@ def extend(key, v):
             # obv_value
         ]
     base_ex += [base_ex[0] / base_ex[4]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
     base_ex += [base_ex[1] / base_ex[5]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
     base_ex += [base_ex[2] / base_ex[6]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
     base_ex += [base_ex[3] / base_ex[7]]
+    base_ex[-1][np.isinf(base_ex[-1])] = 0
     ex += base_ex
     # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
     for (a, b, c) in [(4, 2, 2)]:
