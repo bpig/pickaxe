@@ -88,7 +88,7 @@ def searchModel(model, keys):
         te_acc, l1 = pred(classifier, predSet.fea, tgts)
 
         pp = classifier.predict(predSet.fea, as_iterable=True)
-        f = "log/msearch_ans"
+        f = "log/msearch_ans_" + model[:3]
         genAns(pp, f, predSet)
         filter_by_rule.process(f)
         money = gain.process(f + ".filter", 50, output=False)
