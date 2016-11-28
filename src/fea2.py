@@ -250,17 +250,63 @@ def f6(key, info, ex):
         turnover = info.turnover[idx+ win - 1]
         for i in range(win):
             n = idx + i
-            feas += [0 if low == 0 else info[row][idx] / low
+            feas += [0 if low == 0 else info[row][n] / low
                      for row in [5, 6, 7, 8]]
-            feas += [0 if vol == 0 else info[2][idx] / vol]
-            feas += [0 if amount == 0 else info[3][idx] / amount]
-            feas += [0 if turnover == 0 else info[9][idx] / turnover]
+            feas += [0 if vol == 0 else info[2][n] / vol]
+            feas += [0 if amount == 0 else info[3][n] / amount]
+            feas += [0 if turnover == 0 else info[9][n] / turnover]
 
         windows = [2, 3, 5, 7, 15]
         for w in windows:
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
+
+        ds = info.ds[idx]
+        tgt = info.tgt[idx]
+        feas += [tgt]
+        feas = map(str, feas)
+        content = (key + "_" + ds, ",".join(feas))
+        ans += [content]
+    return ans
+
+def normalize(value):
+    v = np.asarray(value, dtype=np.float32)
+    v = (v - v.mean()) / v.std()
+    return list(v)
+
+@register_kernel
+def f7(key, info, ex):
+    omit = 60
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    win = 60
+    for idx in select:
+        feas = []
+        if np.any(np.asarray(info.volumn[idx:idx+win]) == 0):
+            continue
+        if np.any(np.asarray(info.amount[idx:idx+win]) == 0):
+            continue
+        low = info.low[idx+ win - 1]
+        vol = info.volumn[idx+ win - 1]
+        amount = info.amount[idx+ win - 1]
+        turnover = info.turnover[idx+ win - 1]
+
+        value, vols, amounts, turnovers = [], [], [], []
+        for i in range(win):
+            n = idx + i
+            value += [0 if low == 0 else info[row][n] / low
+                     for row in [5, 6, 7, 8]]
+            vols += [0 if vol == 0 else info.volumn[n] / vol]
+            amounts += [0 if amount == 0 else info.amount[n] / amount]
+            turnovers += [0 if turnover == 0 else info.turnover[n] / turnover]
+
+        feas += normalize(value)
+        feas += normalize(vols)
+        feas += normalize(amounts)
+        feas += normalize(turnovers)
 
         ds = info.ds[idx]
         tgt = info.tgt[idx]
