@@ -63,12 +63,13 @@ def base_data(datafile):
     tgts = np.load(tgtfile)
     return keys, feas, tgts
 
-def read_data(datafile, division=1.01):
+def read_data(datafile, division=None):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
-    tgts = np.asarray(map(lambda x: [1, 0] if x < division else [0, 1], tgts))
+    if division:
+        tgts = np.asarray(map(lambda x: [1, 0] if x < division else [0, 1], tgts))
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype, "division", division
     

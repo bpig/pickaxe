@@ -3,7 +3,7 @@ import keras.backend as K
 from mlp_feeder import read_data
 from tk import loadModel
 
-def genAns(pred, fout):
+def genAns(pred, predSet, fout):
     ans = defaultdict(list)
     for c, p in enumerate(pred):
         if p[0] >= p[1]:
@@ -48,6 +48,6 @@ if __name__ == "__main__":
     model = loadModel(model_dir)
 
     pred = model.predict_proba(predSet.fea, batch_size=1024, verbose=1)
-    genAns(pred, fout)
+    genAns(pred, predSet, fout)
     logging.shutdown()
     K.clear_session()

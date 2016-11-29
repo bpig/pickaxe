@@ -12,9 +12,10 @@ import filter_by_rule
 def getModels(model_dir):
     models = sorted(os.listdir(model_dir))
     models = filter(lambda x: x.endswith("hdf5"), models)
+    print models
     return models
 
-def searchModel(model, keys):
+def searchModel(model, keys, fout):
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
     
@@ -24,26 +25,22 @@ def searchModel(model, keys):
     datafile = "data/fe/%s/test" % fe_version
     
     models = getModels(model_dir)
-    idx = int(m[-2:])
-    division = cfg["division"][idx]
-    predSet = read_data(datafile, division)
+    predSet = read_data(datafile)
     
     for m in models:
-        key = os.path.join(model_dir, m)
+        key = "%s,%s" % (model, m)
         if key in keys:
             continue
         
-        m = loadModel(key)
+        core = loadModel(model_dir, m)
         
-        pred = m.predict_proba(predSet.fea, batch_size=1024, verbose=1)
-        genAns(pred, fout)
-        
+        pred = core.predict_proba(predSet.fea, batch_size=1024, verbose=1)
         f = "log/ps_" + model[:3]
-        genAns(pred, f)
+        genAns(pred, predSet, f)
         filter_by_rule.process(f)
         money = gain.process(f + ".filter", 50, output=False)
         
-        value = "%s/%s,%.5f\n" % (model, m, money)
+        value = "%s,%.5f\n" % (key, money)
         print "==" * 10
         print value,
         print
