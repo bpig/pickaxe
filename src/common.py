@@ -131,13 +131,14 @@ def getArgs(desc=""):
     os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     return args
 
-def getUsedModel(tgt):
+def getUsedModel(tgt, checkExist=True):
     fins = []
     for value in tgt.split("+"):
         key, subs = value.split(",")
         for n in subs:
             fins += [key + "0" + n]
-    fins = filter(lambda x:os.path.exists("model/" + x), fins)
+    if checkExist:
+        fins = filter(lambda x:os.path.exists("model/" + x), fins)
     return fins
 
 

@@ -35,13 +35,8 @@ def loadModel(model_dir, model_file="weight.hdf5"):
     model.load_weights(weightPath)
     return model
 
-if __name__ == '__main__':
-    args = getArgs()
-    
-    model, idx = args.tgt.split(",")
-    model = model + "0" + idx
-    idx = int(idx)
-    
+def train(model, args):
+    idx = int(model[-2:])
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
     
@@ -56,9 +51,6 @@ if __name__ == '__main__':
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)
     
-    lr = 0.001
-    batch_size = 1024
-    
     init_log(model_dir, 'train')
     logger = logging.getLogger('train')
 
@@ -69,8 +61,10 @@ if __name__ == '__main__':
         print "make model"
         model = makeModel(model_dir, len(data.fea[0]))
     
-    gamma = 0.4
-    n_epochs = [10, 10, 10, 10, 10]
+    gamma = cfg['gamma'] if 'gamma' in cfg else 0.4
+    n_epochs = cfg['epochs'] if 'epochs' in cfg else [10, 10, 10, 10, 10]
+    lr = cfg['lr'] if 'lr' in cfg else 0.001
+    batch_size = cfg['batch_size'] if 'batch_size' in cfg else 1024
     
     def lr_scheduler(epoch):
         learning_rate = lr
@@ -93,8 +87,6 @@ if __name__ == '__main__':
                                  verbose=1, save_best_only=True, mode='max')
     callbacks_list = [scheduler, checkpoint]
     
-    lr = 0.001
-    batch_size = 1024
     history = model.fit(data.fea, data.tgt, batch_size=batch_size,
                         validation_split=0.1,
                         nb_epoch=sum(n_epochs), callbacks=callbacks_list)
@@ -111,6 +103,14 @@ if __name__ == '__main__':
     model.save_weights(weightPath, overwrite=True)
     
     print 'training finished'
-    
     logging.shutdown()
-    K.clear_session()
+    K.clear_session()    
+
+
+if __name__ == '__main__':
+    args = getArgs()
+    models = getUsedModel(args.tgt, checkExist=False)
+    print models
+    for m in models:
+        train(m, args)
+

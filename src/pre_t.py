@@ -25,14 +25,6 @@ def genAns(pred, predSet, fout):
         st = map(lambda x: "_".join(x), st)
         fout.write(ds + "," + ",".join(st) + "\n")
 
-def getInput(tgt):
-    fins = []
-    for value in tgt.split("+"):
-        key, subs = value.split(",")
-        for n in subs:
-            fins += [key + "0" + n]
-    return fins
-
 def predOne(model, args):    
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
