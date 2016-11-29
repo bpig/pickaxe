@@ -1,30 +1,7 @@
 from common import *
-from keras.models import Model
-from keras.regularizers import l2
-from keras.layers import *
 from keras.models import model_from_json
 import keras.backend as K
-from mlp_feeder import read_predict_sets
-
-def init_log(save_path, name):
-    log_path = save_path + '%s.log' % name
-    if os.path.exists(log_path):
-        os.remove(log_path)
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
-    
-    fh = logging.FileHandler(log_path)
-    fh.setLevel(logging.DEBUG)
-    
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    
-    formatter = logging.Formatter('%(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    
-    logger.addHandler(fh)
-    logger.addHandler(ch)
+from mlp_feeder import read_data
 
 def getArgs():
     parser = ArgumentParser(description="Predict")
@@ -55,7 +32,7 @@ if __name__ == "__main__":
         datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
     
-    predSet = read_predict_sets(datafile)
+    predSet = read_data(datafile)
     
     model_dir = "model/" + model
     
@@ -67,10 +44,8 @@ if __name__ == "__main__":
     weightPath = model_dir + '/weight.hdf5'
     model.load_weights(weightPath)
     
-    predSet = read_predict_sets(datafile)
-    # calculate all predictions
     pred = model.predict_proba(predSet.fea, batch_size=1024, verbose=1)
-
+    
     ans = defaultdict(list)
     for c, p in enumerate(pred):
         if p[0] >= p[1]:

@@ -83,6 +83,24 @@ def dsInInterval(ds, interval):
 FT_FILE = "raw/st.ft"
 AUX_FILE = "raw/st.aux"
 
+def init_log(save_path, name):
+    log_path = save_path + '%s.log' % name
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    
+    fh = logging.FileHandler(log_path)
+    fh.setLevel(logging.DEBUG)
+    
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    
+    formatter = logging.Formatter('%(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
 if __name__ == '__main__':
     def a():
         return fea_length_extend(np.ones(4), np.ones(3), 5)

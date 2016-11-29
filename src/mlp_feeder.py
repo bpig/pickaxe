@@ -8,8 +8,7 @@
 from common import *
 import cmvn
 
-Datasets = collections.namedtuple('Datasets', ['train', 'test'])
-PredictSets = collections.namedtuple('PredictSets', ['key', 'fea', 'tgt'])
+Datasets = collections.namedtuple('Datasets', ['key', 'fea', 'tgt'])
 
 class DataSet(object):
     def __init__(self, feas, tgts):
@@ -18,7 +17,6 @@ class DataSet(object):
         self._epochs_completed = 0
         self._num_examples = len(feas)
         self._index_in_epoch = len(feas)
-
     
     @property
     def feas(self):
@@ -65,14 +63,14 @@ def base_data(datafile):
     tgts = np.load(tgtfile)
     return keys, feas, tgts
 
-def read_data_sets(datafile, division=1.002):
+def read_data(datafile, division=1.01):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
+    tgts = np.asarray(map(lambda x: [1, 0] if x < division else [0, 1], tgts))
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype, "division", division
-    tgts = np.asarray(map(lambda x: [1,0] if x < division else [0,1], tgts))
     
     # t = tgts == 1
     # part = t.sum()
@@ -91,25 +89,6 @@ def read_data_sets(datafile, division=1.002):
     # keys = keys[select.astype(np.bool)]
     # feas = feas[select.astype(np.bool)]
     
-    tr_x = feas[:point]
-    tr_y = tgts[:point]
-    
-    te_x = feas[point:]
-    te_y = tgts[point:]
-    
-    train = DataSet(tr_x, tr_y)
-    test = DataSet(te_x, te_y)
     print time.ctime(), "finish load data"
-    return Datasets(train=train, test=test)
+    return Datasets(key=keys, fea=feas, tgt=tgts)
 
-def read_predict_sets(datafile, division=1.01):
-    print time.ctime(), "begin load data", datafile
-    
-    keys, feas, tgts = base_data(datafile)
-    tgts = tgts.astype(np.float32)
-    tgts = np.asarray(map(lambda x: [1,0] if x < division else [0,1], tgts))
-    feas = feas.astype(np.float32)
-
-    print "total", len(keys), "dim", len(feas[0]), tgts.dtype
-    print time.ctime(), "finish load data"
-    return PredictSets(key=keys, fea=feas, tgt=tgts)
