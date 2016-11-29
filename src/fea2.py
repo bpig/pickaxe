@@ -24,6 +24,15 @@ def genBasic(vals):
     res = [np.mean(vals), np.std(vals), max(vals), min(vals)]
     return res
 
+def normalize(value):
+    v = np.asarray(value, dtype=np.float32)
+    v = (v - v.mean()) / v.std()
+    return list(v)
+
+def filterByStop(info, win):
+    return np.any(np.asarray(info.volumn[idx:idx+win]) == 0) \
+        or np.any(np.asarray(info.amount[idx:idx+win]) == 0)
+    
 def genStatus(status):
     ct0 = Counter(map(int, status[0]))
     ct1 = Counter(map(int, status[1]))
@@ -49,17 +58,22 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
+def concatRecord(feas, info, idx):
+    ds = info.ds[idx]
+    tgt = info.tgt[idx]
+    feas += [tgt]
+    feas = map(str, feas)
+    return (key + "_" + ds, ",".join(feas))
+
 @register_kernel
-def f1(key, info, ex):
+def f1(key, info, ex, win=15):
     omit = 30
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 15
     for idx in select:
         feas = []
-        # assert len(info) == 20, len(info)
         for i in range(win):
             n = idx + i
             feas += [info[row][n]
@@ -67,22 +81,16 @@ def f1(key, info, ex):
             feas += oneHotStatus(info.status[n], info.s_status[n],
                                  info.wav_status[n], info.e_status[n])
         feas += [ex[row][idx] for row in range(1, len(ex))]
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
 @register_kernel
-def f2(key, info, ex):
+def f2(key, info, ex, win=15):
     omit = 30
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 15
     for idx in select:
         feas = []
         for i in range(win):
@@ -103,22 +111,16 @@ def f2(key, info, ex):
         for i in range(win):
             n = idx + i
             feas += [ex[row][n] for row in range(1, len(ex))]
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
 @register_kernel
-def f3(key, info, ex):
+def f3(key, info, ex, win=15):
     omit = 60
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 15
     for idx in select:
         feas = []
         for i in range(win):
@@ -138,23 +140,16 @@ def f3(key, info, ex):
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
-
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
 @register_kernel
-def f4(key, info, ex):
+def f4(key, info, ex, win=15):
     omit = 60
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 15
     for idx in select:
         feas = []
         for i in range(win):
@@ -178,29 +173,21 @@ def f4(key, info, ex):
         for i in range(win):
             n = idx + i
             feas += [ex[row][n] for row in range(1, len(ex))]
-
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
 @register_kernel
-def f5(key, info, ex):
+def f5(key, info, ex, win=15):
     omit = 60
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 15
     for idx in select:
         feas = []
-        if np.any(np.asarray(info.volumn[idx:idx+win]) == 0):
+        if filterByStop(info, win):
             continue
-        if np.any(np.asarray(info.amount[idx:idx+win]) == 0):
-            continue
+
         for i in range(win):
             n = idx + i
             feas += [info[row][n]
@@ -218,23 +205,16 @@ def f5(key, info, ex):
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
-
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
 @register_kernel
-def f6(key, info, ex):
+def f6(key, info, ex, win=15):
     omit = 60
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 15
     for idx in select:
         feas = []
         for i in range(win):
@@ -261,34 +241,22 @@ def f6(key, info, ex):
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
-
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
-def normalize(value):
-    v = np.asarray(value, dtype=np.float32)
-    v = (v - v.mean()) / v.std()
-    return list(v)
 
 @register_kernel
-def f7(key, info, ex):
+def f7(key, info, ex, win=60):
     omit = 60
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
     ans = []
-    win = 60
     for idx in select:
         feas = []
-        if np.any(np.asarray(info.volumn[idx:idx+win]) == 0):
+        if filterByStop(info, win):
             continue
-        if np.any(np.asarray(info.amount[idx:idx+win]) == 0):
-            continue
+
         low = info.low[idx+ win - 1]
         vol = info.volumn[idx+ win - 1]
         amount = info.amount[idx+ win - 1]
@@ -314,51 +282,16 @@ def f7(key, info, ex):
             v += [info[row][n] for n in range(idx, idx+win)]
         feas += normalize(v)
 
-        for  row in [1, 2, 3, 9, 11, 12, 13, 14, 19, 20]:
+        for row in [1, 2, 3, 9, 11, 12, 13, 14, 19, 20]:
             v = [info[row][n] for n in range(idx, idx+win)]
             feas += normalize(v)
-
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
+        ans += [concatRecord(feas, info, idx)]
     return ans
 
 @register_kernel
-def f8(key, info, ex):
-    omit = 60
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    win = 60
-    for idx in select:
-        feas = []
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-            feas += [info[row][n]
-                     for row in [1, 11, 12, 13, 14, 19, 20]]
+def f8(key, info, ex, win=60):
+    return f3(key, info, ex, win)
 
-        for i in range(1, win):
-            n = idx + i
-            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9]]
-
-        windows = [2, 3, 5, 7, 15]
-        for w in windows:
-            feas += rateCount(info[1][idx:idx+w])
-            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-                feas += genBasic(info[i][idx:idx+w])
-
-        ds = info.ds[idx]
-        tgt = info.tgt[idx]
-        feas += [tgt]
-        feas = map(str, feas)
-        content = (key + "_" + ds, ",".join(feas))
-        ans += [content]
-    return ans
-
+@register_kernel
+def f9(key, info, ex, win=120):
+    return f3(key, info, ex, win)
