@@ -58,7 +58,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
-def concatRecord(feas, info, idx):
+def concatRecord(feas, info, idx, key):
     ds = info.ds[idx]
     tgt = info.tgt[idx]
     feas += [tgt]
@@ -92,7 +92,7 @@ def f2(key, info, ex, win=15):
         for i in range(win):
             n = idx + i
             feas += [ex[row][n] for row in range(1, len(ex))]
-        ans += [concatRecord(feas, info, idx)]
+        ans += [concatRecord(feas, info, idx, key)]
     return ans
 
 @register_kernel
@@ -121,7 +121,7 @@ def f3(key, info, ex, win=15):
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
-        ans += [concatRecord(feas, info, idx)]
+        ans += [concatRecord(feas, info, idx, key)]
     return ans
 
 @register_kernel
@@ -154,7 +154,7 @@ def f4(key, info, ex, win=15):
         for i in range(win):
             n = idx + i
             feas += [ex[row][n] for row in range(1, len(ex))]
-        ans += [concatRecord(feas, info, idx)]
+        ans += [concatRecord(feas, info, idx, key)]
     return ans
 
 @register_kernel
@@ -186,7 +186,7 @@ def f5(key, info, ex, win=15):
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
-        ans += [concatRecord(feas, info, idx)]
+        ans += [concatRecord(feas, info, idx, key)]
     return ans
 
 @register_kernel
@@ -222,7 +222,7 @@ def f6(key, info, ex, win=15):
             feas += rateCount(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
-        ans += [concatRecord(feas, info, idx)]
+        ans += [concatRecord(feas, info, idx, key)]
     return ans
 
 
@@ -266,7 +266,7 @@ def f7(key, info, ex, win=60):
         for row in [1, 2, 3, 9, 11, 12, 13, 14, 19, 20]:
             v = [info[row][n] for n in range(idx, idx+win)]
             feas += normalize(v)
-        ans += [concatRecord(feas, info, idx)]
+        ans += [concatRecord(feas, info, idx, key)]
     return ans
 
 @register_kernel

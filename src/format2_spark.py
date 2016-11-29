@@ -55,7 +55,7 @@ if __name__ == "__main__":
         cfg = yaml.load(fin)[model]
     sc = getSC()
     fin = "htk/" + cfg["raw"]
-    rdd = sc.textFile(fin, 500)
+    rdd = sc.textFile(fin, 1000)
     rdd = rdd.map(getKv).filter(len).groupByKey().mapValues(cal)
     rdd.cache()
     
