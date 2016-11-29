@@ -131,6 +131,15 @@ def getArgs(desc=""):
     os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     return args
 
+def getUsedModel(tgt):
+    fins = []
+    for value in tgt.split("+"):
+        key, subs = value.split(",")
+        for n in subs:
+            fins += [key + "0" + n]
+    fins = filter(lambda x:os.path.exists("model/" + x), fins)
+    return fins
+
 
 if __name__ == '__main__':
     def a():

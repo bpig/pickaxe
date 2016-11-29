@@ -53,19 +53,12 @@ def getkeys(logfile):
     except:
         return set()
 
-def getInput(tgt):
-    fins = []
-    for value in tgt.split("+"):
-        key, subs = value.split(",")
-        for n in subs:
-            fins += [key + "0" + n]
-    return fins
-
 if __name__ == "__main__":
     args = getArgs()
-    model = getInput(args.tgt)
+    model = getUsedModel(args.tgt)
     print model
-    logfile = "log/" + args.a
+    logfile = "log/" + args.tgt[:3]
+    print "logfile", logfile
     keys = getkeys(logfile)
     
     fout = open(logfile, "a")

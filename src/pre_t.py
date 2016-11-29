@@ -25,16 +25,20 @@ def genAns(pred, predSet, fout):
         st = map(lambda x: "_".join(x), st)
         fout.write(ds + "," + ",".join(st) + "\n")
 
-if __name__ == "__main__":
-    args = getArgs()
-    
-    model, idx = args.tgt.split(",")
-    model = model + "0" + idx
-    
+def getInput(tgt):
+    fins = []
+    for value in tgt.split("+"):
+        key, subs = value.split(",")
+        for n in subs:
+            fins += [key + "0" + n]
+    return fins
+
+def predOne(model, args):    
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
-    
+    idx = int(model[-2:])
     fe_version = cfg["fe"]
+
     if args.ds:
         datafile = "data/fe/%s/daily/%s.fe" % (fe_version, args.ds)
         fout = "ans/t" + model[1:]
@@ -45,9 +49,16 @@ if __name__ == "__main__":
     predSet = read_data(datafile)
     
     model_dir = "model/" + model
-    model = loadModel(model_dir)
+    model = loadModel(model_dir, cfg["model"][idx] + ".hdf5")
 
     pred = model.predict_proba(predSet.fea, batch_size=1024, verbose=1)
     genAns(pred, predSet, fout)
     logging.shutdown()
     K.clear_session()
+
+if __name__ == "__main__":
+    args = getArgs()
+    model = getUsedModel(args.tgt)
+    for m in model:
+        predOne(m, args)
+

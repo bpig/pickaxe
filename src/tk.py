@@ -31,6 +31,7 @@ def loadModel(model_dir, model_file="weight.hdf5"):
         model_json = f.read()
         model = model_from_json(model_json)
     weightPath = os.path.join(model_dir, model_file)
+    print "load", weightPath
     model.load_weights(weightPath)
     return model
 
@@ -87,7 +88,7 @@ if __name__ == '__main__':
                   optimizer=Adam(lr=lr),
                   metrics=['accuracy'])
     
-    filepath = model_dir + "/{epoch:02d}-{val_acc:.4f}.hdf5"
+    filepath = model_dir + "/{epoch:02d}-{val_acc:.2f}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc',
                                  verbose=1, save_best_only=True, mode='max')
     callbacks_list = [scheduler, checkpoint]
