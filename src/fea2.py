@@ -66,25 +66,6 @@ def concatRecord(feas, info, idx):
     return (key + "_" + ds, ",".join(feas))
 
 @register_kernel
-def f1(key, info, ex, win=15):
-    omit = 30
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [1, 2, 3, 9, 10, 11, 12, 13, 14, 19, 20]]
-            feas += oneHotStatus(info.status[n], info.s_status[n],
-                                 info.wav_status[n], info.e_status[n])
-        feas += [ex[row][idx] for row in range(1, len(ex))]
-        ans += [concatRecord(feas, info, idx)]
-    return ans
-
-@register_kernel
 def f2(key, info, ex, win=15):
     omit = 30
     if len(info.ds) < omit:
@@ -116,7 +97,7 @@ def f2(key, info, ex, win=15):
 
 @register_kernel
 def f3(key, info, ex, win=15):
-    omit = 60
+    omit = max(60, win)
     if len(info.ds) < omit:
         return []
     select = range(len(info.ds) - omit + 1)
