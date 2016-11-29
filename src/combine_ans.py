@@ -17,6 +17,7 @@ def loadFile(fins):
             ds = l[:pos]
             items = l[pos + 1:].split(",")
             items = map(transform, items)
+#            items = filter(lambda x: x[1] > 0.6, items)
             kv[ds] += [items]
     return kv
 
