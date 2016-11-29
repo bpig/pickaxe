@@ -6,17 +6,10 @@ from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
 from keras.layers import *
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
+from keras.models import model_from_json
 from mlp_feeder import read_data
 
-def getArgs():
-    parser = ArgumentParser(description="Predict")
-    parser.add_argument("-t", dest="m",
-                        help="model")
-    parser.add_argument("-g", dest="g", default="",
-                        help="gpu id")
-    return parser.parse_args()
-
-def makeModel(input_dim):
+def makeModel(model_dir, input_dim):
     model = Sequential()
     model.add(Dense(2048, input_dim=input_dim, activation="relu"))
     model.add(Dropout(0.3))
@@ -25,14 +18,27 @@ def makeModel(input_dim):
     model.add(Dense(1024, activation="relu"))
     model.add(Dropout(0.3))
     model.add(Dense(2, activation="sigmoid"))
+
+    model.summary()
+    model_path = model_dir + "/model.json"
+    with open(model_path, 'w') as f:
+        f.write(model.to_json())
+    return model
+
+def loadModel(model_dir):
+    model_path = model_dir + "/model.json"
+    with open(model_path, 'r') as f:
+        model_json = f.read()
+        model = model_from_json(model_json)
+    
+    weightPath = model_dir + '/weight.hdf5'
+    model.load_weights(weightPath)
     return model
 
 if __name__ == '__main__':
     args = getArgs()
-    if args.g:
-        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     
-    model, idx = args.m.split(",")
+    model, idx = args.tgt.split(",")
     model = model + "0" + idx
     idx = int(idx)
     
@@ -55,13 +61,13 @@ if __name__ == '__main__':
     
     init_log(model_dir, 'train')
     logger = logging.getLogger('train')
-    
-    # define model and save it
-    model = makeModel(len(data.train.feas[0]))
-    model.summary()
-    model_path = model_dir + "/model.json"
-    with open(model_path, 'w') as f:
-        f.write(model.to_json())
+
+    if args.load:
+        print "load model"
+        model = loadModel(model_dir)
+    else:
+        print "make model"
+        model = makeModel(model_dir, len(data.fea[0]))
     
     gamma = 0.4
     n_epochs = [10, 10, 10, 10]
@@ -77,10 +83,9 @@ if __name__ == '__main__':
         print 'lr: %f' % learning_rate
         return learning_rate
     
-    sgd = Adam(lr=lr)
     scheduler = LearningRateScheduler(lr_scheduler)
     model.compile(loss='binary_crossentropy',
-                  optimizer=sgd,
+                  optimizer=Adam(lr=lr),
                   metrics=['accuracy'])
     
     filepath = model_dir + "/{epoch:02d}-{val_acc:.4f}.hdf5"

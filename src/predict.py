@@ -2,26 +2,16 @@
 from common import *
 from sklearn import metrics
 import tensorflow as tf
-from mlp_feeder import read_predict_sets
+from mlp_feeder import read_data
 from simple import kernel
 from jsq_estimator import JSQestimator
-
-def getArgs():
-    parser = ArgumentParser(description="Predict")
-    parser.add_argument("-t", dest="m",
-                        help="model")
-    parser.add_argument("-ds", dest="ds",
-                        help="day")
-    parser.add_argument("-g", dest="g", default="",
-                        help="gpu id")
-    return parser.parse_args()
 
 if __name__ == "__main__":
     args = getArgs()
     if args.g:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     
-    model, idx = args.m.split(",")
+    model, idx = args.tgt.split(",")
     model = model + "0" + idx
     
     with open("conf/model.yaml") as fin:
@@ -35,7 +25,7 @@ if __name__ == "__main__":
         datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
     
-    predSet = read_predict_sets(datafile)
+    predSet = read_data(datafile)
     
     model_dir = "model/" + model
     
@@ -44,7 +34,7 @@ if __name__ == "__main__":
     keep_prob = 1.0
     classifier = JSQestimator(model_fn=kernel(net, keep_prob), model_dir=model_dir)
     
-    classifier.fit(predSet.fea, predSet.tgt.astype(np.int), steps=0)
+    classifier.fit(predSet.fea, np.ones(len(predSet.fea), dtype=np.int), steps=0)
     
     pp = classifier.predict(predSet.fea, as_iterable=True)
     

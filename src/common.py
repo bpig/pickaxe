@@ -101,6 +101,38 @@ def init_log(save_path, name):
     logger.addHandler(fh)
     logger.addHandler(ch)
 
+def getArgs(desc=""):
+    parser = ArgumentParser(description=desc)
+    parser.add_argument("-t", dest="tgt", 
+                        help="tgt")
+    parser.add_argument("-ds", dest="ds",
+                        help="day")
+    parser.add_argument("-a", dest="a", default="tmp",
+                        help="ans")
+    parser.add_argument("-g", dest="g", default="",
+                        help="gpu id")
+    parser.add_argument("-l", dest="load", action="store_true", default=False,
+                        help="load model")
+    parser.add_argument("-d", dest="d", action="store_true", default=False,
+                        help="direct, no filter")
+    parser.add_argument("-v", dest="v", action="store_true", default=False,
+                        help="verbose")
+    parser.add_argument("-c", dest="c", type=int, default=50,
+                        help="ct")
+    # for gain
+    parser.add_argument("-n", dest="n", action="store_true", default=False,
+                        help="new stock")
+    parser.add_argument("-hi", dest="h", action="store_true", default=False,
+                        help="high line ok")
+    parser.add_argument("-st", dest="st", action="store_true", default=False,
+                        help="2016 st")
+
+    args = parser.parse_args()
+    if args.g:
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
+    return args
+
+
 if __name__ == '__main__':
     def a():
         return fea_length_extend(np.ones(4), np.ones(3), 5)

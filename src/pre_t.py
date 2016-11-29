@@ -1,24 +1,12 @@
 from common import *
-from keras.models import model_from_json
 import keras.backend as K
 from mlp_feeder import read_data
-
-def getArgs():
-    parser = ArgumentParser(description="Predict")
-    parser.add_argument("-t", dest="m",
-                        help="model")
-    parser.add_argument("-ds", dest="ds",
-                        help="day")
-    parser.add_argument("-g", dest="g", default="",
-                        help="gpu id")
-    return parser.parse_args()
+from tk import loadModel
 
 if __name__ == "__main__":
     args = getArgs()
-    if args.g:
-        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     
-    model, idx = args.m.split(",")
+    model, idx = args.tgt.split(",")
     model = model + "0" + idx
     
     with open("conf/model.yaml") as fin:
@@ -35,14 +23,7 @@ if __name__ == "__main__":
     predSet = read_data(datafile)
     
     model_dir = "model/" + model
-    
-    model_path = model_dir + "/model.json"
-    with open(model_path, 'r') as f:
-        model_json = f.read()
-        model = model_from_json(model_json)
-    
-    weightPath = model_dir + '/weight.hdf5'
-    model.load_weights(weightPath)
+    model = loadModel(model_dir)
     
     pred = model.predict_proba(predSet.fea, batch_size=1024, verbose=1)
     

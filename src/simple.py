@@ -4,7 +4,7 @@ from sklearn import metrics
 import tensorflow as tf
 import tensorflow.contrib.layers.python.layers as layers
 import tensorflow.contrib.learn.python.learn as learn
-from mlp_feeder import read_data_sets
+from mlp_feeder import read_data
 
 
 def pred(classifier, feas, tgts):
@@ -27,21 +27,10 @@ def kernel(net, keep_prob):
         return {'class': tf.argmax(prediction, 1), 'prob': prediction}, loss, train_op
     return _model
 
-def getArgs():
-    parser = ArgumentParser(description="Predict")
-    parser.add_argument("-t", dest="m", 
-                        help="model")
-    parser.add_argument("-g", dest="g", default="",
-                        help="gpu id")
-    return parser.parse_args()
-
 if __name__ == "__main__":
-    tf.logging.set_verbosity(tf.logging.INFO)
     args = getArgs()
-    if args.g:
-        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
 
-    model, idx = args.m.split(",")
+    model, idx = args.tgt.split(",")
     model = model + "0" + idx
     idx = int(idx)
 

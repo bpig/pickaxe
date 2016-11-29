@@ -37,24 +37,6 @@ def process(fins, fout):
     predictions = loadFile(fins)
     combine(predictions, fout)
 
-def getArgs():
-    parser = ArgumentParser(description="Combine")
-    parser.add_argument("-t", dest="tgt", default=None,
-                        help="target")
-    parser.add_argument("-a", dest="a", default="tmp",
-                        help="ans")
-    parser.add_argument("-p", dest="p", default=None,
-                        help="combine for predict")
-    parser.add_argument("-c", dest="c", type=int, default=50,
-                        help="ct")
-    parser.add_argument("-d", dest="d", action="store_true", default=False,
-                        help="direct, no filter")
-    parser.add_argument("-v", dest="v", action="store_true", default=False,
-                        help="verbose")
-    parser.add_argument("-g", dest="g", default="",
-                        help="gpu id")
-    return parser.parse_args()
-
 def getInput(tgt):
     fins = []
     for value in tgt.split("+"):
@@ -65,15 +47,8 @@ def getInput(tgt):
 
 if __name__ == "__main__":
     args = getArgs()
-    if args.p:
-        key = args.p
-        with open("conf/combine.yaml") as fin:
-            tgt = str(yaml.load(fin)[key])
-        fout = key
-    else:
-        assert args.tgt
-        tgt = args.tgt
-        fout = args.a
+    tgt = args.tgt
+    fout = args.a
     
     fins = getInput(tgt)
     print "fins", fins
