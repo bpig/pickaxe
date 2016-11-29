@@ -14,6 +14,16 @@ def filterByStop(ds, aux):
     
     return _inter
 
+def filterByJump(ds, aux):
+    def _inter(_):
+        ft = aux[_.code]
+        st = ft.ds.index(ds)
+        ed = st + 15
+        es = sorted(map(float, ft.e[st:ed]))
+        return es[-1] / es[0] > 1.1
+    
+    return _inter
+
 def filterByHighLine(ds, aux):
     def _inter(_):
         ft = aux[_.code]
@@ -31,7 +41,7 @@ def filterByNew(ds, aux):
     
     return _inter
 
-def process(fin, newSt=False, high=False, st=False, output=False):
+def process(fin, newSt=False, high=False, st=False, jump=False, output=False):
     fout = open(fin + ".filter", "w")
     aux = getFt(AUX_FILE, Aux)
     
@@ -55,6 +65,10 @@ def process(fin, newSt=False, high=False, st=False, output=False):
         if not high:
             ans = filter(filterByHighLine(ds, aux), ans)
             ct += [len(ans)]
+
+        # if not jump:
+        #     ans = filter(filterByJump(ds, aux), ans)
+        #     ct += [len(ans)]
         
         if not newSt:
             ans = filter(filterByNew(ds, aux), ans)

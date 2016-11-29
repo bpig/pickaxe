@@ -18,6 +18,7 @@ def getCheckPoint(model_dir):
     models = map(lambda _: _.split("-")[1], models)
     models = sorted(models, key=lambda x:int(x))
     models = filter(lambda x: x!= "1", models)
+    models = models[200:]
     print models
     return models
 

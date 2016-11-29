@@ -6,15 +6,11 @@ from common import *
 from data_loader import getFt, getAns, Aux
 import filter_by_rule
 
-def gain(predict, stock, numStock, ds, output, detail):
+def gain(predict, stock, numStock, ds, detail):
     count = 0
-    stop = 0
-    high = 0
-    stop = 0
-    low = 0
     increase = 0
     for key in predict:
-        if count < numStock:
+        if count >= numStock:
             break
         assert key in stock.keys(), "ft keys error, %s not exist" % key
 
@@ -25,30 +21,23 @@ def gain(predict, stock, numStock, ds, output, detail):
         assert index > 0, "%s is to ealy" % ds
 
         if info.status[index] == '1':
-            stop += 1
             continue
         if info.s_status[index] == '1':
-            high += 1
             continue
         inPrice = float(info.s[index])
         index -= 1
         while index >= 0 and (info.status[index] == '1' or info.e_status[index] == '2'):
             index -= 1
-            mark = True
-        if mark:
-            if info.status[index + 1] == '1':
-                stop += 1
-            else:
-                low += 1
         if index < 0:
-            print "warning: %s 跌停， 无法卖出"
+            print "warning: %s stop， 无法卖出" % key
             index = 0
         outPrice = float(info.e[index])
         increase += outPrice / inPrice
-        print "%s_%.3f" % (key, outPrice / inPrice)
+        if detail:
+            print "%s_%.3f" % (key, outPrice / inPrice)
         count += 1
-    res = 100 * (increase / count - 0.0015) - 100
-    print res
+    res = increase / count - 0.0015
+    return res
 
 
 def loadPredictFile(predictFile):
@@ -58,28 +47,53 @@ def loadPredictFile(predictFile):
         if "code" in l or not l:
             continue
         key = l.split(",")[1]
-        predict += key
+        if key[:4] == '"=""':
+            key = key[4:-3]
+        if key:
+            predict += [key]
     return predict
 
-def process(predictFile, numStock, output=True, detail=False):
-    stock = getFt(AUX_FILE, Aux)
-    ds = predictFile.split(".")[0]
-    print ds
+def getDs(predictFile):
+    filename = os.path.basename(predictFile)
+    return filename.split(".")[0][:8]
+
+def getArgs():
+    parser = ArgumentParser(description="Gain")
+    parser.add_argument("-t", dest="tgt", required=True,
+                        help="target")
+    parser.add_argument("-c", dest="c", default=50, type=int, 
+                        help="cal count")
+    parser.add_argument("-v", dest="v", action="store_true", default=False,
+                        help="verbose")
+    return parser.parse_args()    
+
+
+def process(predictFile, numStock,  stock, detail=False):
+    ds = getDs(predictFile)
     predict = loadPredictFile(predictFile)
-    print predict
-    gain(predict, stock, numStock, ds, output, detail)
+
+    try:
+        inc = gain(predict, stock, numStock, ds, detail)
+    except:
+        sys.exit(0)
+
+    print os.path.basename(predictFile), inc
 
 if __name__ == "__main__":
-    # args = getArgs()
-    # tgt = "ans/" + args.tgt
-    #
-    # if args.d or "filter" in tgt:
-    #     process(tgt, args.c, start=args.ds, detail=args.v)
-    # else:
-    #     filter_by_rule.process(tgt, args.n, args.h, args.st)
-    #     tgt += ".filter"
-    #     process(tgt, args.c, start=args.ds, detail=args.v)
-    process()
+    args = getArgs()
+    stock = getFt(AUX_FILE, Aux)
+    stock2 = dict([(x[:6],y) for (x, y) in stock.iteritems()])
+
+    if os.path.isfile(args.tgt):
+        st = stock2 if "model" in args.tgt else stock
+        process(args.tgt, args.c, st)
+    else:
+        for f in sorted(os.listdir(args.tgt)):
+            if not f.startswith("2") or not f.endswith("csv"):
+                continue
+            f = os.path.join(args.tgt, f)
+            st = stock2 if "model" in f else stock
+            process(f, args.c, st, detail=args.v)
     
     
 
