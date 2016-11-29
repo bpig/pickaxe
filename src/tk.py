@@ -30,7 +30,6 @@ def loadModel(model_dir, model_file="weight.hdf5"):
     with open(model_path, 'r') as f:
         model_json = f.read()
         model = model_from_json(model_json)
-    model.summary()    
     weightPath = os.path.join(model_dir, model_file)
     model.load_weights(weightPath)
     return model
