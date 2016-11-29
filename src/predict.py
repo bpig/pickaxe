@@ -8,9 +8,9 @@ from jsq_estimator import JSQestimator
 
 def getArgs():
     parser = ArgumentParser(description="Predict")
-    parser.add_argument("-t", dest="m", 
+    parser.add_argument("-t", dest="m",
                         help="model")
-    parser.add_argument("-ds", dest="ds", 
+    parser.add_argument("-ds", dest="ds",
                         help="day")
     parser.add_argument("-g", dest="g", default="",
                         help="gpu id")
@@ -20,13 +20,13 @@ if __name__ == "__main__":
     args = getArgs()
     if args.g:
         os.environ["CUDA_VISIBLE_DEVICES"] = args.g
-
+    
     model, idx = args.m.split(",")
     model = model + "0" + idx
     
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
-
+    
     fe_version = cfg["fe"]
     if args.ds:
         datafile = "data/fe/%s/daily/%s.fe" % (fe_version, args.ds)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     else:
         datafile = "data/fe/%s/test" % fe_version
         fout = "ans/" + model
-
+    
     predSet = read_predict_sets(datafile)
     
     model_dir = "model/" + model

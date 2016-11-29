@@ -1,14 +1,11 @@
 from common import *
 # from pylab import *
-
+import keras.backend as K
 from keras.models import Model, Sequential
-from keras.optimizers import SGD,Adam
+from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
 from keras.layers import *
-from keras.models import model_from_json
-#from keras.utils.visualize_util import plot
 from keras.callbacks import LearningRateScheduler
-import keras.backend as K
 from mlp_feeder import read_data_sets
 
 def getArgs():
@@ -28,10 +25,6 @@ def makeModel(input_dim):
     model.add(Dense(1024, activation="relu"))
     model.add(Dropout(0.3))
     model.add(Dense(2, activation="sigmoid"))
-    
-    # model.compile(loss='binary_crossentropy',
-    #               optimizer='rmsprop',
-    #               metrics=['accuracy'])
     return model
 
 def init_log(save_path, name):
@@ -99,6 +92,7 @@ if __name__ == '__main__':
     # train
     gamma = 0.5
     n_epochs = [10, 10, 10, 10]
+    
     def lr_scheduler(epoch):
         learning_rate = lr
         ep = epoch
@@ -116,7 +110,7 @@ if __name__ == '__main__':
     model.compile(loss='binary_crossentropy',
                   optimizer=sgd,
                   metrics=['accuracy'])
-
+    
     # print an initial loss
     history = model.fit(data.train.feas, data.train.tgts, batch_size=batch_size,
                         nb_epoch=sum(n_epochs), callbacks=[scheduler])
@@ -129,6 +123,6 @@ if __name__ == '__main__':
     
     print 'training finished'
     # train(model_dir, lr=lr, n_epochs=n_epoch, batch_size=batch_size)
-    
+
     logging.shutdown()
     K.clear_session()
