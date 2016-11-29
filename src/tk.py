@@ -30,7 +30,7 @@ def loadModel(model_dir):
     with open(model_path, 'r') as f:
         model_json = f.read()
         model = model_from_json(model_json)
-    
+    model.summary()    
     weightPath = model_dir + '/weight.hdf5'
     model.load_weights(weightPath)
     return model
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         model = makeModel(model_dir, len(data.fea[0]))
     
     gamma = 0.4
-    n_epochs = [10, 10, 10, 10]
+    n_epochs = [10, 10, 10, 10, 10]
     
     def lr_scheduler(epoch):
         learning_rate = lr
@@ -99,6 +99,8 @@ if __name__ == '__main__':
                         validation_split=0.1,
                         nb_epoch=sum(n_epochs), callbacks=callbacks_list)
     
+    logger.info(time.ctime())
+    logger.info(" ".join(sys.argv))
     for i in zip(history.epoch, history.history['loss'], history.history['acc'],
                  history.history['val_loss'], history.history['val_acc']):
         value = "epoch=%d, loss=%f, acc=%f, val_loss=%f, val_acc=%f" % i

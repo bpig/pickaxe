@@ -128,8 +128,7 @@ def getArgs(desc=""):
                         help="2016 st")
 
     args = parser.parse_args()
-    if args.g:
-        os.environ["CUDA_VISIBLE_DEVICES"] = args.g
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     return args
 
 
