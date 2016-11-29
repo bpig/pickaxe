@@ -69,8 +69,8 @@ def gain(predict, stock, numStock, ds, output, detail):
         
         total = sum(money)
         if detail:
-            print ("{ds} {total:>7.3f} {rate:>5.3f} " +
-                   "{bg:>7.3f} -> {ed:>7.3f} {hi} {lo} {stop} {ct} {lack}").format(
+            print ("{ds} {total:>5.3f} {rate:>5.3f} " +
+                   "{bg:>5.3f} -> {ed:>5.3f}  {ct} {lack}").format(
                        ds=d, total=total, rate=ed / bg, 
                        bg=bg, ed=ed, hi=high, lo=low, stop=stop, 
                        ct=len(predict[d]), lack=lack),
