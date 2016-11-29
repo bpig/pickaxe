@@ -14,11 +14,11 @@ def getModels(model_dir):
     models = filter(lambda x: x.endswith("hdf5"), models)
     return models
 
-def searchModel(m, keys):
+def searchModel(model, keys):
     with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[m[:3]]
+        cfg = yaml.load(fin)[model[:3]]
     
-    model_dir = "model/" + m
+    model_dir = "model/" + model
     
     fe_version = cfg["fe"]
     datafile = "data/fe/%s/test" % fe_version
