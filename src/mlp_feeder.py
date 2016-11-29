@@ -90,8 +90,6 @@ def read_data_sets(datafile, division=1.002):
     # tgts = tgts[select.astype(np.bool)]
     # keys = keys[select.astype(np.bool)]
     # feas = feas[select.astype(np.bool)]
-    print ct, "->", len(keys)
-    point = int(len(keys) * .9)
     
     tr_x = feas[:point]
     tr_y = tgts[:point]
@@ -104,11 +102,12 @@ def read_data_sets(datafile, division=1.002):
     print time.ctime(), "finish load data"
     return Datasets(train=train, test=test)
 
-def read_predict_sets(datafile):
+def read_predict_sets(datafile, division=1.01):
     print time.ctime(), "begin load data", datafile
     
     keys, feas, tgts = base_data(datafile)
     tgts = tgts.astype(np.float32)
+    tgts = np.asarray(map(lambda x: [1,0] if x < division else [0,1], tgts))
     feas = feas.astype(np.float32)
 
     print "total", len(keys), "dim", len(feas[0]), tgts.dtype

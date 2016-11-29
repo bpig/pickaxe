@@ -5,8 +5,8 @@ from keras.models import Model, Sequential
 from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
 from keras.layers import *
-from keras.callbacks import LearningRateScheduler
-from mlp_feeder import read_data_sets
+from keras.callbacks import LearningRateScheduler,ModelCheckpoint
+from mlp_feeder import read_data_sets,read_predict_sets
 
 def getArgs():
     parser = ArgumentParser(description="Predict")
@@ -67,11 +67,9 @@ if __name__ == '__main__':
     
     print "model={m}, data={d}".format(d=datafile, m=model)
     model_dir = "model/" + model + "/"
-    os.system("mkdir %s" % model_dir)
-    
-    # with open(os.path.expanduser("~/.keras/keras.json"), "w") as fh:
-    #     fh.write('{ "image_dim_ordering": "tf", "epsilon": 1e-07, "floatx": "float32", "backend": "tensorflow" }')
-    
+    if not os.path.exists(model_dir):
+        os.mkdir(model_dir)
+
     lr = 0.001
     batch_size = 1024
     
@@ -85,14 +83,12 @@ if __name__ == '__main__':
     with open(model_path, 'w') as f:
         f.write(model.to_json())
     
-    # save image of the model
-    # img_path = model_dir + "/model.png"
-    # plot(model, to_file=img_path, show_shapes=True)
-    
-    # train
-    gamma = 0.5
+    gamma = 0.4
     n_epochs = [10, 10, 10, 10]
-    
+
+    test_datafile = "data/fe/%s/test" % fe_version
+    predSet = read_predict_sets(datafile, division)
+
     def lr_scheduler(epoch):
         learning_rate = lr
         ep = epoch
@@ -110,12 +106,22 @@ if __name__ == '__main__':
     model.compile(loss='binary_crossentropy',
                   optimizer=sgd,
                   metrics=['accuracy'])
-    
-    # print an initial loss
+
+    filepath = model_dir + "/{epoch:02d}-{val_acc:.4f}.hdf5"
+    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', 
+                                 verbose=1, save_best_only=True, mode='max')
+    callbacks_list = [scheduler, checkpoint]
+
+    lr = 0.001
+    batch_size = 1024
     history = model.fit(data.train.feas, data.train.tgts, batch_size=batch_size,
-                        nb_epoch=sum(n_epochs), callbacks=[scheduler])
-    
-    logger.info(str(dict(zip(history.epoch, history.history['loss']))))
+                        validation_data=(predSet.fea, predSet.tgt),
+                        nb_epoch=sum(n_epochs), callbacks=callbacks_list)
+    #    loss: 0.6057 - acc: 0.6594 - val_loss: 0.5920 - val_acc
+    for i in zip(history.epoch, history.history['loss'], history.history['acc'],
+                 history.history['val_loss'], history.history['val_acc']):
+        value = "epoch=%d, loss=%f, acc=%f, val_loss=%f, val_acc=%f" % i
+        logger.info(value)
     # save weights
     print 'saving...'
     weightPath = model_dir + '/weight.hdf5'
