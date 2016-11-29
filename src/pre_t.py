@@ -1,6 +1,4 @@
 from common import *
-from pylab import *
-
 from keras.models import Model
 from keras.regularizers import l2
 from keras.layers import *
@@ -72,8 +70,27 @@ if __name__ == "__main__":
     predSet = read_predict_sets(datafile)
     # calculate all predictions
     pred = model.predict_proba(predSet.fea, batch_size=1024, verbose=1)
-    print len(pred)
-    print pred[:3]
+
+    ans = defaultdict(list)
+    for c, p in enumerate(pred):
+        if p[0] >= p[1]:
+            continue
+        prob = p[1]
+        if "_" in predSet.key[c]:
+            key, date = predSet.key[c].split("_")
+        else:
+            date = predSet.key[c]
+            key = "gb"
+        tgt = predSet.tgt[c]
+        ans[date] += [(key, prob, tgt)]
+    
+    fout = open(fout, "w")
+    for ds in sorted(ans.keys()):
+        st = ans[ds]
+        st = sorted(st, key=lambda x: x[1], reverse=True)
+        st = map(lambda (x, y, z): (x, str(y), str(z)), st)
+        st = map(lambda x: "_".join(x), st)
+        fout.write(ds + "," + ",".join(st) + "\n")
     
     logging.shutdown()
     K.clear_session()
