@@ -2,11 +2,11 @@ from common import *
 # from pylab import *
 
 from keras.models import Model, Sequential
-from keras.optimizers import SGD
+from keras.optimizers import SGD,Adam
 from keras.regularizers import l2
 from keras.layers import *
 from keras.models import model_from_json
-from keras.utils.visualize_util import plot
+#from keras.utils.visualize_util import plot
 from keras.callbacks import LearningRateScheduler
 import keras.backend as K
 from mlp_feeder import read_data_sets
@@ -29,14 +29,13 @@ def makeModel(input_dim):
     model.add(Dropout(0.3))
     model.add(Dense(2, activation="sigmoid"))
     
-    model.compile(loss='binary_crossentropy',
-                  optimizer='rmsprop',
-                  metrics=['accuracy'])
+    # model.compile(loss='binary_crossentropy',
+    #               optimizer='rmsprop',
+    #               metrics=['accuracy'])
     return model
 
 def init_log(save_path, name):
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    log_path = os.path.join(current_dir, save_path + '%s.log' % name)
+    log_path = save_path + '%s.log' % name
     if os.path.exists(log_path):
         os.remove(log_path)
     logger = logging.getLogger(name)
@@ -74,13 +73,13 @@ if __name__ == '__main__':
     data = read_data_sets(datafile, division)
     
     print "model={m}, data={d}".format(d=datafile, m=model)
-    model_dir = "model/" + model
+    model_dir = "model/" + model + "/"
+    os.system("mkdir %s" % model_dir)
     
     # with open(os.path.expanduser("~/.keras/keras.json"), "w") as fh:
     #     fh.write('{ "image_dim_ordering": "tf", "epsilon": 1e-07, "floatx": "float32", "backend": "tensorflow" }')
     
     lr = 0.001
-    n_epoch = [6, 6, 6]
     batch_size = 1024
     
     init_log(model_dir, 'train')
@@ -98,6 +97,8 @@ if __name__ == '__main__':
     # plot(model, to_file=img_path, show_shapes=True)
     
     # train
+    gamma = 0.5
+    n_epochs = [10, 10, 10, 10]
     def lr_scheduler(epoch):
         learning_rate = lr
         ep = epoch
@@ -109,8 +110,13 @@ if __name__ == '__main__':
         print 'lr: %f' % learning_rate
         return learning_rate
     
-    sgd = SGD(lr=lr, momentum=0.9)
+    # sgd = SGD(lr=lr, momentum=0.9)
+    sgd = Adam(lr=lr)
     scheduler = LearningRateScheduler(lr_scheduler)
+    model.compile(loss='binary_crossentropy',
+                  optimizer=sgd,
+                  metrics=['accuracy'])
+
     # print an initial loss
     history = model.fit(data.train.feas, data.train.tgts, batch_size=batch_size,
                         nb_epoch=sum(n_epochs), callbacks=[scheduler])

@@ -29,7 +29,8 @@ def gain(predict, stock, numStock, ds, detail):
         while index >= 0 and (info.status[index] == '1' or info.e_status[index] == '2'):
             index -= 1
         if index < 0:
-            print "warning: %s stop， 无法卖出" % key
+            if detail:
+                print "warning: %s stop， 无法卖出" % key
             index = 0
         outPrice = float(info.e[index])
         increase += outPrice / inPrice
@@ -77,7 +78,8 @@ def process(predictFile, numStock,  stock, detail=False):
     except:
         sys.exit(0)
 
-    print os.path.basename(predictFile), inc
+    #print os.path.basename(predictFile), "%.6f" % inc
+    print ds, "%.6f" % inc
 
 if __name__ == "__main__":
     args = getArgs()

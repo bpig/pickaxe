@@ -72,7 +72,7 @@ def read_data_sets(datafile, division=1.002):
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype, "division", division
-    tgts = np.asarray(map(lambda x: 0 if x < division else 1, tgts))
+    tgts = np.asarray(map(lambda x: [1,0] if x < division else [0,1], tgts))
     
     # t = tgts == 1
     # part = t.sum()
