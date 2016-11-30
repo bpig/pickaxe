@@ -126,6 +126,11 @@ def getArgs(desc=""):
                         help="high line ok")
     parser.add_argument("-st", dest="st", action="store_true", default=False,
                         help="2016 st")
+    # for merge cc
+    parser.add_argument("-u", dest="u", action="store_true", default=False,
+                        help="update to hdfs")
+    parser.add_argument("-m", dest="m", action="store_true", default=False,
+                        help="merge cc")
 
     args = parser.parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.g
