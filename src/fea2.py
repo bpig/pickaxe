@@ -84,11 +84,8 @@ def f5(key, info, ex, win=15):
         return []
 
     for i in range(win):
-        n = idx + i
-        feas += [info[row][n]
-                 for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-        feas += [info[row][n]
-                 for row in [1, 11, 12, 13, 14, 19, 20]]
+        feas += getAbsValue(info, idx + i)
+        feas += getRevValue(info, idx + i)
 
     for i in range(1, win):
         n = idx + i
@@ -107,11 +104,8 @@ def f5(key, info, ex, win=15):
 def f6(key, info, ex, win=15):
     feas = []
     for i in range(win):
-        n = idx + i
-        feas += [info[row][n]
-                 for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-        feas += [info[row][n]
-                 for row in [1, 11, 12, 13, 14, 19, 20]]
+        feas += getAbsValue(info, idx + i)
+        feas += getRevValue(info, idx + i)
 
     low = info.low[idx+ win - 1]
     vol = info.volumn[idx+ win - 1]
