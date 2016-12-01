@@ -43,6 +43,23 @@ def genStatus(status):
             ct2[0], ct2[1] + ct2[3], ct2[2] + ct2[3], ct2[3],
             ct3[0], ct3[1], ct3[2]]
 
+def getDelta(value, win):
+    delta = []
+    for i in range(win + 1):
+        delta += [value[i] - value[i+1]]
+        
+    delta2 = []
+    for i in range(win):
+        delta2 += [delta[i] - delta[i+1]]
+    return delta, delta2
+
+def flat(win, *arys):
+    feas = []
+    for i in range(win):
+        for ary in arys:
+            feas += list(ary[i])
+    return feas
+
 def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr1 = [0] * 2
     arr1[int(status)] = 1
@@ -296,20 +313,30 @@ def f10(key, info, ex, win=15):
         for i in range(win + 2):
             value += [np.asarray(getAbsValue(info, idx + i))]
 
-        delta = []
-        for i in range(win + 1):
-            delta += [value[i] - value[i+1]]
-        
-        delta2 = []
-        for i in range(win):
-            delta2 += [delta[i] - delta[i+1]]
+        delta, delta2 = getDelta(value, win)
 
-        for i in range(win):
-            feas += list(value[i])
-            feas += list(delta[i])
-            feas += list(delta2[i])
+        flat(win, value, delta, delta2)
         
-        assert len(feas) == 360, "%d,%d" % (len(feas), len(feas[0]))
+        ans += [concatRecord(feas, info, idx, key)]
+    return ans
+
+@register_kernel
+def f11(key, info, ex, win=15):
+    omit = max(60, win)
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    for idx in select:
+        feas = []
+        v1, v2 = [], []
+        for i in range(win + 2):
+            v1 += [np.asarray(getAbsValue(info, idx + i))]
+            v2 += [np.asarray(getRevValue(info, idx + i))]
+        d1, d11 = getDelta(v1, win)
+        d2, d22 = getDelta(v2, win)
+
+        feas = flat(win, v1, d1, d11, v2, d2, d22)
 
         ans += [concatRecord(feas, info, idx, key)]
     return ans
