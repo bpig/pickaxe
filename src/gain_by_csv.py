@@ -58,17 +58,6 @@ def getDs(predictFile):
     filename = os.path.basename(predictFile)
     return filename.split(".")[0][:8]
 
-def getArgs():
-    parser = ArgumentParser(description="Gain")
-    parser.add_argument("-t", dest="tgt", required=True,
-                        help="target")
-    parser.add_argument("-c", dest="c", default=50, type=int, 
-                        help="cal count")
-    parser.add_argument("-v", dest="v", action="store_true", default=False,
-                        help="verbose")
-    return parser.parse_args()    
-
-
 def process(predictFile, numStock,  stock, detail=False):
     ds = getDs(predictFile)
     predict = loadPredictFile(predictFile)
@@ -88,7 +77,7 @@ if __name__ == "__main__":
 
     if os.path.isfile(args.tgt):
         st = stock2 if "model" in args.tgt else stock
-        process(args.tgt, args.c, st)
+        process(args.tgt, args.c, st, detail=args.v)
     else:
         for f in sorted(os.listdir(args.tgt)):
             if not f.startswith("2") or not f.endswith("csv"):
