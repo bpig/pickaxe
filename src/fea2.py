@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from common import *
+from fea2_base import *
 
 kernels = {}
 
@@ -7,292 +8,167 @@ def register_kernel(func):
     kernels[func.__name__] = func
     return func
 
-def rateTrans(x):
-    x = int(x * 100)
-    x = min(10, x)
-    x = max(-10, x)
-    x += 10
-    return x
-
-def rateHash(rate):
-    ans = [0] * 21
-    idx = rateTrans(rate)
-    ans[idx] = 1
-    return ans
-
-def rateBucket(rates):
-    rates = map(rateTrans, rates)
-    ans = [0] * 21
-    for r in rates:
-        ans[r] += 1
-    return ans
-
-def genBasic(vals):
-    vals = np.asarray(vals, dtype=np.float32)
-    res = [np.sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
-    return res
-
-def normalize(value):
-    v = np.asarray(value, dtype=np.float32)
-    v = (v - v.mean()) / v.std()
-    return list(v)
-
-def filterByStop(info, win):
-    return np.any(np.asarray(info.volumn[idx:idx+win]) == 0) \
-        or np.any(np.asarray(info.amount[idx:idx+win]) == 0)
-    
-def genStatus(status):
-    ct0 = Counter(map(int, status[0]))
-    ct1 = Counter(map(int, status[1]))
-    ct2 = Counter(map(int, status[2]))
-    ct3 = Counter(map(int, status[3]))
-    return [ct0[0], ct0[1],
-            ct1[0], ct1[1], ct1[2],
-            ct2[0], ct2[1] + ct2[3], ct2[2] + ct2[3], ct2[3],
-            ct3[0], ct3[1], ct3[2]]
-
-def getDelta(value, win):
-    delta = []
-    for i in range(win + 1):
-        delta += [value[i] - value[i+1]]
-        
-    delta2 = []
-    for i in range(win):
-        delta2 += [delta[i] - delta[i+1]]
-    return delta, delta2
-
-def flat(win, *arys):
+@register_kernel
+@fea_frame
+def f2(key, info, ex, win=15):
     feas = []
     for i in range(win):
-        for ary in arys:
-            feas += list(ary[i])
+        n = idx + i
+        feas += [info[row][n]
+                 for row in [1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 19, 20]]
+
+    for i in range(1, win):
+        n = idx + i
+        feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                     for row in [2, 3, 5, 6, 7, 8, 9]]
+
+    windows = [5, 10, 15]
+    for w in windows:
+        rates = info[1][idx:idx+w]
+        feas += rateBucket(rates)
+
+    for i in range(win):
+        n = idx + i
+        feas += [ex[row][n] for row in range(1, len(ex))]
     return feas
 
-def oneHotStatus(status, sstatus, wavstatus, estatus):
-    arr1 = [0] * 2
-    arr1[int(status)] = 1
-    arr2 = [0] * 3
-    arr2[int(sstatus)] = 1
-    arr3 = [0] * 4
-    arr3[int(wavstatus)] = 1
-    if int(wavstatus) == 3:
-        arr3[1] = 1
-        arr3[2] = 1
-        arr3[3] = 1
-    arr4 = [0] * 3
-    arr4[int(estatus)] = 1
-    return arr1 + arr2 + arr3 + arr4
-
-def concatRecord(feas, info, idx, key):
-    ds = info.ds[idx]
-    tgt = info.tgt[idx]
-    feas += [tgt]
-    feas = map(str, feas)
-    return (key + "_" + ds, ",".join(feas))
-
 @register_kernel
-def f2(key, info, ex, win=15):
-    omit = 30
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 19, 20]]
-
-        for i in range(1, win):
-            n = idx + i
-            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9]]
-
-        windows = [5, 10, 15]
-        for w in windows:
-            rates = info[1][idx:idx+w]
-            feas += rateBucket(rates)
-
-        for i in range(win):
-            n = idx + i
-            feas += [ex[row][n] for row in range(1, len(ex))]
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
-
-@register_kernel
+@fea_frame
 def f3(key, info, ex, win=15):
-    omit = max(60, win)
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-            feas += [info[row][n]
-                     for row in [1, 11, 12, 13, 14, 19, 20]]
+    feas = []
+    for i in range(win):
+        feas += getAbsValue(info, idx + i)
+        feas += getRevValue(info, idx + i)
 
-        for i in range(1, win):
-            n = idx + i
-            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9]]
+    for i in range(1, win):
+        n = idx + i
+        feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                 for row in [2, 3, 5, 6, 7, 8, 9]]
 
-        windows = [2, 3, 5, 7, 15]
-        for w in windows:
-            feas += rateBucket(info[1][idx:idx+w])
-            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-                feas += genBasic(info[i][idx:idx+w])
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        feas += rateBucket(info[1][idx:idx+w])
+        for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])
+    return feas
 
 @register_kernel
+@fea_frame
 def f4(key, info, ex, win=15):
-    omit = 60
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-            feas += [info[row][n]
-                     for row in [1, 11, 12, 13, 14, 19, 20]]
+    feas = []
+    for i in range(win):
+        feas += getAbsValue(info, idx + i)
+        feas += getRevValue(info, idx + i)
 
-        for i in range(1, win):
-            n = idx + i
-            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9]]
+    for i in range(1, win):
+        n = idx + i
+        feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                 for row in [2, 3, 5, 6, 7, 8, 9]]
 
-        windows = [2, 3, 5, 7, 15]
-        for w in windows:
-            feas += rateBucket(info[1][idx:idx+w])
-            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-                feas += genBasic(info[i][idx:idx+w])
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        feas += rateBucket(info[1][idx:idx+w])
+        for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])
 
-        for i in range(win):
-            n = idx + i
-            feas += [ex[row][n] for row in range(1, len(ex))]
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    for i in range(win):
+        n = idx + i
+        feas += [ex[row][n] for row in range(1, len(ex))]
+    return feas
 
 @register_kernel
+@fea_frame
 def f5(key, info, ex, win=15):
-    omit = 60
-    if len(info.ds) < omit:
+    feas = []
+    if filterByStop(info, win):
         return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        if filterByStop(info, win):
-            continue
 
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-            feas += [info[row][n]
-                     for row in [1, 11, 12, 13, 14, 19, 20]]
+    for i in range(win):
+        n = idx + i
+        feas += [info[row][n]
+                 for row in [2, 3, 5, 6, 7, 8, 9, 10]]
+        feas += [info[row][n]
+                 for row in [1, 11, 12, 13, 14, 19, 20]]
 
-        for i in range(1, win):
-            n = idx + i
-            feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9]]
+    for i in range(1, win):
+        n = idx + i
+        feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                 for row in [2, 3, 5, 6, 7, 8, 9]]
 
-        windows = [2, 3, 5, 7, 15]
-        for w in windows:
-            feas += rateBucket(info[1][idx:idx+w])
-            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-                feas += genBasic(info[i][idx:idx+w])
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        feas += rateBucket(info[1][idx:idx+w])
+        for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])
+    return feas
 
 @register_kernel
+@fea_frame
 def f6(key, info, ex, win=15):
-    omit = 60
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        for i in range(win):
-            n = idx + i
-            feas += [info[row][n]
-                     for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-            feas += [info[row][n]
-                     for row in [1, 11, 12, 13, 14, 19, 20]]
+    feas = []
+    for i in range(win):
+        n = idx + i
+        feas += [info[row][n]
+                 for row in [2, 3, 5, 6, 7, 8, 9, 10]]
+        feas += [info[row][n]
+                 for row in [1, 11, 12, 13, 14, 19, 20]]
 
-        low = info.low[idx+ win - 1]
-        vol = info.volumn[idx+ win - 1]
-        amount = info.amount[idx+ win - 1]
-        turnover = info.turnover[idx+ win - 1]
-        for i in range(win):
-            n = idx + i
-            feas += [0 if low == 0 else info[row][n] / low
+    low = info.low[idx+ win - 1]
+    vol = info.volumn[idx+ win - 1]
+    amount = info.amount[idx+ win - 1]
+    turnover = info.turnover[idx+ win - 1]
+    for i in range(win):
+        n = idx + i
+        feas += [0 if low == 0 else info[row][n] / low
                      for row in [5, 6, 7, 8]]
-            feas += [0 if vol == 0 else info[2][n] / vol]
-            feas += [0 if amount == 0 else info[3][n] / amount]
-            feas += [0 if turnover == 0 else info[9][n] / turnover]
+        feas += [0 if vol == 0 else info[2][n] / vol]
+        feas += [0 if amount == 0 else info[3][n] / amount]
+        feas += [0 if turnover == 0 else info[9][n] / turnover]
 
-        windows = [2, 3, 5, 7, 15]
-        for w in windows:
-            feas += rateBucket(info[1][idx:idx+w])
-            for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-                feas += genBasic(info[i][idx:idx+w])
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        feas += rateBucket(info[1][idx:idx+w])
+        for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])
+    return feas
 
 
 @register_kernel
+@fea_frame
 def f7(key, info, ex, win=60):
-    omit = 60
-    if len(info.ds) < omit:
+    feas = []
+    if filterByStop(info, win):
         return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        if filterByStop(info, win):
-            continue
 
-        low = info.low[idx+ win - 1]
-        vol = info.volumn[idx+ win - 1]
-        amount = info.amount[idx+ win - 1]
-        turnover = info.turnover[idx+ win - 1]
+    low = info.low[idx+ win - 1]
+    vol = info.volumn[idx+ win - 1]
+    amount = info.amount[idx+ win - 1]
+    turnover = info.turnover[idx+ win - 1]
 
-        value, vols, amounts, turnovers = [], [], [], []
+    value, vols, amounts, turnovers = [], [], [], []
 
-        for i in range(win):
-            n = idx + i
-            value += [0 if low == 0 else info[row][n] / low
-                     for row in [5, 6, 7, 8]]
-            vols += [0 if vol == 0 else info.volumn[n] / vol]
-            amounts += [0 if amount == 0 else info.amount[n] / amount]
-            turnovers += [0 if turnover == 0 else info.turnover[n] / turnover]
+    for i in range(win):
+        n = idx + i
+        value += [0 if low == 0 else info[row][n] / low
+                  for row in [5, 6, 7, 8]]
+        vols += [0 if vol == 0 else info.volumn[n] / vol]
+        amounts += [0 if amount == 0 else info.amount[n] / amount]
+        turnovers += [0 if turnover == 0 else info.turnover[n] / turnover]
 
-        feas += normalize(value)
-        feas += normalize(vols)
-        feas += normalize(amounts)
-        feas += normalize(turnovers)
+    feas += normalize(value)
+    feas += normalize(vols)
+    feas += normalize(amounts)
+    feas += normalize(turnovers)
 
-        v = []
-        for  row in [5, 6, 7, 8]:
-            v += [info[row][n] for n in range(idx, idx+win)]
+    v = []
+    for  row in [5, 6, 7, 8]:
+        v += [info[row][n] for n in range(idx, idx+win)]
+    feas += normalize(v)
+
+    for row in [1, 2, 3, 9, 11, 12, 13, 14, 19, 20]:
+        v = [info[row][n] for n in range(idx, idx+win)]
         feas += normalize(v)
-
-        for row in [1, 2, 3, 9, 11, 12, 13, 14, 19, 20]:
-            v = [info[row][n] for n in range(idx, idx+win)]
-            feas += normalize(v)
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    return feas
 
 @register_kernel
 def f8(key, info, ex, win=60):
@@ -302,102 +178,63 @@ def f8(key, info, ex, win=60):
 def f9(key, info, ex, win=120):
     return f3(key, info, ex, win)
 
-def getAbsValue(info, idx):
-    return [info[row][idx] for row in [2, 3, 5, 6, 7, 8, 9, 10]]
-
-def getRevValue(info, idx):
-    return [info[row][idx] for row in [1, 11, 12, 13, 14, 19, 20]]
-
 @register_kernel
+@fea_frame
 def f10(key, info, ex, win=15):
-    omit = max(60, win)
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        value = []
-        for i in range(win + 2):
-            value += [np.asarray(getAbsValue(info, idx + i))]
+    feas = []
+    value = []
+    for i in range(win + 2):
+        value += [np.asarray(getAbsValue(info, idx + i))]
 
-        delta, delta2 = getDelta(value, win)
+    delta, delta2 = getDelta(value, win)
 
-        flat(win, value, delta, delta2)
-        
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    return flat(win, value, delta, delta2)
 
 @register_kernel
+@fea_frame
 def f11(key, info, ex, win=15):
-    omit = max(60, win)
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        v1, v2 = [], []
-        for i in range(win + 2):
-            v1 += [np.asarray(getAbsValue(info, idx + i))]
-            v2 += [np.asarray(getRevValue(info, idx + i))]
-        d1, d11 = getDelta(v1, win)
-        d2, d22 = getDelta(v2, win)
-
-        feas = flat(win, v1, d1, d11, v2, d2, d22)
-
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    v1, v2 = [], []
+    for i in range(win + 2):
+        v1 += [np.asarray(getAbsValue(info, idx + i))]
+        v2 += [np.asarray(getRevValue(info, idx + i))]
+    d1, d11 = getDelta(v1, win)
+    d2, d22 = getDelta(v2, win)
+    
+    return flat(win, v1, d1, d11, v2, d2, d22)
 
 @register_kernel
+@fea_frame
 def f12(key, info, ex, win=15):
-    omit = max(60, win)
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        v1, v2 = [], []
-        for i in range(win + 2):
-            v1 += [np.asarray(getAbsValue(info, idx + i))]
-        d1, d11 = getDelta(v1, win)
+    v1, v2 = [], []
+    for i in range(win + 2):
+        v1 += [np.asarray(getAbsValue(info, idx + i))]
+    d1, d11 = getDelta(v1, win)
         
-        for i in range(win):        
-            v2 += getRevValue(info, idx + i)
+    for i in range(win):        
+        v2 += getRevValue(info, idx + i)
 
-        feas = flat(win, v1, d1, d11)
-        for r in v2:
-            feas += rateHash(r)
-
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
-
-# def feaFramework(func):
-#     def _inter(key, info, ex, win=15):
-        
+    feas = flat(win, v1, d1, d11)
+    for r in v2:
+        feas += rateHash(r)
+    return feas
 
 @register_kernel
-def f13(key, info, ex, win=15):
-    omit = max(60, win)
-    if len(info.ds) < omit:
-        return []
-    select = range(len(info.ds) - omit + 1)
-    ans = []
-    for idx in select:
-        feas = []
-        for i in range(win):
-            feas += getAbsValue(info, idx + i)
+@fea_frame
+def f13(info, ex, idx, win=15):
+    feas = []
+    for i in range(win):
+        feas += getAbsValue(info, idx + i)
         
-        v2 = []
-        for i in range(win):        
-            v2 += getRevValue(info, idx + i)
+    v2 = []
+    for i in range(win):        
+        v2 += getRevValue(info, idx + i)
 
-        for r in v2:
-            feas += rateHash(r)
+    for r in v2:
+        feas += rateHash(r)
 
-        windows = [2, 3, 5, 7, 15]
-        for w in windows:
-            for i in [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20]:
-                feas += genBasic(info[i][idx:idx+w])
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        for i in [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])
 
-        ans += [concatRecord(feas, info, idx, key)]
-    return ans
+    return feas
