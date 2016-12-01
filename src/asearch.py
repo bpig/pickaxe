@@ -35,7 +35,7 @@ if __name__ == '__main__':
         else:
             key = r[0]
             name = r[1]
-        if "acc" in fin or "v5" in fin:
+        if "acc" in fin or "v5" in fin or "v6" in fin:
             score = float(r[-1])
             acc[key] += [(name, score)]
         else:
@@ -44,7 +44,7 @@ if __name__ == '__main__':
             t3[key] += [(name, s3)]
             t50[key] += [(name, s50)]
 
-    if "acc" in fin or "v5" in fin:
+    if "acc" in fin or "v5" in fin or "v6" in fin:
         for k in sorted(acc.keys()):
             acc[k] = sorted(acc[k], key=lambda x: x[1])
         printDict(acc)
