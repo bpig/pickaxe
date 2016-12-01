@@ -10,7 +10,7 @@ def register_kernel(func):
 
 @register_kernel
 @fea_frame
-def f2(key, info, ex, win=15):
+def f2(info, ex, idx, win=15):
     feas = []
     for i in range(win):
         n = idx + i
@@ -34,7 +34,7 @@ def f2(key, info, ex, win=15):
 
 @register_kernel
 @fea_frame
-def f3(key, info, ex, win=15):
+def f3(info, ex, idx, win=15):
     feas = []
     for i in range(win):
         feas += getAbsValue(info, idx + i)
@@ -49,12 +49,12 @@ def f3(key, info, ex, win=15):
     for w in windows:
         feas += rateBucket(info[1][idx:idx+w])
         for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-            feas += genBasic(info[i][idx:idx+w])
+            feas += genBasic(info[i][idx:idx+w])[1:]
     return feas
 
 @register_kernel
 @fea_frame
-def f4(key, info, ex, win=15):
+def f4(info, ex, idx, win=15):
     feas = []
     for i in range(win):
         feas += getAbsValue(info, idx + i)
@@ -69,7 +69,7 @@ def f4(key, info, ex, win=15):
     for w in windows:
         feas += rateBucket(info[1][idx:idx+w])
         for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-            feas += genBasic(info[i][idx:idx+w])
+            feas += genBasic(info[i][idx:idx+w])[1:]
 
     for i in range(win):
         n = idx + i
@@ -78,7 +78,7 @@ def f4(key, info, ex, win=15):
 
 @register_kernel
 @fea_frame
-def f5(key, info, ex, win=15):
+def f5(info, ex, idx, win=15):
     feas = []
     if filterByStop(info, win):
         return []
@@ -99,12 +99,12 @@ def f5(key, info, ex, win=15):
     for w in windows:
         feas += rateBucket(info[1][idx:idx+w])
         for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-            feas += genBasic(info[i][idx:idx+w])
+            feas += genBasic(info[i][idx:idx+w])[1:]
     return feas
 
 @register_kernel
 @fea_frame
-def f6(key, info, ex, win=15):
+def f6(info, ex, idx, win=15):
     feas = []
     for i in range(win):
         n = idx + i
@@ -129,13 +129,13 @@ def f6(key, info, ex, win=15):
     for w in windows:
         feas += rateBucket(info[1][idx:idx+w])
         for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
-            feas += genBasic(info[i][idx:idx+w])
+            feas += genBasic(info[i][idx:idx+w])[1:]
     return feas
 
 
 @register_kernel
 @fea_frame
-def f7(key, info, ex, win=60):
+def f7(info, ex, idx, win=60):
     feas = []
     if filterByStop(info, win):
         return []
@@ -171,16 +171,16 @@ def f7(key, info, ex, win=60):
     return feas
 
 @register_kernel
-def f8(key, info, ex, win=60):
-    return f3(key, info, ex, win)
+def f8(info, ex, idx, win=60):
+    return f3(info, ex, idx, win)
 
 @register_kernel
-def f9(key, info, ex, win=120):
-    return f3(key, info, ex, win)
+def f9(info, ex, idx, win=120):
+    return f3(info, ex, idx, win)
 
 @register_kernel
 @fea_frame
-def f10(key, info, ex, win=15):
+def f10(info, ex, idx, win=15):
     feas = []
     value = []
     for i in range(win + 2):
@@ -192,7 +192,7 @@ def f10(key, info, ex, win=15):
 
 @register_kernel
 @fea_frame
-def f11(key, info, ex, win=15):
+def f11(info, ex, idx, win=15):
     v1, v2 = [], []
     for i in range(win + 2):
         v1 += [np.asarray(getAbsValue(info, idx + i))]
@@ -204,7 +204,7 @@ def f11(key, info, ex, win=15):
 
 @register_kernel
 @fea_frame
-def f12(key, info, ex, win=15):
+def f12(info, ex, idx, win=15):
     v1, v2 = [], []
     for i in range(win + 2):
         v1 += [np.asarray(getAbsValue(info, idx + i))]

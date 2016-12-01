@@ -68,7 +68,9 @@ if __name__ == "__main__":
         mu = np.load(mu_file)
         delta = np.load(delta_file)
         interval = cfg["predict"]
+        print interval
         ft = ft.filter(select(interval))
+        print ft.count()
         ft = ft.map(normal(mu, delta)).saveAsSequenceFile(fout)
         sys.exit(0)
     
