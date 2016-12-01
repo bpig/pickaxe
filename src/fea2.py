@@ -7,13 +7,20 @@ def register_kernel(func):
     kernels[func.__name__] = func
     return func
 
-def rateCount(rates):
-    def trans(x):
-        x = int(x + 10)
-        x = min(10, x)
-        x = max(-10, x)
-        return x
-    rates = map(trans, rates)
+def rateTrans(x):
+    x = int(x + 10)
+    x = min(10, x)
+    x = max(-10, x)
+    return x
+
+def rateHash(rate):
+    ans = [0] * 21
+    idx = rateTrans(rate)
+    ans[idx] = 1
+    return ans
+
+def rateBucket(rates):
+    rates = map(rateTrans, rates)
     ans = [0] * 21
     for r in rates:
         ans[r] += 1
@@ -104,7 +111,7 @@ def f2(key, info, ex, win=15):
         windows = [5, 10, 15]
         for w in windows:
             rates = info[1][idx:idx+w]
-            feas += rateCount(rates)
+            feas += rateBucket(rates)
 
         for i in range(win):
             n = idx + i
@@ -135,7 +142,7 @@ def f3(key, info, ex, win=15):
 
         windows = [2, 3, 5, 7, 15]
         for w in windows:
-            feas += rateCount(info[1][idx:idx+w])
+            feas += rateBucket(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
         ans += [concatRecord(feas, info, idx, key)]
@@ -164,7 +171,7 @@ def f4(key, info, ex, win=15):
 
         windows = [2, 3, 5, 7, 15]
         for w in windows:
-            feas += rateCount(info[1][idx:idx+w])
+            feas += rateBucket(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
 
@@ -200,7 +207,7 @@ def f5(key, info, ex, win=15):
 
         windows = [2, 3, 5, 7, 15]
         for w in windows:
-            feas += rateCount(info[1][idx:idx+w])
+            feas += rateBucket(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
         ans += [concatRecord(feas, info, idx, key)]
@@ -236,7 +243,7 @@ def f6(key, info, ex, win=15):
 
         windows = [2, 3, 5, 7, 15]
         for w in windows:
-            feas += rateCount(info[1][idx:idx+w])
+            feas += rateBucket(info[1][idx:idx+w])
             for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
                 feas += genBasic(info[i][idx:idx+w])
         ans += [concatRecord(feas, info, idx, key)]
@@ -328,7 +335,6 @@ def f11(key, info, ex, win=15):
     select = range(len(info.ds) - omit + 1)
     ans = []
     for idx in select:
-        feas = []
         v1, v2 = [], []
         for i in range(win + 2):
             v1 += [np.asarray(getAbsValue(info, idx + i))]
@@ -337,6 +343,29 @@ def f11(key, info, ex, win=15):
         d2, d22 = getDelta(v2, win)
 
         feas = flat(win, v1, d1, d11, v2, d2, d22)
+
+        ans += [concatRecord(feas, info, idx, key)]
+    return ans
+
+@register_kernel
+def f12(key, info, ex, win=15):
+    omit = max(60, win)
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    for idx in select:
+        v1, v2 = [], []
+        for i in range(win + 2):
+            v1 += [np.asarray(getAbsValue(info, idx + i))]
+        d1, d11 = getDelta(v1, win)
+        
+        for i in range(win):        
+            v2 += getRevValue(info, idx + i)
+
+        feas = flat(win, v1, d1, d11)
+        for r in v2:
+            feas += rateHash(r)
 
         ans += [concatRecord(feas, info, idx, key)]
     return ans
