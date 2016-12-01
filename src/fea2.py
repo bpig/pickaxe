@@ -8,9 +8,10 @@ def register_kernel(func):
     return func
 
 def rateTrans(x):
-    x = int(x + 10)
+    x = int(x * 100)
     x = min(10, x)
     x = max(-10, x)
+    x += 10
     return x
 
 def rateHash(rate):
@@ -28,7 +29,7 @@ def rateBucket(rates):
 
 def genBasic(vals):
     vals = np.asarray(vals, dtype=np.float32)
-    res = [np.mean(vals), np.std(vals), max(vals), min(vals)]
+    res = [np.sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
     return res
 
 def normalize(value):
@@ -366,6 +367,37 @@ def f12(key, info, ex, win=15):
         feas = flat(win, v1, d1, d11)
         for r in v2:
             feas += rateHash(r)
+
+        ans += [concatRecord(feas, info, idx, key)]
+    return ans
+
+# def feaFramework(func):
+#     def _inter(key, info, ex, win=15):
+        
+
+@register_kernel
+def f13(key, info, ex, win=15):
+    omit = max(60, win)
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    for idx in select:
+        feas = []
+        for i in range(win):
+            feas += getAbsValue(info, idx + i)
+        
+        v2 = []
+        for i in range(win):        
+            v2 += getRevValue(info, idx + i)
+
+        for r in v2:
+            feas += rateHash(r)
+
+        windows = [2, 3, 5, 7, 15]
+        for w in windows:
+            for i in [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20]:
+                feas += genBasic(info[i][idx:idx+w])
 
         ans += [concatRecord(feas, info, idx, key)]
     return ans

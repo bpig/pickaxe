@@ -5,61 +5,32 @@ from fea_kernel import *
 from fea_core import *
 from data_loader import Cc
 
-def getline(filename):
-    for c, l in enumerate(open(filename)):
-        l = l.strip()
-        if "code" in l or not l:
-            continue
-        yield l
-
-def getKv(filename, kv, uniq):
-    for l in getline(filename):
-        pos = l.find(",")
-        key = l[:pos]
-        
-        value = l[pos + 1:].replace("NULL", "0.0")
-        value = value.split(",")
-        ds = value[0]
-        # if ds < "20160000":
-        #     continue
-        kid = key + "_" + value[0]
-        if kid in uniq:
-            continue
-        uniq.add(kid)
-        
-        kv[key].append(value)
-    # code, dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares
-    #  -1    0    1      2       3     4  5    6    7   8      9        10
-    
-    # dt, rate, volumn, amount, pe, s, high, low, e, turnover, shares,
-    # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
-    return kv, uniq
-
 def getStatus(rate):
-    if rate <= 0.901:
+    if rate <= -0.099:
         return 2
-    elif rate >= 1.099:
+    elif rate >= 0.099:
         return 1
     return 0
 
 def getWavStatus(h_rate, l_rate):
-    if h_rate >= 1.099 and l_rate <= 0.901:
+    if h_rate >= 0.099 and l_rate <= -0.099:
         return 3
-    elif l_rate <= 0.901:
+    elif l_rate <= -0.099:
         return 2
-    elif h_rate >= 1.099:
+    elif h_rate >= 0.099:
         return 1
     return 0
 
 def extend(key, v):
     for i in [2, 3, 4, 5, 6, 7, 8, 9]:
         v[i] = map(float, v[i])
-    a_rate = map(lambda x, y: 0 if x == 0 else y / x, v[3][1:], v[3][:-1]) + [0]
-    v_rate = map(lambda x, y: 0 if x == 0 else y / x, v[2][1:], v[2][:-1]) + [0]
-    s_rate = map(lambda x, y: y / x, v[4], v[5])
-    h_rate = map(lambda x, y: y / x, v[4], v[6])
-    l_rate = map(lambda x, y: y / x, v[4], v[7])
-    e_rate = map(lambda x, y: y / x, v[4], v[8])
+    v[2] = map(lambda x: x / 100, v[2])
+    a_rate = map(lambda x, y: 0 if x == 0 else y / x - 1, v[3][1:], v[3][:-1]) + [0]
+    v_rate = map(lambda x, y: 0 if x == 0 else y / x - 1, v[2][1:], v[2][:-1]) + [0]
+    s_rate = map(lambda x, y: y / x - 1, v[4], v[5])
+    h_rate = map(lambda x, y: y / x - 1, v[4], v[6])
+    l_rate = map(lambda x, y: y / x - 1, v[4], v[7])
+    e_rate = map(lambda x, y: y / x - 1, v[4], v[8])
     status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
     s_status = map(getStatus, s_rate)
     wav_status = map(getWavStatus, h_rate, l_rate)
@@ -152,55 +123,3 @@ def extend(key, v):
         aux[i] = aux[i][:150]
     return v, aux, ex
 
-def dump(kv, filename):
-    fout = open(filename, "w")
-    fout1 = open(filename + ".aux", "w")
-    ex_keys = []
-    ex_values = []
-    # fdebug = open(filename + ".debug", "w")
-    for c, (k, v) in enumerate(kv.items()):
-        v = sorted(v, key=lambda x: x[0], reverse=True)
-        v = zip(*v)
-        v, aux, ex = extend(k, v)
-        
-        # normal output
-        v = map(lambda x: "_".join(x), v)
-        fout.write(k + "," + ",".join(v) + "\n")
-        
-        aux = map(lambda x: "_".join(x), aux)
-        fout1.write(k + "," + ",".join(aux) + "\n")
-        
-        ex_values += [ex]
-        ex_keys += [k]
-        if c % 50 == 0:
-            print time.ctime(), c
-    
-    np.save(filename + ".value.ex", np.asarray(ex_values))
-    np.save(filename + ".key.ex", np.asarray(ex_keys))
-
-def mergeDailyCsv(kv, uniq):
-    dailyCsv = "data/daily"
-    with CD(dailyCsv):
-        for d in os.listdir("."):
-            if len(d) > 12 or not d.endswith(".csv"):
-                continue
-            getKv(d, kv, uniq)
-            print d, len(kv), len(uniq)
-
-def process(fin, fout, merge=False):
-    kv = defaultdict(list)
-    uniq = set()
-    getKv(fin, kv, uniq)
-    print len(kv), len(uniq)
-    if merge:
-        mergeDailyCsv(kv, uniq)
-    dump(kv, fout)
-
-if __name__ == "__main__":
-    model = sys.argv[1]
-    with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[model]
-    
-    fin = "data/" + cfg["raw"]
-    fout = "data/" + cfg["data"]
-    process(fin, fout, merge=False)
