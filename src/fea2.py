@@ -276,3 +276,40 @@ def f8(key, info, ex, win=60):
 @register_kernel
 def f9(key, info, ex, win=120):
     return f3(key, info, ex, win)
+
+def getAbsValue(info, idx):
+    return [info[row][idx] for row in [2, 3, 5, 6, 7, 8, 9, 10]]
+
+def getRevValue(info, idx):
+    return [info[row][idx] for row in [1, 11, 12, 13, 14, 19, 20]]
+
+@register_kernel
+def f10(key, info, ex, win=15):
+    omit = max(60, win)
+    if len(info.ds) < omit:
+        return []
+    select = range(len(info.ds) - omit + 1)
+    ans = []
+    for idx in select:
+        feas = []
+        value = []
+        for i in range(win + 2):
+            value += [np.asarray(getAbsValue(info, idx + i))]
+
+        delta = []
+        for i in range(win + 1):
+            delta += [value[i] - value[i+1]]
+        
+        delta2 = []
+        for i in range(win):
+            delta2 += [delta[i] - delta[i+1]]
+
+        for i in range(win):
+            feas += list(value[i])
+            feas += list(delta[i])
+            feas += list(delta2[i])
+        
+        assert len(feas) == 360, "%d,%d" % (len(feas), len(feas[0]))
+
+        ans += [concatRecord(feas, info, idx, key)]
+    return ans
