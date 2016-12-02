@@ -29,6 +29,7 @@ def combine(predictions, fout):
         for items in v:
             for item in items:
                 code = item[0]  # + "_" + item[2]
+#                kv[code] = 1 - (1 - kv[code]) * (1 - item[1])
                 kv[code] += item[1]
         cw = sorted(kv.items(), key=lambda x: x[1], reverse=True)
         cw = map(lambda x: x[0] + "_" + str(x[1]) + "_0.0", cw)

@@ -142,7 +142,7 @@ def getArgs():
 
 if __name__ == '__main__':
     args = getArgs()
-    model = args.model
+    model = args.tgt
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
     

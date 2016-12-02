@@ -14,17 +14,13 @@ def searchCb(cb):
     
     filter_by_rule.process(fout, output=False)
     gain50 = gain.process(fout + ".filter", 50, output=False)
-    #    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
-    #    filter_by_rule.process(fout, newSt=True, high=True, st=True, output=False)
-    gain3 = gain.process(fout + ".filter", 3, output=False)
-    #    gain3 = gain.process(fout, 3, output=False)
     
     cb = getCbKey(cb)
-    value = "%s,%.5f,%.5f\n" % (cb, gain3, gain50)
+    value = "%s,%.5f\n" % (cb, gain50)
     print "==" * 10
     print value,
     print
-    return value, gain3, gain50
+    return value, gain50
 
 def allSearch(fins, fout, kv):
     for i in range(1, len(fins) + 1):
@@ -32,9 +28,19 @@ def allSearch(fins, fout, kv):
             print cb
             if getCbKey(cb) in kv:
                 continue
-            cb, _, _ = searchCb(cb)
+            cb,  _ = searchCb(cb)
             fout.write(cb)
             fout.flush()
+
+def trans2tgt(queue):
+    kv = defaultdict(str)
+    for t in sorted(queue):
+        t = t.replace("ans/", "")
+        key = t[:3]
+        idx = t[4:]
+        kv[key] += idx
+    ans = [k + "," + kv[k] for k in sorted(kv.keys())]
+    return "+".join(ans)
 
 def quickSearch(fins, fout, q, kv):
     queue = []
@@ -44,47 +50,32 @@ def quickSearch(fins, fout, q, kv):
             cb = queue + [f]
             key = getCbKey(cb)
             if key in kv:
-                g3, g50 = kv[key]
+                g50 = kv[key]
             else:
-                cb, g3, g50 = searchCb(cb)
+                cb, g50 = searchCb(cb)
                 fout.write(cb)
                 fout.flush()
-            if q == "t":
-                tmp += [(f, g3)]
-            else:
-                tmp += [(f, g50)]
+            tmp += [(f, g50)]
         tmp = sorted(tmp, key=lambda (x, y): -y)
         select = tmp[0][0]
         queue += [select]
-        print sorted(queue), tmp[0][1]
+        #print sorted(queue), tmp[0][1]
+        print trans2tgt(queue), tmp[0][1]
         fins.remove(select)
-
-def getArgs():
-    parser = ArgumentParser(description="Combine")
-    parser.add_argument("-t", dest="tgt", required=True,
-                        help="target")
-    parser.add_argument("-a", dest="a", default="cs_tmp",
-                        help="ans")
-    parser.add_argument("-q", dest="q", default="",
-                        help="quick")
-    return parser.parse_args()
 
 if __name__ == "__main__":
     args = getArgs()
     fins = combine_ans.getInput(args.tgt)
-    if args.q == "t":
-        logfile = "log/cs_top"
-    elif args.q == "d":
-        logfile = "log/cs_daily"
+    if args.q:
+        logfile = "log/cs_daily_g50"
     else:
-        logfile = "log/" + args.a
+        logfile = "log/cs_all_g50"
     print "fin", fins
     print "fout", logfile
     
     try:
         rd = csv.reader(open(logfile))
-        kv = dict([("+".join(sorted(r[0].split("+"))),
-                    (float(r[1]), float(r[2]))) for r in rd])
+        kv = dict([(r[0], float(r[1])) for r in rd])
     except:
         kv = {}
     fout = open(logfile, "a")
@@ -92,6 +83,7 @@ if __name__ == "__main__":
         print "quich search"
         quickSearch(fins, fout, args.q, kv)
     else:
+        print "all search"
         allSearch(fins, fout, kv)
     
     os.system("rm -f log/cb.tmp")

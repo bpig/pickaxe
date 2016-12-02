@@ -132,6 +132,10 @@ def getArgs(desc=""):
                         help="update to hdfs")
     parser.add_argument("-m", dest="m", action="store_true", default=False,
                         help="merge cc")
+    
+    # for csearch
+    parser.add_argument("-q", dest="q", action="store_true", default=False,
+                        help="quick")
 
     args = parser.parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.g

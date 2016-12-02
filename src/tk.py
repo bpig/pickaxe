@@ -84,7 +84,7 @@ def train(model, args):
     
     filepath = model_dir + "/{epoch:02d}-{val_acc:.2f}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc',
-                                 verbose=1, save_best_only=True, mode='max')
+                                 verbose=1, save_best_only=False, mode='auto')
     callbacks_list = [scheduler, checkpoint]
     
     history = model.fit(data.fea, data.tgt, batch_size=batch_size,
