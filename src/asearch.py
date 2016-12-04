@@ -19,6 +19,13 @@ def getArgs():
                         help="model")
     return parser.parse_args()
 
+def isNew(fin):
+    keys = "acc v5 v6 v7".split()
+    for k in keys:
+        if k in fin:
+            return True
+    return False
+
 if __name__ == '__main__':
     args = getArgs()
     fin = "log/" + args.t
@@ -35,7 +42,7 @@ if __name__ == '__main__':
         else:
             key = r[0]
             name = r[1]
-        if "acc" in fin or "v5" in fin or "v6" in fin:
+        if isNew(fin):
             score = float(r[-1])
             acc[key] += [(name, score)]
         else:
@@ -44,7 +51,7 @@ if __name__ == '__main__':
             t3[key] += [(name, s3)]
             t50[key] += [(name, s50)]
 
-    if "acc" in fin or "v5" in fin or "v6" in fin:
+    if isNew(fin):
         for k in sorted(acc.keys()):
             acc[k] = sorted(acc[k], key=lambda x: x[1])
         printDict(acc)
