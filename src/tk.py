@@ -82,7 +82,7 @@ def train(model, args):
                   optimizer=Adam(lr=lr),
                   metrics=['accuracy'])
     
-    filepath = model_dir + "/{epoch:02d}-{val_acc:.2f}.hdf5"
+    filepath = model_dir + "/e{epoch:d}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc',
                                  verbose=1, save_best_only=False, mode='auto')
     callbacks_list = [scheduler, checkpoint]
