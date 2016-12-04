@@ -25,10 +25,10 @@ def fea_frame(func):
     return _inter
 
 def getMoneyValue(info, idx):
-    return [info[row][idx] for row in range(22, 63)]
+    return [info[row][idx] for row in range(21, 62)]
 
 def getIndicatorValue(info, idx):
-    return [info[row][idx] for row in range(63, 69)]
+    return [info[row][idx] for row in range(62, 68)]
 
 def getAbsValue(info, idx):
     return [info[row][idx] for row in [2, 3, 5, 6, 7, 8, 9, 10]]
@@ -50,7 +50,12 @@ def rateHash(rate):
     return ans
 
 def rateBucket(rates):
-    rates = map(rateTrans, rates)
+    def trans(x):
+        x = int(x + 10)
+        x = min(10, x)
+        x = max(-10, x)
+        return x
+    rates = map(trans, rates)
     ans = [0] * 21
     for r in rates:
         ans[r] += 1

@@ -6,18 +6,18 @@ from fea_core import *
 from data_loader import Cc
 
 def getStatus(rate):
-    if rate <= -0.099 + 1:
+    if rate <= 0.901:
         return 2
-    elif rate >= 0.099 + 1:
+    elif rate >= 1.099:
         return 1
     return 0
 
 def getWavStatus(h_rate, l_rate):
-    if h_rate >= (0.099 + 1) and l_rate <= (-0.099 + 1):
+    if h_rate >= 1.099 and l_rate <= 0.901:
         return 3
-    elif l_rate <= -0.099 + 1:
+    elif l_rate <= 0.901:
         return 2
-    elif h_rate >= 0.099 + 1:
+    elif h_rate >= 1.099:
         return 1
     return 0
 
@@ -113,8 +113,11 @@ def extend(key, v):
     buy = [-1.0] + buy[:-1]
     sell = [-1.0, -1.0] + sell[:-2]
     tgt = map(lambda x, y: -1.0 if x < 0 or y < 0 else y / x, buy, sell)
-    v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status,
-          a_rate, v_rate, tgt]
+    v = v[:11] + [s_rate, h_rate, l_rate, e_rate, 
+                  status, s_status, wav_status, e_status,
+                  a_rate, v_rate] + v[11:] + [tgt]
+    # v += [s_rate, h_rate, l_rate, e_rate, status, s_status, wav_status, e_status,
+    #       a_rate, v_rate, tgt]
     v = map(lambda x: map(str, x), v)
     work_day = map(str, work_day)
     aux = [v[0], work_day, v[4], v[5], v[6], v[7], v[8], v[15], v[16], v[18]]
