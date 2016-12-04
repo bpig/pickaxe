@@ -1,10 +1,18 @@
 # -*- coding:utf-8 -*-
 from common import *
 
+def concatRecord(feas, info, idx, key):
+    ds = info.ds[idx]
+    tgt = info.tgt[idx]
+    feas += [tgt]
+    feas = map(str, feas)
+    return (key + "_" + ds, ",".join(feas))
+
 def fea_frame(func):
     @wraps(func)
     def _inter(key, info, ex, win=15):
-        omit = max(60, win)
+        # omit = max(60, win)
+        omit = win
         if len(info.ds) < omit:
             return []
         select = range(len(info.ds) - omit + 1)
@@ -16,6 +24,12 @@ def fea_frame(func):
         return ans
     return _inter
 
+def getMoneyValue(info, idx):
+    return [info[row][idx] for row in range(22, 63)]
+
+def getIndicatorValue(info, idx):
+    return [info[row][idx] for row in range(63, 69)]
+
 def getAbsValue(info, idx):
     return [info[row][idx] for row in [2, 3, 5, 6, 7, 8, 9, 10]]
 
@@ -23,7 +37,7 @@ def getRevValue(info, idx):
     return [info[row][idx] for row in [1, 11, 12, 13, 14, 19, 20]]
 
 def rateTrans(x):
-    x = int(x * 100)
+    x = int(x)
     x = min(10, x)
     x = max(-10, x)
     x += 10
@@ -98,11 +112,4 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4 = [0] * 3
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
-
-def concatRecord(feas, info, idx, key):
-    ds = info.ds[idx]
-    tgt = info.tgt[idx]
-    feas += [tgt]
-    feas = map(str, feas)
-    return (key + "_" + ds, ",".join(feas))
 

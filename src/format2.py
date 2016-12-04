@@ -6,31 +6,30 @@ from fea_core import *
 from data_loader import Cc
 
 def getStatus(rate):
-    if rate <= -0.099:
+    if rate <= -0.099 + 1:
         return 2
-    elif rate >= 0.099:
+    elif rate >= 0.099 + 1:
         return 1
     return 0
 
 def getWavStatus(h_rate, l_rate):
-    if h_rate >= 0.099 and l_rate <= -0.099:
+    if h_rate >= (0.099 + 1) and l_rate <= (-0.099 + 1):
         return 3
-    elif l_rate <= -0.099:
+    elif l_rate <= -0.099 + 1:
         return 2
-    elif h_rate >= 0.099:
+    elif h_rate >= 0.099 + 1:
         return 1
     return 0
 
 def extend(key, v):
     for i in [2, 3, 4, 5, 6, 7, 8, 9]:
         v[i] = map(float, v[i])
-    v[2] = map(lambda x: x / 100, v[2])
-    a_rate = map(lambda x, y: 0 if x == 0 else y / x - 1, v[3][1:], v[3][:-1]) + [0]
-    v_rate = map(lambda x, y: 0 if x == 0 else y / x - 1, v[2][1:], v[2][:-1]) + [0]
-    s_rate = map(lambda x, y: y / x - 1, v[4], v[5])
-    h_rate = map(lambda x, y: y / x - 1, v[4], v[6])
-    l_rate = map(lambda x, y: y / x - 1, v[4], v[7])
-    e_rate = map(lambda x, y: y / x - 1, v[4], v[8])
+    a_rate = map(lambda x, y: 0 if x == 0 else y / x, v[3][1:], v[3][:-1]) + [0]
+    v_rate = map(lambda x, y: 0 if x == 0 else y / x, v[2][1:], v[2][:-1]) + [0]
+    s_rate = map(lambda x, y: y / x, v[4], v[5])
+    h_rate = map(lambda x, y: y / x, v[4], v[6])
+    l_rate = map(lambda x, y: y / x, v[4], v[7])
+    e_rate = map(lambda x, y: y / x, v[4], v[8])
     status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
     s_status = map(getStatus, s_rate)
     wav_status = map(getWavStatus, h_rate, l_rate)
@@ -39,7 +38,7 @@ def extend(key, v):
     ex = []
     ex += [np.asarray(v[0], dtype=np.float64)]
     
-    cc = Cc(*v)
+    cc = Cc(*v[:11])
 #    for i in [5, 10, 15]:
     base_ex = []
     for i in [2, 5]:

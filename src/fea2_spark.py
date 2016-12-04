@@ -3,11 +3,11 @@
 from common import *
 from pyspark import SparkConf
 from pyspark import SparkContext
-from data_loader import Ft, Ft2
+from data_loader import Ft, Ft2, Ft3
 import fea2
 import yaml
 
-def genOneStock(func):
+def genOneStock(func, ftType):
     def _inter(kv):
         key, (info, ex) = kv
     
@@ -15,7 +15,7 @@ def genOneStock(func):
         info = map(lambda x: x.split("_"), info)
         for i in range(1, len(info)):
             info[i] = map(float, info[i])
-        info = Ft2(*info)
+        info = ftType(*info)
     
         f = StringIO(ex)
         ex = np.load(f)
@@ -60,8 +60,9 @@ if __name__ == "__main__":
     fout = "htk/fe/%s/raw" % model
 
     feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f1
-    print feaFunc
-    fe = rdd.map(genOneStock(feaFunc)).filter(len).flatMap(lambda x: x)
+    ftType = Ft3 if "ft_type" in cfg and cfg["ft_type"] == "ft3" else Ft2
+    print feaFunc, ftType
+    fe = rdd.map(genOneStock(feaFunc, ftType)).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
 # spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

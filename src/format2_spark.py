@@ -22,7 +22,7 @@ def cal(lt):
     lt = sorted(lt, key=lambda x: x[0], reverse=True)
     lt = zip(*lt)
     
-    lt, aux, ex = format2.extend("no_use", lt)
+    lt, aux, ex = format2.extend(key="no_use", v=lt)
     
     lt = map(lambda x: "_".join(x), lt)
     lt = ",".join(lt)
