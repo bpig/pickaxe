@@ -117,3 +117,11 @@ f30:
   predict: 20161100-20170000
   ft_type: ft3
   func: f14
+
+f31:
+  raw: big.cc
+  train: 20100000-20160500
+  test: 20160500-20161100
+  predict: 20161100-20170000
+  ft_type: ft3
+  func: f14
