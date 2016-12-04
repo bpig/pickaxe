@@ -62,7 +62,7 @@ def train(model, args):
         model = makeModel(model_dir, len(data.fea[0]))
     
     gamma = cfg['gamma'] if 'gamma' in cfg else 0.4
-    n_epochs = cfg['epochs'] if 'epochs' in cfg else [10, 10, 10, 10, 10]
+    n_epochs = cfg['epochs'] if 'epochs' in cfg else [10, 10]
     lr = cfg['lr'] if 'lr' in cfg else 0.001
     batch_size = cfg['batch_size'] if 'batch_size' in cfg else 1024
     

@@ -50,11 +50,11 @@ if __name__ == '__main__':
         printDict(acc)
         sys.exit(1)
 
-    if not "cb" in fin:
-        print "last 3 select"
-        printDict(t3)
-        print "last 50 select"
-        printDict(t50)
+    # if not "cb" in fin:
+    #     print "last 3 select"
+    #     printDict(t3)
+    #     print "last 50 select"
+    #     printDict(t50)
 
     
     for k in sorted(t3.keys()):
