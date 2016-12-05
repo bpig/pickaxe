@@ -21,20 +21,7 @@ def getWavStatus(h_rate, l_rate):
         return 1
     return 0
 
-def extend(key, v):
-    for i in [2, 3, 4, 5, 6, 7, 8, 9]:
-        v[i] = map(float, v[i])
-    a_rate = map(lambda x, y: 0 if x == 0 else y / x, v[3][1:], v[3][:-1]) + [0]
-    v_rate = map(lambda x, y: 0 if x == 0 else y / x, v[2][1:], v[2][:-1]) + [0]
-    s_rate = map(lambda x, y: y / x, v[4], v[5])
-    h_rate = map(lambda x, y: y / x, v[4], v[6])
-    l_rate = map(lambda x, y: y / x, v[4], v[7])
-    e_rate = map(lambda x, y: y / x, v[4], v[8])
-    status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
-    s_status = map(getStatus, s_rate)
-    wav_status = map(getWavStatus, h_rate, l_rate)
-    e_status = map(getStatus, e_rate)
-    
+def genEx(v):
     ex = []
     ex += [np.asarray(v[0], dtype=np.float64)]
     
@@ -98,6 +85,24 @@ def extend(key, v):
     # for a in [10, 15]:
     #     vr_value = vr(cc, a)
     #     ex += [vr_value]
+    return ex
+
+def extend(key, v):
+    for i in [2, 3, 4, 5, 6, 7, 8, 9]:
+        v[i] = map(float, v[i])
+    a_rate = map(lambda x, y: 0 if x == 0 else y / x, v[3][1:], v[3][:-1]) + [0]
+    v_rate = map(lambda x, y: 0 if x == 0 else y / x, v[2][1:], v[2][:-1]) + [0]
+    s_rate = map(lambda x, y: y / x, v[4], v[5])
+    h_rate = map(lambda x, y: y / x, v[4], v[6])
+    l_rate = map(lambda x, y: y / x, v[4], v[7])
+    e_rate = map(lambda x, y: y / x, v[4], v[8])
+    status = map(lambda turnover: 1 if turnover == 0.0 else 0, v[9])
+    s_status = map(getStatus, s_rate)
+    wav_status = map(getWavStatus, h_rate, l_rate)
+    e_status = map(getStatus, e_rate)
+    
+    # ex = genEx(v)
+    ex = []
     
     work_day = range(len(e_rate), 0, -1)
     

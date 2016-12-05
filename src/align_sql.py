@@ -1,26 +1,28 @@
 from common import *
 
-def getKv(filename):
-    for l in open("data/" + filename):
-        l = l.strip()
-        if not l or "code" in l or "S_INFO" in l:
-            continue
-        pos = l.find(",")
-        pos = l.find(",", pos + 1)
-        key = l[:pos]
-        value = l[pos:]
-        yield key, value
+def getKv(*args):
+    for filename in args:
+        for l in open("data/" + filename):
+            l = l.strip()
+            if not l or "code" in l or "S_INFO" in l:
+                continue
+            pos = l.find(",")
+            pos = l.find(",", pos + 1)
+            key = l[:pos]
+            value = l[pos:]
+            yield key, value
 
 if __name__ == "__main__":
     with TimeLog():
-        base = dict(list(getKv("total.cc")))
+        base = dict(getKv("total.cc"))
     with TimeLog():
-        indicator = dict(list(getKv("asharel2indicators.cc")))
+        indicator = dict(getKv("asharel2indicators.cc", "i.cc"))
     with TimeLog():
-        moneyflow = dict(list(getKv("asharemoneyflow.cc")))
+        moneyflow = dict(getKv("asharemoneyflow.cc", "m.cc"))
     bk = set(base.keys())
     ik = set(indicator.keys())
     mk = set(moneyflow.keys())
+    print len(bk), len(ik), len(mk)
     keys = bk.intersection(ik).intersection(mk)
     print len(keys)
     
@@ -31,7 +33,7 @@ if __name__ == "__main__":
         fout.write(moneyflow[k])
         fout.write(indicator[k])
         fout.write("\n")
-        if c % 10000 == 0:
+        if c % 1000000 == 0:
             print c
         
 
