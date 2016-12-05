@@ -205,3 +205,15 @@ v72:
   batch_size: 1024
   gamma: 0.5
   division: [1.002, 1.011, 1.012, 1.014, 1.016, 1.018, 1.019]
+  model: ['', e0, e10, e0, e3, e10, e0]
+
+v73:
+  fe: f30
+  net: [2048, 1024, 1024]
+  keep_prob: 0.3
+  epochs: [10, 5]
+  lr: 0.001
+  batch_size: 1024
+  gamma: 0.5
+  division: [1.002, 1.008, 1.009, 1.010, 1.013, 1.015, 1.017]
+  model: ['', e8, e2, e8, e9, weight, e13]

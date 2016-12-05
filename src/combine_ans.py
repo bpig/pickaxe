@@ -42,7 +42,11 @@ def process(fins, fout):
 def getInput(tgt):
     fins = []
     for value in tgt.split("+"):
-        key, subs = value.split(",")
+        try:
+            key, subs = value.split(",")
+        except:
+            key = value
+            subs = "123456"
         for n in subs:
             fins += ["ans/" + key + "0" + n]
     return fins
