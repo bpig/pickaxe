@@ -33,8 +33,20 @@ if __name__ == "__main__":
         fout.write(moneyflow[k])
         fout.write(indicator[k])
         fout.write("\n")
+        
+        bl = len(base[k].split(","))
+        ml = len(moneyflow[k].split(","))
+        il = len(indicator[k].split(","))
+        assert bl + ml + il == 70, "%s %d, %d, %d" % (k, bl, ml, il)
+
         if c % 1000000 == 0:
             print c
+        fout.flush()
         
+    cmd = "hdfs dfs -rmr htk/big.cc"
+    os.system(cmd)
+    cmd = "hdfs dfs -put data/big.cc htk/big.cc"
+    os.system(cmd)
+
 
         
