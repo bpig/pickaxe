@@ -3,7 +3,7 @@
 from common import *
 from pyspark import SparkConf
 from pyspark import SparkContext
-from data_loader import Ft, Ft2, Ft3
+from data_loader import Ft, Ft2, Ft3, Ft4
 import fea2
 import yaml
 
@@ -60,7 +60,13 @@ if __name__ == "__main__":
     fout = "htk/fe/%s/raw" % model
 
     feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f1
-    ftType = Ft3 if "ft_type" in cfg and cfg["ft_type"] == "ft3" else Ft2
+    ftMap = {
+        "ft3": Ft3,
+        "ft4": Ft4,
+        }
+
+    ftType = ftMap[cfg["ft_type"]] if "ft_type" in cfg else Ft2
+
     print feaFunc, ftType
     fe = rdd.map(genOneStock(feaFunc, ftType)).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)

@@ -39,6 +39,35 @@ Ft3 = collections.namedtuple(
      'tgt',
      ])
 
+Ft4 = collections.namedtuple(
+    'Ft4',
+    ['ds', 'rate', 'volumn', 'amount', 'pe',
+     's', 'high', 'low', 'e', 'turnover',
+     'shares', 's_rate', 'h_rate', 'l_rate', 'e_rate',
+     'status', 's_status', 'wav_status', 'e_status', 'a_rate',
+     'v_rate',
+
+     "buy_value_exlarge_order","sell_value_exlarge_order","buy_value_large_order","sell_value_large_order","buy_value_med_order","sell_value_med_order","buy_value_small_order","sell_value_small_order","buy_volume_exlarge_order","sell_volume_exlarge_order","buy_volume_large_order","sell_volume_large_order","buy_volume_med_order","sell_volume_med_order","buy_volume_small_order","sell_volume_small_order","trades_count","buy_trades_exlarge_order","sell_trades_exlarge_order","buy_trades_large_order","sell_trades_large_order","buy_trades_med_order","sell_trades_med_order","buy_trades_small_order","sell_trades_small_order","s_mfd_inflowvolume","net_inflow_rate_volume","s_mfd_inflow","net_inflow_rate_value","s_mfd_inflowvolume_large_order","net_inflow_rate_volume_l","s_mfd_inflow_large_order","net_inflow_rate_value_l","moneyflow_pct_volume_l","moneyflow_pct_value_l","buy_value_exlarge_order_act","sell_value_exlarge_order_act","buy_value_large_order_act","sell_value_large_order_act","buy_value_med_order_act","sell_value_med_order_act","buy_value_small_order_act","sell_value_small_order_act","buy_volume_exlarge_order_act","sell_volume_exlarge_order_act","buy_volume_large_order_act","sell_volume_large_order_act","buy_volume_med_order_act","sell_volume_med_order_act","buy_volume_small_order_act","sell_volume_small_order_act",
+
+     "s_li_initiativebuyrate","s_li_initiativebuymoney","s_li_initiativebuyamount","s_li_initiativesellrate","s_li_initiativesellmoney","s_li_initiativesellamount",
+
+     "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R",
+
+     'tgt',
+     ])
+
+#  s.index("v_rate")
+# 20
+#  s.index("buy_value_exlarge_order")
+# 21
+#  s.index("s_li_initiativebuyrate")
+# 72
+#  s.index("A")
+# 78
+#  s.index("tgt")
+# 96
+
+
 Cc = collections.namedtuple(
     'Cc',
     ['ds', 'rate', 'volumn', 'amount', 'pe',

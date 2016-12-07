@@ -30,6 +30,12 @@ def getMoneyValue(info, idx):
 def getIndicatorValue(info, idx):
     return [info[row][idx] for row in range(62, 68)]
 
+def getMissValue(info, idx):
+    return [info[row][idx] for row in range(68, 78)]
+
+def getAdditionValue(info, idx):
+    return [info[row][idx] for row in range(78, 96)]
+
 def getAbsValue(info, idx):
     return [info[row][idx] for row in [2, 3, 5, 6, 7, 8, 9, 10]]
 

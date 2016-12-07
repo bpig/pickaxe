@@ -259,12 +259,34 @@ def f15(info, ex, idx, win=15):
         feas += getRevValue(info, idx + i)
         feas += getMoneyValue(info, idx + i)
         feas += getIndicatorValue(info, idx + i)
+        feas += getMissValue(info, idx + i)
 
     windows = [2, 3, 5, 7, 15]
     for w in windows:
         feas += rateBucket(info[1][idx:idx+w])
         for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
             feas += genBasic(info[i][idx:idx+w])
-        for i in range(22, 69):
+        for i in range(21, 78):
+            feas += genBasic(info[i][idx:idx+w])
+    return feas
+
+@register_kernel
+@fea_frame
+def f16(info, ex, idx, win=15):
+    feas = []
+    for i in range(win):
+        feas += getAbsValue(info, idx + i)
+        feas += getRevValue(info, idx + i)
+        feas += getMoneyValue(info, idx + i)
+        feas += getIndicatorValue(info, idx + i)
+        feas += getMissValue(info, idx + i)
+        feas += getAdditionValue(info, idx + i)
+
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        feas += rateBucket(info[1][idx:idx+w])
+        for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])
+        for i in range(21, 96):
             feas += genBasic(info[i][idx:idx+w])
     return feas

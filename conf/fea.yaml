@@ -133,3 +133,12 @@ f32:  # mis money indicator direct in f14
   predict: 20161100-20170000
   ft_type: ft3
   func: f15
+
+
+f33:  # add addition
+  raw: ex.cc
+  train: 20150000-20160500
+  test: 20160500-20161100
+  predict: 20161100-20170000
+  ft_type: ft4
+  func: f16
