@@ -28,7 +28,7 @@ def genEx(v):
     cc = Cc(*v[:11])
 #    for i in [5, 10, 15]:
     base_ex = []
-    for i in [2, 5]:
+    for i in [5, 10, 20, 60]:
         # emv_value, emv_ma = emv(cc, i)
         
         # cr_value = cr(cc, i)
@@ -51,30 +51,31 @@ def genEx(v):
         # wms_value = wms(cc, i)
         # obv_value = obv(cc, i)
         base_ex += [
-            sma_value, ema_value, bias_value, v_value,
-            #emv_value, emv_ma, cr_value, br_value, 
+            sma_value ,
+            # ema_value, bias_value, v_value,
+            # emv_value, emv_ma, cr_value, br_value, 
             # boll_rate, boll_std, 
             # rsi_value, cci_value, osc_value, psy_value, wms_value,
             # obv_value
         ]
-    base_ex += [base_ex[0] / base_ex[4]]
-    base_ex[-1][np.isinf(base_ex[-1])] = 0
-    base_ex += [base_ex[1] / base_ex[5]]
-    base_ex[-1][np.isinf(base_ex[-1])] = 0
-    base_ex += [base_ex[2] / base_ex[6]]
-    base_ex[-1][np.isinf(base_ex[-1])] = 0
-    base_ex += [base_ex[3] / base_ex[7]]
-    base_ex[-1][np.isinf(base_ex[-1])] = 0
-    ex += base_ex
-    # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
-    for (a, b, c) in [(4, 2, 2)]:
-        k, d, j = kdj(cc, a, b, c)
-        ex += [k, d, j]
+    # base_ex += [base_ex[0] / base_ex[4]]
+    # base_ex[-1][np.isinf(base_ex[-1])] = 0
+    # base_ex += [base_ex[1] / base_ex[5]]
+    # base_ex[-1][np.isinf(base_ex[-1])] = 0
+    # base_ex += [base_ex[2] / base_ex[6]]
+    # base_ex[-1][np.isinf(base_ex[-1])] = 0
+    # base_ex += [base_ex[3] / base_ex[7]]
+    # base_ex[-1][np.isinf(base_ex[-1])] = 0
+    # ex += base_ex
+    # # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
+    # for (a, b, c) in [(4, 2, 2)]:
+    #     k, d, j = kdj(cc, a, b, c)
+    #     ex += [k, d, j]
     
-    # for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5)]:
-    for (l, s, m) in [(5, 3, 2)]:
-        diff, diff_ma, diff_ema = macd(cc, l, s, m)
-        ex += [diff]
+    # # for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5)]:
+    # for (l, s, m) in [(5, 3, 2)]:
+    #     diff, diff_ma, diff_ema = macd(cc, l, s, m)
+    #     ex += [diff]
     
     # ex += [cdp(cc)]
     
@@ -101,8 +102,8 @@ def extend(key, v):
     wav_status = map(getWavStatus, h_rate, l_rate)
     e_status = map(getStatus, e_rate)
     
-    # ex = genEx(v)
-    ex = []
+    ex = genEx(v)
+#    ex = []
     
     work_day = range(len(e_rate), 0, -1)
     
@@ -127,6 +128,6 @@ def extend(key, v):
     work_day = map(str, work_day)
     aux = [v[0], work_day, v[4], v[5], v[6], v[7], v[8], v[15], v[16], v[18]]
     for i in range(len(aux)):
-        aux[i] = aux[i][:150]
+        aux[i] = aux[i][:200]
     return v, aux, ex
 

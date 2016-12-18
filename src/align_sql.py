@@ -1,3 +1,4 @@
+# coding:utf-8
 from common import *
 
 def getKv(*args):
@@ -13,6 +14,11 @@ def getKv(*args):
             yield key, value
 
 if __name__ == "__main__":
+    cmd = "scp -P 8022 yingyang@61.130.4.98:/home/yingyang/公共的/sql/m.cc data"
+    os.system(cmd)
+    cmd = "scp -P 8022 yingyang@61.130.4.98:/home/yingyang/公共的/sql/i.cc data"
+    os.system(cmd)
+
     with TimeLog():
         base = dict(getKv("total.cc"))
     with TimeLog():
