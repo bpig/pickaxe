@@ -31,6 +31,7 @@ from functools import wraps
 try:
     import yaml
     import pandas as pd
+    import tushare as ts
 except:
     pass
 

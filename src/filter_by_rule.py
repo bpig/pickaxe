@@ -6,6 +6,14 @@ __date__ = "11/2/16"
 from common import *
 from data_loader import getAns, getFt, Aux, formatAns
 
+def filterByMa(ds, aux, exKv):
+    def _inter(_):
+        ft = aux[_.code]
+        ex = exKv[_.code]
+        idx = ft.ds.index(ds)
+        return float(ft.e[idx]) > ex[1][idx] > ex[2][idx] > ex[3][idx] > ex[4][idx]
+    return _inter
+
 def filterByStop(ds, aux):
     def _inter(_):
         ft = aux[_.code]
@@ -51,12 +59,22 @@ def process(fin, newSt=False, high=False, st=False, jump=False, output=False):
     #    print idx, ft2.ds[:idx+1], ft2.status[:idx+1]#, ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
     #    sys.exit(1)
     st2016 = set(map(str.strip, open("data/2016.st")))
+
+    exKv = {}
+    for f in os.listdir("raw/f13e"):
+        if "dumper" in f:
+            continue
+        ex = np.load("raw/f13e/" + f)
+        exKv[f] = ex
     
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
         
         ans = filter(filterByStop(ds, aux), ans)
         ct += [len(ans)]
+
+        # ans = filter(filterByMa(ds, aux, exKv), ans)
+        # ct += [len(ans)]
         
         if not st:
             ans = filter(lambda _: _.code not in st2016, ans)
