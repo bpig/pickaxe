@@ -152,6 +152,14 @@ def getUsedModel(tgt, checkExist=True):
         fins = filter(lambda x:os.path.exists("model/" + x), fins)
     return fins
 
+def readFile(filename):
+    fin = open(filename)
+    next(fin)
+    for l in fin:
+        l = l.strip()
+        if not l:
+            continue
+        yield l
 
 if __name__ == '__main__':
     def a():
