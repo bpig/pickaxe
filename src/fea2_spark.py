@@ -7,6 +7,12 @@ from data_loader import Ft, Ft2, Ft3, Ft4
 import fea2
 import yaml
 
+cat = {}
+for l in readFile("data/cat.cc", skipHead=False):
+    items = l.split(",")
+    key = items[0]
+    cat[key] = items[1:]
+
 def genOneStock(func, ftType):
     def _inter(kv):
         key, (info, ex) = kv
@@ -20,7 +26,9 @@ def genOneStock(func, ftType):
         f = StringIO(ex)
         ex = np.load(f)
         
-        return func(key, info, ex)
+        gb = cat[key[:-3]]
+
+        return func(key, info, gb)
     return _inter
 
 def getSC(appName='aux'):
@@ -68,7 +76,7 @@ if __name__ == "__main__":
     ftType = ftMap[cfg["ft_type"]] if "ft_type" in cfg else Ft2
 
     print feaFunc, ftType
-    fe = rdd.map(genOneStock(feaFunc, ftType)).filter(len).flatMap(lambda x: x)
+    fe = rdd.filter(lambda x: x[0][:-3] in cat).map(genOneStock(feaFunc, ftType)).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
 # spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

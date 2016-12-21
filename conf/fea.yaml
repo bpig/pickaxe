@@ -142,3 +142,10 @@ f33:  # add addition
   predict: 20161100-20170000
   ft_type: ft4
   func: f16
+
+f40:
+  raw: 2010.cc
+  train: 20140000-20160500
+  test: 20160500-20161100
+  predict: 20161100-20170000
+  func: f17

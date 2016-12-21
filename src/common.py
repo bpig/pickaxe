@@ -152,9 +152,10 @@ def getUsedModel(tgt, checkExist=True):
         fins = filter(lambda x:os.path.exists("model/" + x), fins)
     return fins
 
-def readFile(filename):
+def readFile(filename, skipHead=True):
     fin = open(filename)
-    next(fin)
+    if skipHead:
+        next(fin)
     for l in fin:
         l = l.strip()
         if not l:

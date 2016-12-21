@@ -290,3 +290,25 @@ def f16(info, ex, idx, win=15):
         for i in range(21, 96):
             feas += genBasic(info[i][idx:idx+w])
     return feas
+
+@register_kernel
+@fea_frame
+def f17(info, ex, idx, win=15):
+    feas = []
+    for i in range(win):
+        feas += getAbsValue(info, idx + i)
+        feas += getRevValue(info, idx + i)
+
+    for i in range(1, win):
+        n = idx + i
+        feas += [0 if info[row][n] == 0 else info[row][idx] / info[row][n]
+                 for row in [2, 3, 5, 6, 7, 8, 9]]
+
+    windows = [2, 3, 5, 7, 15]
+    for w in windows:
+        feas += rateBucket(info[1][idx:idx+w])
+        for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
+            feas += genBasic(info[i][idx:idx+w])[1:]
+    if feas:
+        feas += ex
+    return feas
