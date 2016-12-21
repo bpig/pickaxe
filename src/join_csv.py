@@ -23,6 +23,28 @@ def join():
             value = value[:pos]
             fout.write(key + "," + value + "\n")
 
+def joinIndex():
+    args = getArgs()
+    fout = open("data/" + args.tgt, "w")    
+    dirname = "share/index/"
+    for f in os.listdir(dirname):
+        if not f.endswith(".csv"):
+            continue
+        if f[:-4] not in ['000001', '399001', '000300', '000905', '399005', '399006']:
+            continue
+        t = dirname + f
+        for l in readFile(t):
+            pos = l.find(',')
+            assert pos != -1
+
+            value = l[pos+1:]
+            value = value.replace("-", "")
+
+            pos = value.rfind(',')
+            key = value[pos+1:]
+            value = value[:pos]
+            fout.write(key + "," + value + "\n")
+
 def bucketize(filename, st):
     values = set()
     for l in readFile(filename):
@@ -87,6 +109,6 @@ def genCat():
         fout.write(k + "," + value + "\n")
 
 if __name__ == "__main__":
-    join()
+    joinIndex()
     # genCat()
 

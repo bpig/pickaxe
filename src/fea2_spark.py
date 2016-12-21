@@ -13,6 +13,11 @@ for l in readFile("data/cat.cc", skipHead=False):
     key = items[0]
     cat[key] = items[1:]
 
+gb = defaultdict(dict)
+for l in readFile("data/gb.cc", skipHead=False):
+    items = l.split(",")
+    gb[items[0]][items[1]] = items[2:]
+
 def genOneStock(func, ftType):
     def _inter(kv):
         key, (info, ex) = kv
@@ -26,9 +31,9 @@ def genOneStock(func, ftType):
         f = StringIO(ex)
         ex = np.load(f)
         
-        gb = cat[key[:-3]]
-
-        return func(key, info, gb)
+        c = cat[key[:-3]]
+        mix = (ex, c, gb)
+        return func(key, info, mix)
     return _inter
 
 def getSC(appName='aux'):

@@ -8,9 +8,17 @@ def concatRecord(feas, info, idx, key):
     feas = map(str, feas)
     return (key + "_" + ds, ",".join(feas))
 
+# open,close,high,low,volume
+def getGb(gb, dates):
+    fea = []
+    for k in gb:
+        for ds in dates:
+            fea += gb[k][ds]
+    return fea
+    
 def fea_frame(func):
     @wraps(func)
-    def _inter(key, info, ex, win=15):
+    def _inter(key, info, mix, win=15):
         # omit = max(60, win)
         omit = win
         if len(info.ds) < omit:
@@ -18,8 +26,9 @@ def fea_frame(func):
         select = range(len(info.ds) - omit + 1)
         ans = []
         for idx in select:
-            feas = func(info, ex, idx, win)
+            feas = func(info, mix, idx, win)
             if feas:
+                feas += getGb(mix[2], info.ds[idx:idx+10])
                 ans += [concatRecord(feas, info, idx, key)]
         return ans
     return _inter

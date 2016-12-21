@@ -2,7 +2,7 @@
 from common import *
 from tqdm import tqdm
 
-start_date = '2015-01-01'
+start_date = '2014-01-01'
 end_date = '2017-12-31'
 
 # start_date = '2016-12-19'
@@ -61,4 +61,5 @@ def getCat():
     df.to_csv("share/cat/zz500.csv", encoding='utf-8')
 
 if __name__ == "__main__"    :
-    getCat()
+    getIndex()
+    # getCat()

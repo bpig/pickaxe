@@ -293,7 +293,7 @@ def f16(info, ex, idx, win=15):
 
 @register_kernel
 @fea_frame
-def f17(info, ex, idx, win=15):
+def f17(info, mix, idx, win=15):
     feas = []
     for i in range(win):
         feas += getAbsValue(info, idx + i)
@@ -310,5 +310,5 @@ def f17(info, ex, idx, win=15):
         for i in [2, 3, 9, 11, 12, 13, 14, 19, 20]:
             feas += genBasic(info[i][idx:idx+w])[1:]
     if feas:
-        feas += ex
+        feas += mix[1]
     return feas
