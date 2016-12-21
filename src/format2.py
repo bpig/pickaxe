@@ -66,11 +66,12 @@ def genEx(v):
     # base_ex[-1][np.isinf(base_ex[-1])] = 0
     # base_ex += [base_ex[3] / base_ex[7]]
     # base_ex[-1][np.isinf(base_ex[-1])] = 0
-    # ex += base_ex
+
+    ex += base_ex
     # # for (a, b, c) in [(4, 2, 2), (9, 3, 3), (16, 4, 4)]:
-    # for (a, b, c) in [(4, 2, 2)]:
-    #     k, d, j = kdj(cc, a, b, c)
-    #     ex += [k, d, j]
+    for (a, b, c) in [(9, 3, 3)]:
+        k, d, j = kdj(cc, a, b, c)
+        ex += [k, d, j]
     
     # # for (l, s, m) in [(5, 3, 2), (10, 5, 3), (15, 7, 5)]:
     # for (l, s, m) in [(5, 3, 2)]:
@@ -86,6 +87,8 @@ def genEx(v):
     # for a in [10, 15]:
     #     vr_value = vr(cc, a)
     #     ex += [vr_value]
+
+
     return ex
 
 def extend(key, v):
