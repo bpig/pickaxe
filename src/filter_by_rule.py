@@ -22,6 +22,19 @@ def filterByStop(ds, aux):
     
     return _inter
 
+# decrease in vol if decrease in close price
+def filterByVol(ds, aux):
+    def _inter(_):
+        ft = aux[_.code]
+        idx = ft.ds.index(ds)
+        if float(ft.e[idx]) >= float(ft.pe[idx]):
+            return True
+        preVol = float(ft.vol[idx + 1])
+        vol = float(ft.vol[idx])
+        return vol < preVol
+    
+    return _inter
+
 def filterByJump(ds, aux):
     def _inter(_):
         ft = aux[_.code]
@@ -60,17 +73,20 @@ def process(fin, newSt=False, high=False, st=False, jump=False, output=False):
     #    sys.exit(1)
     st2016 = set(map(str.strip, open("data/2016.st")))
 
-    exKv = {}
-    for f in os.listdir("raw/f13e"):
-        if "dumper" in f:
-            continue
-        ex = np.load("raw/f13e/" + f)
-        exKv[f] = ex
+    # exKv = {}
+    # for f in os.listdir("raw/f13e"):
+    #     if "dumper" in f:
+    #         continue
+    #     ex = np.load("raw/f13e/" + f)
+    #     exKv[f] = ex
     
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
         
         ans = filter(filterByStop(ds, aux), ans)
+        ct += [len(ans)]
+
+        ans = filter(filterByVol(ds, aux), ans)
         ct += [len(ans)]
 
         # ans = filter(filterByMa(ds, aux, exKv), ans)
@@ -110,4 +126,4 @@ def getArgs():
 if __name__ == "__main__":
     args = getArgs()
     tgt = "ans/" + args.tgt
-    process(tgt, args.n)
+    process(tgt, output=True)

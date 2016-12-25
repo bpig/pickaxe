@@ -20,7 +20,7 @@ def getArgs():
     return parser.parse_args()
 
 def isNew(fin):
-    keys = "acc v5 v6 v7".split()
+    keys = "acc v5 v6 v7 v8".split()
     for k in keys:
         if k in fin:
             return True
