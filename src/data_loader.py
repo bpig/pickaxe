@@ -7,7 +7,7 @@ from common import *
 Aux = collections.namedtuple(
     'Aux',
     ['ds', 'work_day', 'pe', 's', 'high',
-     'low', 'e', 'status', 's_status', 'e_status'])
+     'low', 'e', 'status', 's_status', 'e_status', 'vol'])
 
 Ft = collections.namedtuple(
     'Ft',

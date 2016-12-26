@@ -31,7 +31,8 @@ def filterByVol(ds, aux):
             return True
         preVol = float(ft.vol[idx + 1])
         vol = float(ft.vol[idx])
-        return vol < preVol
+        # print _.code, vol / preVol
+        return vol < preVol * 0.6
     
     return _inter
 
@@ -73,12 +74,12 @@ def process(fin, newSt=False, high=False, st=False, jump=False, output=False):
     #    sys.exit(1)
     st2016 = set(map(str.strip, open("data/2016.st")))
 
-    # exKv = {}
-    # for f in os.listdir("raw/f13e"):
-    #     if "dumper" in f:
-    #         continue
-    #     ex = np.load("raw/f13e/" + f)
-    #     exKv[f] = ex
+    exKv = {}
+    for f in os.listdir("raw/f13e"):
+        if "dumper" in f:
+            continue
+        ex = np.load("raw/f13e/" + f)
+        exKv[f] = ex
     
     for ds, ans in sorted(getAns(fin)):
         ct = [len(ans)]
@@ -86,8 +87,8 @@ def process(fin, newSt=False, high=False, st=False, jump=False, output=False):
         ans = filter(filterByStop(ds, aux), ans)
         ct += [len(ans)]
 
-        ans = filter(filterByVol(ds, aux), ans)
-        ct += [len(ans)]
+        # ans = filter(filterByVol(ds, aux), ans)
+        # ct += [len(ans)]
 
         # ans = filter(filterByMa(ds, aux, exKv), ans)
         # ct += [len(ans)]

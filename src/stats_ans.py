@@ -11,21 +11,16 @@ if __name__ == "__main__":
     c = 0
     ans = []
     for k in aux:
-        # if k != "601127.SH":
-        #     continue
         v = 0
         c = 0
         ex = np.load("raw/f13e/" + k)
         for dt in aux[k].ds[2:]:
-            idx = np.where(ex[0]==float(dt))[0][0]
-            # print dt, aux[k].e[idx], ex[1][idx], ex[2][idx], ex[3][idx], ex[4][idx]
+            idx = np.where(ex[0] == float(dt))[0][0]
+
             if float(aux[k].e[idx]) > ex[1][idx] > ex[2][idx] > ex[3][idx] > ex[4][idx]:
                 try:
                     if float(aux[k].e[idx-2]) > float(aux[k].s[idx-1]):
                         v += 1
-                        # print dt, k
-                        # if v == 3:
-                        #     sys.exit(1)
                     c += 1
                 except:
                     print k, len(aux[k].e), len(aux[k].s), idx
