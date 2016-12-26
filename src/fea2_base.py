@@ -28,7 +28,7 @@ def fea_frame(func):
         for idx in select:
             feas = func(info, mix, idx, win)
             if feas:
-                feas += getGb(mix[2], info.ds[idx:idx+10])
+                # feas += getGb(mix[2], info.ds[idx:idx+10])
                 ans += [concatRecord(feas, info, idx, key)]
         return ans
     return _inter

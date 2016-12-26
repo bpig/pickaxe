@@ -20,6 +20,9 @@ def getKv(line):
 def cal(lt):
     lt = map(lambda x: x.split(","), lt)
     lt = sorted(lt, key=lambda x: x[0], reverse=True)
+    # lt = filter(lambda x:x[0] > "20140000", lt)
+    if not lt:
+        return []
     lt = zip(*lt)
     
     lt, aux, ex = format2.extend(key="no_use", v=lt)
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     sc = getSC()
     fin = "htk/" + cfg["raw"]
     rdd = sc.textFile(fin, 1000)
-    rdd = rdd.map(getKv).filter(len).groupByKey().mapValues(cal)
+    rdd = rdd.map(getKv).filter(len).groupByKey().mapValues(cal).filter(lambda x:len(x[1]))
     rdd.cache()
     
     fout_ex = "htk/ft/%s/ex" % model
