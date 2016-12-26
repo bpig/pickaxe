@@ -14,6 +14,7 @@ import random
 import time
 import sys
 import logging
+import operator
 from itertools import chain
 from cStringIO import StringIO
 from collections import defaultdict
