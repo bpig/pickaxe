@@ -8,14 +8,17 @@ import fea2
 import yaml
 
 gb = []
+gbSet = set(['20160831'])
 for l in readFile("data/000001.csv"):
     l = l.replace("-", "")
     items = l.split(",")
     elems = items[2:-1]
     elems = map(float, elems)
-    assert len(elems) == 5
+    if items[1] in gbSet:
+        continue
     gb += [ [items[1]] + elems ]
-    gb = sorted(gb, operator.itemgetter(0), reversed=True)
+    gbSet.add(items[1])
+gb = sorted(gb, key=operator.itemgetter(0), reverse=True)
 
 def genOneStock(kv):
     key, info = kv
@@ -54,7 +57,7 @@ def genOneStock(kv):
             r10 = r5 = r_5 = r_10 = m10 = m5 = m_5 = m10 = 0
 
         ans += [(ds, (vol, amount, e * shares, 
-                 m10, m5, m_5, m_10, r10, r5, r1, r_5, r_10))]
+                 m10, m5, m_5, m_10, r10, r5, r1, r_5, r_10, 1))]
     return ans
 
 def merge(x, y):
@@ -72,31 +75,39 @@ def getSC(appName='aux'):
 
 def cal(iterator):
     total = list(iterator)
-    total = sorted(total, operator.itemgetter(0), reversed=True))
+    total = sorted(total, key=operator.itemgetter(0), reverse=True)
     win = 15
     ans = []
+    # assert len(gb) == len(total), "%d, %d, %s, %s" % (len(gb), len(total), 
+    #                                                   gb[-1][0], total[-1][0])
+    a = set([gb[_][0] for _ in range(len(gb))])
+    b = set([total[_][0] for _ in range(len(total))])
+    for v in a:
+        if v not in b:
+            assert False, v
+
     for i in range(1, len(total) - win):
-        ds = total[0][i]
+        ds = total[i][0]
         assert gb[i][0] == ds, "%s, %s" % (gb[i][0] , ds)
         tgt = gb[i-1][2] / gb[i][2]
         feas = []
         for j in range(win):
             feas += gb[i+j][1:]
         for j in range(win):
-            feas += total[i+j]
+            feas += total[i+j][1]
         feas += [tgt]
         feas = map(str, feas)
         feas = ",".join(feas)
         ans += [(ds, feas)]
-    return ans
+    yield ans
 
 if __name__ == "__main__":
     sc = getSC()
     
-    fin = "htk/ft/f13/ft" % model
-    ft = sc.sequenceFile(fin)
+    fin = "htk/ft/f13/ft" 
+    rdd = sc.sequenceFile(fin)
     
-    fout = "htk/index/" % model
+    fout = "htk/index/raw" 
 
     fe = rdd.map(genOneStock).filter(len).flatMap(lambda x: x)\
         .reduceByKey(merge).coalesce(1).mapPartitions(cal).flatMap(lambda x: x)
