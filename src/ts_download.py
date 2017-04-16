@@ -8,12 +8,14 @@ end_date = '2013-12-31'
 start_date = '2016-12-27'
 end_date = '2017-12-31'
 
+
 def getShare():
     df = ts.get_stock_basics()
     for code in tqdm(df.index):
-        df = ts.get_k_data(code, start=start_date, end=end_date, 
+        df = ts.get_k_data(code, start=start_date, end=end_date,
                            index=False, retry_count=5, pause=0.005)
         df.to_csv("share/%s.csv" % code, mode="a", header=None)
+
 
 # name = ['000905', '000001']
 
@@ -21,15 +23,17 @@ def getIndex():
     # df = ts.get_index()
     # for code in tqdm(df['code']):
     for code in tqdm(["000001"]):
-        df = ts.get_k_data(code, start=start_date, end=end_date, 
+        df = ts.get_k_data(code, start=start_date, end=end_date,
                            index=True, retry_count=5, pause=0.005)
         df.to_csv("share/index/%s.csv" % code, mode="a", header=None)
+
 
 def getK(ktype):
     df = ts.get_stock_basics()
     for code in tqdm(df.index):
         df = ts.get_k_data(code, ktype=ktype, retry_count=5, pause=0.005)
         df.to_csv("share/%s/%s.csv" % (ktype, code))
+
 
 def getCat():
     os.system("mkdir share/cat")
@@ -61,6 +65,7 @@ def getCat():
     df = ts.get_zz500s()
     df.to_csv("share/cat/zz500.csv", encoding='utf-8')
 
-if __name__ == "__main__"    :
+
+if __name__ == "__main__":
     getIndex()
     # getCat()
