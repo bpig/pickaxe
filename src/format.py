@@ -102,7 +102,7 @@ def dump(kv, filename):
         fout1.write(k + "," + ",".join(aux) + "\n")
 
 def mergeDailyCsv(kv, uniq):
-    dailyCsv = "data/daily"
+    dailyCsv = "macro/daily"
     with CD(dailyCsv):
         for d in os.listdir("."):
             if len(d) > 12 or not d.endswith(".csv"):
@@ -124,6 +124,6 @@ if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
     
-    fin = "data/" + cfg["raw"]
-    fout = "data/2010/2016.ft"
+    fin = "macro/" + cfg["raw"]
+    fout = "macro/2010/2016.ft"
     process(fin, fout, model, merge=True)

@@ -155,9 +155,9 @@ if __name__ == "__main__":
     fe_version = cfg["fe"]
     today = sys.argv[2]
     
-    os.system("mkdir -p data/daily/cache")
+    os.system("mkdir -p macro/daily/cache")
     
-    dailydt = "data/daily/"
+    dailydt = "macro/daily/"
     with CD(dailydt):
         csv = "%s.csv" % today
         if not os.path.exists(csv):
@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
     print "fe"
     fe = "%s.fe" % today
-    dailyfe = "data/fe/%s/daily/" % fe_version
+    dailyfe = "macro/fe/%s/daily/" % fe_version
     os.system("mkdir -p %s" % dailyfe)
     if not os.path.exists(dailyfe + fe):
         print "gen %s" % (dailyfe + fe)

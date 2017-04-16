@@ -4,7 +4,7 @@ from common import *
 
 def getKv(*args):
     for filename in args:
-        for l in open("data/" + filename):
+        for l in open("macro/" + filename):
             l = l.strip()
             if not l or "code" in l or "S_INFO" in l:
                 continue
@@ -16,9 +16,9 @@ def getKv(*args):
 
 
 if __name__ == "__main__":
-    cmd = "scp -P 8022 yingyang@61.130.4.98:/home/yingyang/公共的/sql/m.cc data"
+    cmd = "scp -P 8022 yingyang@61.130.4.98:/home/yingyang/公共的/sql/m.cc macro"
     os.system(cmd)
-    cmd = "scp -P 8022 yingyang@61.130.4.98:/home/yingyang/公共的/sql/i.cc data"
+    cmd = "scp -P 8022 yingyang@61.130.4.98:/home/yingyang/公共的/sql/i.cc macro"
     os.system(cmd)
 
     with TimeLog():
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     keys = bk.intersection(ik).intersection(mk)
     print len(keys)
 
-    fout = open("data/big.cc", "w")
+    fout = open("macro/big.cc", "w")
     for c, k in enumerate(keys):
         fout.write(k)
         fout.write(base[k])
@@ -53,5 +53,5 @@ if __name__ == "__main__":
 
     cmd = "hdfs dfs -rmr htk/big.cc"
     os.system(cmd)
-    cmd = "hdfs dfs -put data/big.cc htk/big.cc"
+    cmd = "hdfs dfs -put macro/big.cc htk/big.cc"
     os.system(cmd)

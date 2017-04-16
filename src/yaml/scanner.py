@@ -49,7 +49,7 @@ class Scanner(object):
         """Initialize the scanner."""
         # It is assumed that Scanner and Reader will have a common descendant.
         # Reader do the dirty work of checking for BOM and converting the
-        # input data to Unicode. It also adds NUL to the end.
+        # input macro to Unicode. It also adds NUL to the end.
         #
         # Reader supports the following methods
         #   self.peek(i=0)       # peek the next i-th character

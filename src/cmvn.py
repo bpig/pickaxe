@@ -7,7 +7,7 @@ from common import *
 Fea = namedtuple("Fea", ["key", "value", "tgt"])
 
 def loadData(filename, hasTgt=True):
-    print time.ctime(), "begin load data"
+    print time.ctime(), "begin load macro"
     datas = []
     for c, l in enumerate(open(filename)):
         l = l.strip()
@@ -25,7 +25,7 @@ def loadData(filename, hasTgt=True):
         datas.append(Fea(key, value, tgt))
         if c % 10000 == 0:
             print time.ctime(), c
-    print time.ctime(), "finish load data", c
+    print time.ctime(), "finish load macro", c
     return datas
 
 def globalCal(data):
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
     
-    tgt = "data/fe/%s/" % model
+    tgt = "macro/fe/%s/" % model
         
     train = tgt + "train"
     test = tgt + "test"

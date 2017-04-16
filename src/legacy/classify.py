@@ -39,10 +39,10 @@ class Classify:
             else:
                 df = pd.concat([df, tp])
             print len(df)
-        df.to_pickle("../data/1.pkl")
+        df.to_pickle("../macro/1.pkl")
         return df
 
 if __name__ == '__main__':
-    os.chdir("../data")
+    os.chdir("../macro")
     cl = Classify()
     cl.get_by_level(1)

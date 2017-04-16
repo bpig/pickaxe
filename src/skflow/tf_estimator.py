@@ -847,7 +847,7 @@ class Estimator(BaseEstimator):
             Where
     
               * `features` are single `Tensor` or `dict` of `Tensor`s
-                     (depending on data passed to `fit`),
+                     (depending on macro passed to `fit`),
               * `targets` are `Tensor` or `dict` of `Tensor`s (for multi-head
                      models). If mode is `ModeKeys.INFER`, `targets=None` will be
                      passed. If the `model_fn`'s signature does not accept

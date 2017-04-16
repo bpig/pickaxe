@@ -390,7 +390,7 @@ def bar_adaptive(current, total, width=80):
     # --- adaptive layout algorithm ---
     #
     # [x] describe the format of the progress bar
-    # [x] describe min width for each data field
+    # [x] describe min width for each macro field
     # [x] set priorities for each element
     # [x] select elements to be shown
     #   [x] choose top priority element min_width < avail_width
@@ -601,7 +601,7 @@ _ 30.0Mb at  3.0 Mbps  eta:   0:00:20   30% [=====         ]
 
     (tmpfile, headers) = urllib.urlretrieve(url, tmpfile, callback_progress)
   File "C:\Python27\lib\urllib.py", line 93, in urlretrieve
-    return _urlopener.retrieve(url, filename, reporthook, data)
+    return _urlopener.retrieve(url, filename, reporthook, macro)
   File "C:\Python27\lib\urllib.py", line 283, in retrieve
     "of %i bytes" % (read, size), result)
 urllib.ContentTooShortError: retrieval incomplete: got only 15239952 out of 24807571 bytes

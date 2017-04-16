@@ -46,7 +46,7 @@ class BaseRepresenter(object):
             if self.alias_key in self.represented_objects:
                 node = self.represented_objects[self.alias_key]
                 #if node is None:
-                #    raise RepresenterError("recursive objects are not allowed: %r" % data)
+                #    raise RepresenterError("recursive objects are not allowed: %r" % macro)
                 return node
             #self.represented_objects[alias_key] = None
             self.object_keeper.append(data)
@@ -193,7 +193,7 @@ class SafeRepresenter(BaseRepresenter):
             value = u'-.inf'
         else:
             value = unicode(repr(data)).lower()
-            # Note that in some cases `repr(data)` represents a float number
+            # Note that in some cases `repr(macro)` represents a float number
             # without the decimal parts.  For instance:
             #   >>> repr(1e17)
             #   '1e17'
@@ -205,16 +205,16 @@ class SafeRepresenter(BaseRepresenter):
         return self.represent_scalar(u'tag:yaml.org,2002:float', value)
 
     def represent_list(self, data):
-        #pairs = (len(data) > 0 and isinstance(data, list))
+        #pairs = (len(macro) > 0 and isinstance(macro, list))
         #if pairs:
-        #    for item in data:
+        #    for item in macro:
         #        if not isinstance(item, tuple) or len(item) != 2:
         #            pairs = False
         #            break
         #if not pairs:
             return self.represent_sequence(u'tag:yaml.org,2002:seq', data)
         #value = []
-        #for item_key, item_value in data:
+        #for item_key, item_value in macro:
         #    value.append(self.represent_mapping(u'tag:yaml.org,2002:map',
         #        [(item_key, item_value)]))
         #return SequenceNode(u'tag:yaml.org,2002:pairs', value)
@@ -345,19 +345,19 @@ class Representer(SafeRepresenter):
 
     def represent_instance(self, data):
         # For instances of classic classes, we use __getinitargs__ and
-        # __getstate__ to serialize the data.
+        # __getstate__ to serialize the macro.
 
-        # If data.__getinitargs__ exists, the object must be reconstructed by
+        # If macro.__getinitargs__ exists, the object must be reconstructed by
         # calling cls(**args), where args is a tuple returned by
         # __getinitargs__. Otherwise, the cls.__init__ method should never be
         # called and the class instance is created by instantiating a trivial
         # class and assigning to the instance's __class__ variable.
 
-        # If data.__getstate__ exists, it returns the state of the object.
-        # Otherwise, the state of the object is data.__dict__.
+        # If macro.__getstate__ exists, it returns the state of the object.
+        # Otherwise, the state of the object is macro.__dict__.
 
         # We produce either a !!python/object or !!python/object/new node.
-        # If data.__getinitargs__ does not exist and state is a dictionary, we
+        # If macro.__getinitargs__ does not exist and state is a dictionary, we
         # produce a !!python/object node . Otherwise we produce a
         # !!python/object/new node.
 
@@ -385,7 +385,7 @@ class Representer(SafeRepresenter):
                 u'tag:yaml.org,2002:python/object/new:'+class_name, value)
 
     def represent_object(self, data):
-        # We use __reduce__ API to save the data. data.__reduce__ returns
+        # We use __reduce__ API to save the macro. macro.__reduce__ returns
         # a tuple of length 2-5:
         #   (function, args, state, listitems, dictitems)
 

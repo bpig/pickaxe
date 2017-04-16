@@ -63,7 +63,7 @@ def searchModel(model, keys):
     model_dir = "model/" + model
 
     fe_version = cfg["fe"]
-    datafile = "data/fe/%s/test" % fe_version    
+    datafile = "macro/fe/%s/test" % fe_version
 
     foutFile = "ans/" + model
     predSet = read_predict_sets(datafile)

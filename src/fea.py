@@ -135,7 +135,7 @@ if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[model]
     ds = sys.argv[2]
-    fin = "data/" + cfg["data"]
-    fout = "data/fe/%s/daily/%s.fe" % (model, ds)
+    fin = "macro/" + cfg["macro"]
+    fout = "macro/fe/%s/daily/%s.fe" % (model, ds)
     with TimeLog():
         process(fin, fout, ds)

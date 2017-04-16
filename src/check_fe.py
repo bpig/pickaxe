@@ -4,8 +4,8 @@ from common import *
 import mlp_feeder
 
 def checkNum(fe_version):
-    tr = "data/fe/%s/train" % fe_version
-    te = "data/fe/%s/test" % fe_version
+    tr = "macro/fe/%s/train" % fe_version
+    te = "macro/fe/%s/test" % fe_version
     tr_k, tr_f, tr_t = mlp_feeder.base_data(tr)
     te_k, te_f, te_t = mlp_feeder.base_data(te)
 
@@ -33,10 +33,10 @@ def checkContent(fe_version):
                 print c + 1, len(mark)
 
 def checkDs(fe_version, ds):
-    te = "data/fe/%s/test" % fe_version
+    te = "macro/fe/%s/test" % fe_version
     print te
     te_k, te_f, te_t = mlp_feeder.base_data(te)
-    ds = "data/fe/%s/daily/%s.fe" % (fe_version, ds)
+    ds = "macro/fe/%s/daily/%s.fe" % (fe_version, ds)
     print ds
     ds_k, ds_f, ds_t = mlp_feeder.base_data(ds)
     for i in range(len(ds_f)):
@@ -64,7 +64,7 @@ def checkDs(fe_version, ds):
 #        sys.exit(1)
 
 def checkTarget(fe_version):
-    te = "data/fe/%s/test" % fe_version
+    te = "macro/fe/%s/test" % fe_version
     te_k, te_f, te_t = mlp_feeder.base_data(te)
 
     print te_f[0][-3:]

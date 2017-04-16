@@ -80,7 +80,7 @@ class Record:
                                          [st['target'][i + step - 1]]])]
 
 if __name__ == '__main__':
-    os.chdir("../data")
+    os.chdir("../macro")
     rd = Record()
     print len(rd.ans)
     rd.dump()

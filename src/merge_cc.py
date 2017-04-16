@@ -149,7 +149,7 @@ def transformOne(filename, table, ct):
     return kv
 
 def mergeCc(cc, dailydt):
-    fout = open("data/total.cc", "w")
+    fout = open("macro/total.cc", "w")
     keys = set()
     for l in open(cc):
         l = l.strip()
@@ -184,10 +184,10 @@ def mergeCc(cc, dailydt):
 if __name__ == "__main__":
     args = getArgs()
     today = args.ds
-    os.system("mkdir -p data/daily/cache")
+    os.system("mkdir -p macro/daily/cache")
     
-    dailydt = "data/daily/"
-    cc = "data/2010.cc"
+    dailydt = "macro/daily/"
+    cc = "macro/2010.cc"
 
     if today:
         with CD(dailydt):
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     if args.u:
         cmd = "hdfs dfs -rmr htk/2010.cc"
         os.system(cmd)
-        cmd = "hdfs dfs -put data/total.cc htk/2010.cc"
+        cmd = "hdfs dfs -put macro/total.cc htk/2010.cc"
         os.system(cmd)
         cmd = "hdfs dfs -ls htk"
         os.system(cmd)

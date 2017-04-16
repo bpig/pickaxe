@@ -213,15 +213,15 @@ if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     
-    fin = "data/" + cfg["data"]
+    fin = "macro/" + cfg["macro"]
     
     if "predict" in cfg:
-        fout = "data/" + cfg["predict"]
+        fout = "macro/" + cfg["predict"]
         process(fin, fout)
         sys.exit(0)
     
-    fout1 = "data/" + cfg["train"]
-    fout2 = "data/" + cfg["test"]
+    fout1 = "macro/" + cfg["train"]
+    fout2 = "macro/" + cfg["test"]
     
     if sys.argv[2] == "test":
         filter_func = lambda x: x >= "20160000"

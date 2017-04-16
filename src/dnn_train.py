@@ -37,7 +37,7 @@ if __name__ == '__main__':
     trainSet, testSet = getData(fin)
     
     n_features = len(trainSet.fea[0])
-    # Specify that all features have real-value data
+    # Specify that all features have real-value macro
     feature_columns = [tf.contrib.layers.real_valued_column("", dimension=n_features)]
     
     # Build 3 layer DNN with 10, 20, 10 units respectively.

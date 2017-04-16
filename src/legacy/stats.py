@@ -67,7 +67,7 @@ def normal(df, vol):
     df[vol] = (df[vol] - df[vol].mean()) / df[vol].std()
 
 if __name__ == '__main__':
-    os.chdir("../data")
+    os.chdir("../macro")
     # st = Stats("sh.pkl")
     
     sh = pd.read_pickle("sh.pkl")

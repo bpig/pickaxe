@@ -39,12 +39,12 @@ if __name__ == "__main__":
 
     fe_version = cfg["fe"]
 
-    datafile = "data/fe/%s/train" % fe_version
+    datafile = "macro/fe/%s/train" % fe_version
 
     division = cfg["division"][idx]
     data = read_data_sets(datafile, division)
 
-    print "model={m}, data={d}".format(d=datafile, m=model)
+    print "model={m}, macro={d}".format(d=datafile, m=model)
 
     config = learn.estimators.run_config.RunConfig(
         gpu_memory_fraction=0.33,
@@ -72,8 +72,8 @@ if __name__ == "__main__":
             classifier.fit(batch_x, batch_y, steps=1)
             print time.ctime(), "batch_step", i
     
-        # te_acc = pred(classifier, data.test.feas, data.test.tgts)
-        # tr_acc = pred(classifier, data.train.feas[:ct], data.train.tgts[:ct])
+        # te_acc = pred(classifier, macro.test.feas, macro.test.tgts)
+        # tr_acc = pred(classifier, macro.train.feas[:ct], macro.train.tgts[:ct])
         # print time.ctime(), "epoch %d, train acc %.6f, test acc %.6f" \
         #     % (epoch, tr_acc, te_acc)
 

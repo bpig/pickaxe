@@ -40,7 +40,7 @@ class DataSet(object):
         if self._index_in_epoch > self._num_examples:
             # Finished epoch
             self._epochs_completed += 1
-            # Shuffle the data
+            # Shuffle the macro
             perm = np.arange(self._num_examples)
             np.random.shuffle(perm)
             self._feas = self._feas[perm]
@@ -64,7 +64,7 @@ def base_data(datafile):
     return keys, feas, tgts
 
 def read_data(datafile, division=None):
-    print time.ctime(), "begin load data"
+    print time.ctime(), "begin load macro"
     keys, feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
@@ -90,6 +90,6 @@ def read_data(datafile, division=None):
     # keys = keys[select.astype(np.bool)]
     # feas = feas[select.astype(np.bool)]
     
-    print time.ctime(), "finish load data"
+    print time.ctime(), "finish load macro"
     return Datasets(key=keys, fea=feas, tgt=tgts)
 

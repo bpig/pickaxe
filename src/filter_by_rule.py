@@ -72,7 +72,7 @@ def process(fin, newSt=False, high=False, st=False, jump=False, output=False):
     #    idx = ft.ds.index("20161111")
     #    print idx, ft2.ds[:idx+1], ft2.status[:idx+1]#, ft2.pe[-1], ft2.e[-1], ft2.ds[-1], ft2.rate[-1]
     #    sys.exit(1)
-    st2016 = set(map(str.strip, open("data/2016.st")))
+    st2016 = set(map(str.strip, open("macro/2016.st")))
 
     exKv = {}
     for f in os.listdir("raw/f13e"):

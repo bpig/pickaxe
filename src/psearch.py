@@ -22,7 +22,7 @@ def searchModel(model, keys, fout):
     model_dir = "model/" + model
     
     fe_version = cfg["fe"]
-    datafile = "data/fe/%s/test" % fe_version
+    datafile = "macro/fe/%s/test" % fe_version
     
     models = getModels(model_dir)
     predSet = read_data(datafile)

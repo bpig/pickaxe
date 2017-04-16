@@ -46,7 +46,7 @@ if __name__ == "__main__":
     with open("conf/model.yaml") as fin:
         cfg = yaml.load(fin)[model[:3]]
         fe_version = cfg["fe"]
-        datafile = "data/fe/%s/train" % fe_version
+        datafile = "macro/fe/%s/train" % fe_version
         data = read_data_sets(datafile, 1.01)
 
     with open("conf/net.yaml") as fin:

@@ -20,6 +20,6 @@ class DataChecker:
         print c
 
 if __name__ == '__main__':
-    os.chdir("../data")
+    os.chdir("../macro")
     dc = DataChecker("sh.pkl")
     dc.checkShares()

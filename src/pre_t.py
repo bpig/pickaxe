@@ -32,10 +32,10 @@ def predOne(model, args):
     fe_version = cfg["fe"]
 
     if args.ds:
-        datafile = "data/fe/%s/daily/%s.fe" % (fe_version, args.ds)
+        datafile = "macro/fe/%s/daily/%s.fe" % (fe_version, args.ds)
         fout = "ans/t" + model[1:]
     else:
-        datafile = "data/fe/%s/test" % fe_version
+        datafile = "macro/fe/%s/test" % fe_version
         fout = "ans/" + model
     
     predSet = read_data(datafile)

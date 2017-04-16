@@ -8,13 +8,13 @@ import fea2
 import yaml
 
 cat = {}
-for l in readFile("data/cat.cc", skipHead=False):
+for l in readFile("macro/cat.cc", skipHead=False):
     items = l.split(",")
     key = items[0]
     cat[key] = items[1:]
 
 gb = defaultdict(dict)
-for l in readFile("data/gb.cc", skipHead=False):
+for l in readFile("macro/gb.cc", skipHead=False):
     items = l.split(",")
     gb[items[0]][items[1]] = items[2:]
 

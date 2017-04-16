@@ -2,7 +2,7 @@ from common import *
 
 def join():
     args = getArgs()
-    fout = open("data/" + args.tgt, "w")
+    fout = open("macro/" + args.tgt, "w")
     st = getCodeByFile("share/cat/st.csv")
 
     for f in os.listdir("share"):
@@ -25,7 +25,7 @@ def join():
 
 def joinIndex():
     args = getArgs()
-    fout = open("data/" + args.tgt, "w")    
+    fout = open("macro/" + args.tgt, "w")
     dirname = "share/index/"
     for f in os.listdir(dirname):
         if not f.endswith(".csv"):
@@ -102,7 +102,7 @@ def genCat():
     concept = bucketize("share/cat/concept.csv", st) # 156
     cat = catByCode(st)
     kv = {}
-    fout = open("data/cat.cc", "w")
+    fout = open("macro/cat.cc", "w")
     for k in st:
         value = industry[k] + area[k] + concept[k] + cat[k]
         value = ",".join(map(str, value))

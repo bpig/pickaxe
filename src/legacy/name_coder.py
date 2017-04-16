@@ -12,7 +12,7 @@ class NameCoder:
             num += 3000
         return prefix + str(num)
     
-    def __init__(self, sh="../data/sh_id.txt", sz="../data/sz_id.txt"):
+    def __init__(self, sh="../macro/sh_id.txt", sz="../macro/sz_id.txt"):
         self.dt = {}
         self.short = []
         self.readFile(sh)

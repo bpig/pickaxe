@@ -4,7 +4,7 @@
 from src.common import *
 
 def trans(filebase):
-    os.chdir("../data")
+    os.chdir("../macro")
     
     filename = filebase + ".xlsx"
     xls_file = pd.ExcelFile(filename)

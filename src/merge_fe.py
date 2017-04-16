@@ -15,7 +15,7 @@ def np_save(prefix, key, fea, tgt):
 
 def mergeForPredict(model, ds):
     fin = "raw/%sp" % model
-    tgt = "data/fe/%s/daily/" % model
+    tgt = "macro/fe/%s/daily/" % model
     fe = tgt + ds + ".fe"
     
     os.system("mkdir -p %s" % tgt)
@@ -62,7 +62,7 @@ def mergeFt(fin, fout):
 
 def mergeForTrain(model):
     fin = "raw/%s" % model
-    tgt = "data/fe/%s/" % model
+    tgt = "macro/fe/%s/" % model
     tr = tgt + "train"
     te = tgt + "test"
     

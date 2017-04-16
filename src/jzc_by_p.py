@@ -17,7 +17,7 @@ def loadFile(fin):
     return kv
 
 def gain(predict, stock, numStock, period, start):
-    st2016 = set(map(str.strip, open("data/2016.st")))
+    st2016 = set(map(str.strip, open("macro/2016.st")))
     ds = sorted(predict.keys())
     totalMoney = [0.5, 0.5]
     updateMoney = [0.5, 0.5]
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     
     pfile = "ans/" + cfg["pout"]
     
-    stockFile = "data/2010/2016.ft"
+    stockFile = "macro/2010/2016.ft"
     try:
         numStock = 50
         numStock = int(sys.argv[2])

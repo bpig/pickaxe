@@ -259,7 +259,7 @@ def add_representer(data_type, representer, Dumper=Dumper):
     """
     Add a representer for the given type.
     Representer is a function accepting a Dumper instance
-    and an instance of the given data type
+    and an instance of the given macro type
     and producing the corresponding representation node.
     """
     Dumper.add_representer(data_type, representer)
@@ -268,7 +268,7 @@ def add_multi_representer(data_type, multi_representer, Dumper=Dumper):
     """
     Add a representer for the given type.
     Multi-representer is a function accepting a Dumper instance
-    and an instance of the given data type or subtype
+    and an instance of the given macro type or subtype
     and producing the corresponding representation node.
     """
     Dumper.add_multi_representer(data_type, multi_representer)

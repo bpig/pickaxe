@@ -49,15 +49,15 @@ if __name__ == '__main__':
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     
-    fin = "data/" + cfg["data"]
+    fin = "macro/" + cfg["macro"]
     if "gb" in cfg:
-        gbfin = "data/" + cfg["gb"]
+        gbfin = "macro/" + cfg["gb"]
         if not os.path.exists(gbfin):
             print "gen gb info"
             global_info.process(fin, gbfin)
             print "finish gb info"
     else:
         gbfin = None
-    fout1 = "data/" + cfg["train"]
-    fout2 = "data/ " + cfg["test"]
+    fout1 = "macro/" + cfg["train"]
+    fout2 = "macro/ " + cfg["test"]
     genTrainAndTest(fin, gbfin, fout1, fout2)

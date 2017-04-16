@@ -120,12 +120,12 @@ def formatAns(_):
     return "_".join(_)
 
 if __name__ == '__main__':
-    # aux = getFt("data/2010/2016.ft.aux", Aux)
+    # aux = getFt("macro/2010/2016.ft.aux", Aux)
     # keys = aux.keys()
     # key = keys[0]
     # print len(aux[key].ds), len(aux[key].work_day)
     
-    # ft = getFt("data/2010/2016.ft")
+    # ft = getFt("macro/2010/2016.ft")
     # print len(ft[key].ds), len(ft[key].target)
     
     for k, ans in getAns("ans/2016_pc"):

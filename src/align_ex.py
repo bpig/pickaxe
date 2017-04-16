@@ -3,7 +3,7 @@ from common import *
 
 def getKv(*args):
     for filename in args:
-        for l in open("data/" + filename):
+        for l in open("macro/" + filename):
             l = l.strip()
             if not l or "code" in l or "S_INFO" in l:
                 continue
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     keys = bk.intersection(ak)
     print "new keys", len(keys)
 
-    fout = open("data/ex.cc", "w")
+    fout = open("macro/ex.cc", "w")
     for c, k in enumerate(keys):
         fout.write(k)
         fout.write(base[k])
@@ -43,5 +43,5 @@ if __name__ == "__main__":
 
     cmd = "hdfs dfs -rmr htk/ex.cc"
     os.system(cmd)
-    cmd = "hdfs dfs -put data/ex.cc htk/ex.cc"
+    cmd = "hdfs dfs -put macro/ex.cc htk/ex.cc"
     os.system(cmd)

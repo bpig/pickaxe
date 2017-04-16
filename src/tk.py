@@ -41,12 +41,12 @@ def train(model, args):
         cfg = yaml.load(fin)[model[:3]]
     
     fe_version = cfg["fe"]
-    datafile = "data/fe/%s/train" % fe_version
+    datafile = "macro/fe/%s/train" % fe_version
     
     division = cfg["division"][idx]
     data = read_data(datafile, division)
     
-    print "model={m}, data={d}".format(d=datafile, m=model)
+    print "model={m}, macro={d}".format(d=datafile, m=model)
     model_dir = "model/" + model + "/"
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)

@@ -6,7 +6,7 @@ import time
 import sys
 
 print(time.ctime())
-mnist = mlp_feeder.read_data_sets("data/20.fe.2015.cmvn.shuf", None)
+mnist = mlp_feeder.read_data_sets("macro/20.fe.2015.cmvn.shuf", None)
 print(time.ctime())
 model_path = "r128_direct/2015"
 
@@ -27,7 +27,7 @@ display_step = 1
 n_hidden_1 = 128  # 1st layer number of features
 n_hidden_2 = 128  # 2nd layer number of features
 n_hidden_3 = 128  # 3nd layer number of features
-n_input = 1673  # MNIST data input (img shape: 28*28)
+n_input = 1673  # MNIST macro input (img shape: 28*28)
 n_classes = 1  # MNIST total classes (0-9 digits)
 
 # tf Graph input

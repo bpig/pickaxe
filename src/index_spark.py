@@ -9,7 +9,7 @@ import yaml
 
 gb = []
 gbSet = set(['20160831'])
-for l in readFile("data/000001.csv"):
+for l in readFile("macro/000001.csv"):
     l = l.replace("-", "")
     items = l.split(",")
     elems = items[2:-1]

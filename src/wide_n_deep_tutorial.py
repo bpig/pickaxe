@@ -33,8 +33,8 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string("model_dir", "", "Base directory for output models.")
 flags.DEFINE_string("model_type", "wide_n_deep", "Valid model types: {'wide', 'deep', 'wide_n_deep'}.")
 flags.DEFINE_integer("train_steps", 200, "Number of training steps.")
-flags.DEFINE_string("train_data", "", "Path to the training data.")
-flags.DEFINE_string("test_data", "", "Path to the test data.")
+flags.DEFINE_string("train_data", "", "Path to the training macro.")
+flags.DEFINE_string("test_data", "", "Path to the test macro.")
 
 COLUMNS = ["age", "workclass", "fnlwgt", "education", "education_num",
            "marital_status", "occupation", "relationship", "race", "gender",
@@ -53,20 +53,20 @@ def download_data(url):
         return tmp.name
 
 def maybe_download():
-    """May be downloads training data and returns train and test file names."""
+    """May be downloads training macro and returns train and test file names."""
     if FLAGS.train_data:
         train_file_name = FLAGS.train_data
     else:
         train_file_name = download_data(
-            "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data")
-        print("Training data is downloaded to %s" % train_file_name)
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.macro")
+        print("Training macro is downloaded to %s" % train_file_name)
     
     if FLAGS.test_data:
         test_file_name = FLAGS.test_data
     else:
         test_file_name = download_data(
             "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test")
-        print("Test data is downloaded to %s" % test_file_name)
+        print("Test macro is downloaded to %s" % test_file_name)
     
     return train_file_name, test_file_name
 

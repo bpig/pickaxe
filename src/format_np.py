@@ -129,7 +129,7 @@ def dump(kv, filename):
     np.save(filename, ary)
 
 def mergeSmallCsv(kv, uniq):
-    smallCsvDir = "data/predict/cache"
+    smallCsvDir = "macro/predict/cache"
     for d in os.listdir(smallCsvDir):
         if len(d) > 12 or not d.endswith(".csv"):
             continue
@@ -144,7 +144,7 @@ def process(fin, fout, merge=False):
     print len(kv), len(uniq)
     if merge:
         mergeSmallCsv(kv, uniq)
-    print "dump data"
+    print "dump macro"
     with TimeLog():
         dump(kv, fout)
 
@@ -152,6 +152,6 @@ if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[sys.argv[1]]
     
-    fin = "data/" + cfg["raw"]
-    fout = "data/" + cfg["data"]
+    fin = "macro/" + cfg["raw"]
+    fout = "macro/" + cfg["macro"]
     process(fin, fout, True)

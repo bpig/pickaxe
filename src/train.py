@@ -90,20 +90,20 @@ class Network(object):
             if monitor_training_cost:
                 cost = self.total_cost(training_data, lmbda)
                 training_cost.append(cost)
-                print "Cost on training data: {}".format(cost)
+                print "Cost on training macro: {}".format(cost)
             if monitor_training_accuracy:
                 accuracy = self.accuracy(training_data, convert=True)
                 training_accuracy.append(accuracy)
-                print "Accuracy on training data: {} ".format(
+                print "Accuracy on training macro: {} ".format(
                     accuracy)
             if monitor_evaluation_cost:
                 cost = self.total_cost(evaluation_data, lmbda, convert=True)
                 evaluation_cost.append(cost)
-                print "Cost on evaluation data: {}".format(cost)
+                print "Cost on evaluation macro: {}".format(cost)
             if monitor_evaluation_accuracy:
                 accuracy = self.accuracy(evaluation_data, convert=True)
                 evaluation_accuracy.append(accuracy)
-                print "Accuracy on evaluation data: {}".format(
+                print "Accuracy on evaluation macro: {}".format(
                     accuracy)
             print
         return evaluation_cost, evaluation_accuracy, \
@@ -114,7 +114,7 @@ class Network(object):
         descent using backpropagation to a single mini batch.  The
         ``mini_batch`` is a list of tuples ``(x, y)``, ``eta`` is the
         learning rate, ``lmbda`` is the regularization parameter, and
-        ``n`` is the total size of the training data set.
+        ``n`` is the total size of the training macro set.
 
         """
         nabla_b = [np.zeros(b.shape) for b in self.biases]

@@ -15,3 +15,5 @@ train
 md
 other
 share
+src/ts/macro/*
+src/ts/top/*

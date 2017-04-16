@@ -7,8 +7,8 @@
 # It's just a record and its only use is producing nice error messages.
 # Parser does not use it for any other purposes.
 #
-#   Reader(source, data)
-# Reader determines the encoding of `data` and converts it to unicode.
+#   Reader(source, macro)
+# Reader determines the encoding of `macro` and converts it to unicode.
 # Reader provides the following methods and attributes:
 #   reader.peek(length=1) - return the next `length` characters
 #   reader.forward(length=1) - move the current position to `length` characters.
@@ -44,7 +44,7 @@ class ReaderError(YAMLError):
 
 class Reader(object):
     # Reader:
-    # - determines the data encoding and converts it to unicode,
+    # - determines the macro encoding and converts it to unicode,
     # - checks if characters are in allowed range,
     # - adds '\0' to the end.
 

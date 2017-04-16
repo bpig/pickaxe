@@ -59,7 +59,7 @@ class RawTransformer:
     
     @staticmethod
     def process(filebase):
-        os.chdir("../data")
+        os.chdir("../macro")
         
         rt = RawTransformer()
         print time.ctime()

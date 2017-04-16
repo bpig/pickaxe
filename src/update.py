@@ -68,7 +68,7 @@ def transformOne(filename, table, ct):
     return ans
 
 if __name__ == '__main__':
-    os.chdir("../data/inc")
+    os.chdir("../macro/inc")
     # now = datetime.datetime.now()
     # print now.year, now.month, now.day
     # yesterday = yesterday(now)
