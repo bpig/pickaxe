@@ -28,19 +28,10 @@ def getWindcodes(conn):
 def getAllDataByDate(conn, start_date, end_date):
     sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, S_DQ_ADJLOW, S_DQ_ADJCLOSE, " + \
            "S_DQ_ADJFACTOR, S_DQ_AVGPRICE , S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices " + \
-           "WHERE TRADE_DT>'%s' and TRADE_DT<'%s';" % (start_date, end_date)
+           "WHERE TRADE_DT>='%s' and TRADE_DT<='%s';" % (start_date, end_date)
 
     sql2 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_TURN, S_DQ_FREETURNOVER FROM ashareeodderivativeindicator " + \
-           "WHERE S_DQ_TURN is not NULL and TRADE_DT>'%s' and TRADE_DT<'%s';" % (start_date, end_date)
-
-    # sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, " + \
-    #        "S_DQ_ADJLOW, S_DQ_ADJCLOSE, S_DQ_ADJFACTOR, S_DQ_AVGPRICE, " + \
-    #        "S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices " + \
-    #        "WHERE TRADE_DT='%s';" % date
-    #
-    # sql2 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_TURN, S_DQ_FREETURNOVER " + \
-    #        "FROM ashareeodderivativeindicator " + \
-    #        "WHERE S_DQ_TURN is not NULL and TRADE_DT='%s';" % date
+           "WHERE S_DQ_TURN is not NULL and TRADE_DT>='%s' and TRADE_DT<='%s';" % (start_date, end_date)
 
     with TimeLog('sql query1,'):
         table1 = pd.read_sql(sql1, conn)
@@ -94,7 +85,7 @@ if __name__ == '__main__':
     try:
         end_date = sys.argv[2]
     except:
-        start_date = end_date
+        end_date = start_date
     conn = connectSQL()
     with TimeLog("%s-%s" % (start_date, end_date)):
         addData(conn, start_date, end_date)
