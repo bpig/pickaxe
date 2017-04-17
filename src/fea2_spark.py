@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     fout = "htk/fe/%s/raw" % model
 
-    feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f1
+    feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f2
     ftMap = {
         "ft3": Ft3,
         "ft4": Ft4,

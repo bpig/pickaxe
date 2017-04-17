@@ -1,12 +1,14 @@
 # -*- coding:utf-8 -*-
 from common import *
 
+
 def concatRecord(feas, info, idx, key):
     ds = info.ds[idx]
     tgt = info.tgt[idx]
     feas += [tgt]
     feas = map(str, feas)
-    return (key + "_" + ds, ",".join(feas))
+    return key + "_" + ds, ",".join(feas)
+
 
 # open,close,high,low,volume
 def getGb(gb, dates):
@@ -15,7 +17,8 @@ def getGb(gb, dates):
         for ds in dates:
             fea += gb[k][ds]
     return fea
-    
+
+
 def fea_frame(func):
     @wraps(func)
     def _inter(key, info, mix, win=15):
@@ -31,25 +34,33 @@ def fea_frame(func):
                 # feas += getGb(mix[2], info.ds[idx:idx+10])
                 ans += [concatRecord(feas, info, idx, key)]
         return ans
+
     return _inter
+
 
 def getMoneyValue(info, idx):
     return [info[row][idx] for row in range(21, 62)]
 
+
 def getIndicatorValue(info, idx):
     return [info[row][idx] for row in range(62, 68)]
+
 
 def getMissValue(info, idx):
     return [info[row][idx] for row in range(68, 78)]
 
+
 def getAdditionValue(info, idx):
     return [info[row][idx] for row in range(78, 96)]
+
 
 def getAbsValue(info, idx):
     return [info[row][idx] for row in [2, 3, 5, 6, 7, 8, 9, 10]]
 
+
 def getRevValue(info, idx):
     return [info[row][idx] for row in [1, 11, 12, 13, 14, 19, 20]]
+
 
 def rateTrans(x):
     x = int(x)
@@ -58,11 +69,13 @@ def rateTrans(x):
     x += 10
     return x
 
+
 def rateHash(rate):
     ans = [0] * 21
     idx = rateTrans(rate)
     ans[idx] = 1
     return ans
+
 
 def rateBucket(rates):
     def trans(x):
@@ -70,26 +83,30 @@ def rateBucket(rates):
         x = min(10, x)
         x = max(-10, x)
         return x
+
     rates = map(trans, rates)
     ans = [0] * 21
     for r in rates:
         ans[r] += 1
     return ans
 
+
 def genBasic(vals):
     vals = np.asarray(vals, dtype=np.float32)
     res = [np.sum(vals), np.mean(vals), np.std(vals), max(vals), min(vals)]
     return res
+
 
 def normalize(value):
     v = np.asarray(value, dtype=np.float32)
     v = (v - v.mean()) / v.std()
     return list(v)
 
+
 def filterByStop(info, win):
-    return np.any(np.asarray(info.volumn[idx:idx+win]) == 0) \
-        or np.any(np.asarray(info.amount[idx:idx+win]) == 0)
-    
+    return np.any(np.asarray(info.volumn[idx:idx + win]) == 0) \
+           or np.any(np.asarray(info.amount[idx:idx + win]) == 0)
+
 
 def genStatus(status):
     ct0 = Counter(map(int, status[0]))
@@ -101,15 +118,17 @@ def genStatus(status):
             ct2[0], ct2[1] + ct2[3], ct2[2] + ct2[3], ct2[3],
             ct3[0], ct3[1], ct3[2]]
 
+
 def getDelta(value, win):
     delta = []
     for i in range(win + 1):
-        delta += [value[i] - value[i+1]]
-        
+        delta += [value[i] - value[i + 1]]
+
     delta2 = []
     for i in range(win):
-        delta2 += [delta[i] - delta[i+1]]
+        delta2 += [delta[i] - delta[i + 1]]
     return delta, delta2
+
 
 def flat(win, *arys):
     feas = []
@@ -117,6 +136,7 @@ def flat(win, *arys):
         for ary in arys:
             feas += list(ary[i])
     return feas
+
 
 def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr1 = [0] * 2
@@ -132,4 +152,3 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4 = [0] * 3
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
-

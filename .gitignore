@@ -11,9 +11,8 @@ daily*
 smsr_dumper
 raw
 *.sh
-train
 md
 other
 share
-src/ts/macro/*
-src/ts/top/*
+src/ts/macro*
+src/ts/top*

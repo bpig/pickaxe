@@ -167,7 +167,7 @@ if __name__ == "__main__":
             print "format"
             with CD("../.."):
                 with TimeLog():
-                    os.system("python src/format.py %s" % fe_version)
+                    os.system("python src/ft.py %s" % fe_version)
         else:
             print "%s in cache" % csv
             print "no need format"

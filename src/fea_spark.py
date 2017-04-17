@@ -7,6 +7,7 @@ from data_loader import Ft
 import fea
 import yaml
 
+
 def genOneFe(info, wins):
     feas = fea.genOneFe(info, wins)
     tgt = info.tgt[0]
@@ -14,6 +15,7 @@ def genOneFe(info, wins):
     feas += [tgt]
     info = map(str, feas)
     return ",".join(info)
+
 
 def process(line):
     pos = line.find(",")
@@ -25,11 +27,11 @@ def process(line):
     # wins = [2, 3, 5, 7, 15]
     wins = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
     maxWin = wins[-1]
-    
+
     ct = len(ds) - 2 - maxWin
     if ct < 0:
         return key, []
-    
+
     feas = []
     for i in range(2, ct + 2):
         info = Ft(*map(lambda x: x[i:i + maxWin], items))
@@ -40,6 +42,7 @@ def process(line):
         feas += [(key + "_" + info.ds[0], fe)]
     return key, feas
 
+
 def getSC(appName='aux'):
     sconf = SparkConf().set("spark.hadoop.validateOutputSpecs", "false") \
         .set("spark.akka.frameSize", "2000") \
@@ -49,6 +52,7 @@ def getSC(appName='aux'):
     sc.addPyFile("src/fea.py")
     sc.addPyFile("src/common.py")
     return sc
+
 
 if __name__ == "__main__":
     with open("conf/fea.yaml") as fin:

@@ -4,12 +4,14 @@ from data_loader import getFt, Ft, getFtEx
 from fea_kernel import *
 from fea_core import *
 
+
 def getBaseInfo(fin):
     st = getFt(fin)
     ex = getFtEx(fin)
     assert set(st.keys()) == set(ex.keys())
     for key in st.keys():
         yield key, st[key], ex[key]
+
 
 def dump(st, fout, ds, predict=False):
     ct = 0
@@ -22,15 +24,18 @@ def dump(st, fout, ds, predict=False):
             ct += 1
     return ct
 
+
 def daySpan(d1, d2):
     v1 = datetime.datetime(int(d1[:4]), int(d1[4:6]), int(d1[6:]))
     v2 = datetime.datetime(int(d2[:4]), int(d2[4:6]), int(d2[6:]))
     return (v2 - v1).days
 
+
 def genBasic(vals):
     vals = np.asarray(vals, dtype=np.float32)
     res = [np.mean(vals), np.std(vals), max(vals), min(vals)]
     return res
+
 
 def genStatus(status):
     ct0 = Counter(status[0])
@@ -41,6 +46,7 @@ def genStatus(status):
             ct1['0'], ct1['1'], ct1['2'],
             ct2['0'], ct2['1'], ct2['2'], ct2['3'],
             ct3['0'], ct3['1'], ct3['2']]
+
 
 def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr1 = [0] * 2
@@ -56,6 +62,7 @@ def oneHotStatus(status, sstatus, wavstatus, estatus):
     arr4[int(estatus)] = 1
     return arr1 + arr2 + arr3 + arr4
 
+
 def genOne(key, info, exinfo, ds, predict=False):
     idx = info.ds.index(ds)
     if not predict:
@@ -67,7 +74,7 @@ def genOne(key, info, exinfo, ds, predict=False):
     elif idx != 0:
         print "index %s of %s must 0" % (ds, key)
         return ""
-    
+
     windows = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
     max_win = windows[-1]
     info = Ft(*map(lambda x: x[idx:idx + max_win], info))
@@ -75,7 +82,7 @@ def genOne(key, info, exinfo, ds, predict=False):
     if len(info.ds) != max_win:
         # print "%s_%s, %d" % (key, ds, len(values[0]))
         return ""
-    
+
     feas = genOneFe(info, exinfo, windows)
     if not predict:
         tgt = info.tgt[0]
@@ -83,6 +90,7 @@ def genOne(key, info, exinfo, ds, predict=False):
         feas += [tgt]
     info = map(str, feas)
     return key + "_" + ds + ":" + ",".join(info) + "\n"
+
 
 def genOneFe(info, exinfo, wins):
     feas = []
@@ -94,7 +102,7 @@ def genOneFe(info, exinfo, wins):
                              info.wav_status[d], info.e_status[d])
     for d in range(maxWin):
         feas += [exinfo[_][d] for _ in range(1, len(exinfo))]
-    
+
     # win fea
     for win in wins:
         fea = []
@@ -108,12 +116,13 @@ def genOneFe(info, exinfo, wins):
         feas += fea
     return feas
 
+
 def process(fin, fout, ds=None):
     np.seterr(all='raise')
     st = getFt(fin)
     dates = set(chain(*map(lambda x: x.ds, st.values())))
     dates = sorted(dates)
-    
+
     if not ds:
         ds = dates[-1]
         print "process ds %s" % ds
@@ -124,17 +133,19 @@ def process(fin, fout, ds=None):
     ct = dump(st, fout, ds, True)
     print time.ctime(), ds, ct
 
+
 def genAll(fin, fout, filter_func):
     st = getFt(fin)
     dates = set(chain(*map(lambda x: x.ds, st.values())))
     dates = sorted(dates)
-    
+
     fout = open(fout, "w")
     dates = filter(filter_func, dates)
     total = len(dates)
     for c, ds in enumerate(dates):
         ct = dump(st, fout, ds)
         print time.ctime(), ds, c, "/", total, ct
+
 
 if __name__ == "__main__":
     model = sys.argv[1]
