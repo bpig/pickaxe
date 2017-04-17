@@ -25,7 +25,7 @@ def cal(lt):
         return []
     lt = zip(*lt)
 
-    lt, aux, ex = ft.extend(key="no_use", v=lt)
+    lt, aux = ft.extend(key="no_use", v=lt)
 
     lt = map(lambda x: "_".join(x), lt)
     lt = ",".join(lt)
@@ -33,12 +33,13 @@ def cal(lt):
     aux = map(lambda x: "_".join(x), aux)
     aux = ",".join(aux)
 
-    f = StringIO()
-    ex = np.asarray(ex)
-    for i in range(len(ex)):
-        ex[i] = np.nan_to_num(ex[i])
-    np.save(f, ex)
-    return lt, aux, bytearray(f.getvalue())
+    # f = StringIO()
+    # ex = np.asarray(ex)
+    # for i in range(len(ex)):
+    #     ex[i] = np.nan_to_num(ex[i])
+    # np.save(f, ex)
+    # return lt, aux, bytearray(f.getvalue())
+    return lt, aux
 
 
 def getSC(appName='aux'):
