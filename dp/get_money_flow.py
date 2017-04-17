@@ -1,13 +1,4 @@
-import MySQLdb
-import os
-import time
-import numpy as np
-import pandas as pd
-
-
-def connectSQL():
-    conn = MySQLdb.connect('localhost', 'yyzc', 'yyzc', 'daily_data')
-    return conn
+from common import *
 
 
 def getWindcodes(conn):
@@ -23,23 +14,21 @@ def getWindcodes(conn):
 
 
 def getAllDataByDate(conn, start_date='20040601', end_date='20170101'):
-    sql1 = 'SELECT S_INFO_WINDCODE, TRADE_DT, BUY_VALUE_EXLARGE_ORDER, SELL_VALUE_EXLARGE_ORDER, \
-		     BUY_VOLUME_EXLARGE_ORDER, SELL_VOLUME_EXLARGE_ORDER, TRADES_COUNT, BUY_TRADES_EXLARGE_ORDER, SELL_TRADES_EXLARGE_ORDER, \
-		     S_MFD_INFLOWVOLUME, NET_INFLOW_RATE_VOLUME, OPEN_MONEYFLOW_PCT_VOLUME_L, CLOSE_MONEYFLOW_PCT_VOLUME_L\
-                     FROM asharemoneyflow WHERE \
-                     TRADE_DT>\'%s\' and TRADE_DT<\'%s\';' % (start_date, end_date)
-    start_time = time.time()
-    print 'executing query1...'
-    result1 = pd.read_sql(sql1, conn)
-    duration = time.time() - start_time
-    print 'done. {}s used.'.format(duration)
+    sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, BUY_VALUE_EXLARGE_ORDER, SELL_VALUE_EXLARGE_ORDER, " + \
+           "BUY_VOLUME_EXLARGE_ORDER, SELL_VOLUME_EXLARGE_ORDER, TRADES_COUNT, BUY_TRADES_EXLARGE_ORDER, " + \
+           "SELL_TRADES_EXLARGE_ORDER, S_MFD_INFLOWVOLUME, NET_INFLOW_RATE_VOLUME, OPEN_MONEYFLOW_PCT_VOLUME_L, " + \
+           "CLOSE_MONEYFLOW_PCT_VOLUME_L FROM asharemoneyflow " + \
+           "WHERE TRADE_DT>='%s' and TRADE_DT<='%s';" % (start_date, end_date)
+
+    with TimeLog('execute sql'):
+        result1 = pd.read_sql(sql1, conn)
 
     return result1
 
 
 def getDataByWindcode(windcode, result1):
     start_time = time.time()
-    print 'processing %s...'%windcode
+    print 'processing %s...' % windcode
 
     final_result = result1[result1.S_INFO_WINDCODE == windcode]
     final_result.drop('S_INFO_WINDCODE', axis=1, inplace=True)
@@ -55,25 +44,20 @@ def getDataByWindcode(windcode, result1):
 
 if __name__ == '__main__':
     dest_path = 'csvData_moneyflow/'
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    if os.path.exists(os.path.join(current_dir, dest_path)) == False:
+    current_dir = curDir()
+    if not os.path.exists(os.path.join(current_dir, dest_path)):
         os.mkdir(os.path.join(current_dir, dest_path))
     conn = connectSQL()
     result1 = getAllDataByDate(conn, start_date='20040601', end_date='20170101')
     codes = getWindcodes(conn)
-    counter = 0
-    length = len(codes)
-    for (code,) in codes:
-        counter += 1
+
+    for (code,) in tqdm(codes):
         codenum = code.split('.')[0]
         file_path = dest_path + codenum + '.csv'
-        if codenum.isdigit() == False:
+        if not codenum.isdigit():
             continue
         if os.path.exists(file_path):
             continue
-        print code
-        print '%d out of %d' % (counter, length)
         df = getDataByWindcode(code, result1)
         df.to_csv(os.path.join(current_dir, dest_path) + codenum + '.csv')
         print 'saved!\n'
-
