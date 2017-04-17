@@ -3,67 +3,68 @@
 from common import *
 from pyspark import SparkConf
 from pyspark import SparkContext
-from data_loader import Ft
-import fea
+from data_loader import Ft, Ft2, Ft3, Ft4
+import fea2
 import yaml
 
 
-def genOneFe(info, wins):
-    feas = fea.genOneFe(info, wins)
-    tgt = info.tgt[0]
-    assert tgt > 0
-    feas += [tgt]
-    info = map(str, feas)
-    return ",".join(info)
+def genOneStock(func, ftType):
+    def _inter(kv):
+        key, (info, ex) = kv
 
+        info = info.split(",")
+        info = map(lambda x: x.split("_"), info)
+        for i in range(1, len(info)):
+            info[i] = map(float, info[i])
+        info = ftType(*info)
 
-def process(line):
-    pos = line.find(",")
-    key = line[:pos]
-    value = line[pos + 1:]
-    items = value.split(",")
-    items = map(lambda x: x.split("_"), items)
-    ds = items[0]
-    # wins = [2, 3, 5, 7, 15]
-    wins = [2, 3, 5, 7, 10, 15, 20, 30, 60, 90, 120]
-    maxWin = wins[-1]
+        f = StringIO(ex)
+        ex = np.load(f)
 
-    ct = len(ds) - 2 - maxWin
-    if ct < 0:
-        return key, []
+        c = cat[key[:-3]]
+        mix = (ex, c, gb)
+        return func(key, info, mix)
 
-    feas = []
-    for i in range(2, ct + 2):
-        info = Ft(*map(lambda x: x[i:i + maxWin], items))
-        # stock is stoped
-        if items[15][i - 1] == '1' or items[15][i - 2] == '1':
-            continue
-        fe = genOneFe(info, wins)
-        feas += [(key + "_" + info.ds[0], fe)]
-    return key, feas
+    return _inter
 
 
 def getSC(appName='aux'):
     sconf = SparkConf().set("spark.hadoop.validateOutputSpecs", "false") \
-        .set("spark.akka.frameSize", "2000") \
-        .set("spark.kryoserializer.buffer.max", "2000")
+        .set("spark.akka.frameSize", "1000") \
+        .set("spark.kryoserializer.buffer.max", "1000")
     sc = SparkContext(appName=appName, conf=sconf)
-    sc.addPyFile("src/data_loader.py")
-    sc.addPyFile("src/fea.py")
+    sc.addPyFile("src/fea2.py")
+    sc.addPyFile("src/fea2_base.py")
     sc.addPyFile("src/common.py")
     return sc
 
 
 if __name__ == "__main__":
+    model = sys.argv[1]
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[sys.argv[1]]
+        cfg = yaml.load(fin)[model]
     sc = getSC()
-    fin = "htk/" + cfg["ft"]
-    fout = "htk/" + cfg["fe"]
-    print "fin", fin
-    print "fout", fout
-    ft = sc.textFile(fin, 500)
-    fe = ft.map(process).values().filter(len).flatMap(lambda x: x)
+
+    fin_ex = "htk/ft/%s/ex" % model
+    ex = sc.sequenceFile(fin_ex)
+
+    fin = "htk/ft/%s/ft" % model
+    ft = sc.sequenceFile(fin)
+
+    rdd = ft.join(ex)
+
+    fout = "htk/fe/%s/raw" % model
+
+    feaFunc = fea2.kernels[cfg["func"]] if "func" in cfg else fea2.f2
+    ftMap = {
+        "ft3": Ft3,
+        "ft4": Ft4,
+    }
+
+    ftType = ftMap[cfg["ft_type"]] if "ft_type" in cfg else Ft2
+
+    print feaFunc, ftType
+    fe = rdd.map(genOneStock(feaFunc, ftType)).filter(len).flatMap(lambda x: x)
     fe.saveAsSequenceFile(fout)
 
 # spark-submit  --num-executors 700 --executor-cores 1 --executor-memory 5g src/fea_spark.py 2010

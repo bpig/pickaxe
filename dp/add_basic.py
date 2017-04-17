@@ -1,74 +1,56 @@
-import pymysql
-import os
-import sys
-import numpy as np
-import pandas as pd
-import time
-import datetime
-from tqdm import tqdm
+from common import *
 
-pd.options.mode.chained_assignment = None
 
-class TimeLog:
-    def __init__(self, name=""):
-        self.n = name
+def strtodatetime(datestr, format="%Y%m%d"):
+    return datetime.datetime.strptime(datestr, format)
 
-    def __enter__(self):
-        self.t = time.time()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        print "%s %.2fs" % (self.n, time.time() - self.t)
-
-def curDir():
-    return os.path.dirname(os.path.realpath(__file__))    
-
-def strtodatetime(datestr,format="%Y%m%d"):
-    return datetime.datetime.strptime(datestr,format)
 
 def datetostr(date):
     return date.strftime('%Y%m%d')
 
-def datediff(beginDate,endDate,format="%Y%m%d"):
-    bd=strtodatetime(beginDate,format)
-    ed=strtodatetime(endDate,format)
+
+def datediff(beginDate, endDate, format="%Y%m%d"):
+    bd = strtodatetime(beginDate, format)
+    ed = strtodatetime(endDate, format)
     delta = ed - bd
     return delta.days
 
-def connectSQL():
-    conn = pymysql.connect(
-            host='localhost', 
-            port=3306, 
-            user='jxb', 
-            passwd='jxb', 
-            db='daily_data')
-    return conn
 
-def getWindcodes(conn, date):
+def getWindcodes(conn):
     with TimeLog('getting codes'):
         cur = conn.cursor()
-        sql = "select distinct S_INFO_WINDCODE from ashareeodprices WHERE TRADE_DT='%s';" %date
+        sql = "select distinct S_INFO_WINDCODE from ashareeodprices"
         cur.execute(sql)
         codes = cur.fetchall()
     return codes
 
-def getAllDataByDate(conn, date):
-    sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, " + \
-        "S_DQ_ADJLOW, S_DQ_ADJCLOSE, S_DQ_ADJFACTOR, S_DQ_AVGPRICE, " + \
-        "S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices " + \
-        "WHERE TRADE_DT='%s';" %date
 
-    sql2 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_TURN, S_DQ_FREETURNOVER " + \
-        "FROM ashareeodderivativeindicator " + \
-        "WHERE S_DQ_TURN is not NULL and TRADE_DT='%s';" %date
+def getAllDataByDate(conn, start_date, end_date):
+    sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, S_DQ_ADJLOW, S_DQ_ADJCLOSE, " + \
+           "S_DQ_ADJFACTOR, S_DQ_AVGPRICE , S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices " + \
+           "WHERE TRADE_DT>'%s' and TRADE_DT<'%s';" % (start_date, end_date)
+
+    sql2 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_TURN, S_DQ_FREETURNOVER FROM ashareeodderivativeindicator " + \
+           "WHERE S_DQ_TURN is not NULL and TRADE_DT>'%s' and TRADE_DT<'%s';" % (start_date, end_date)
+
+    # sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, " + \
+    #        "S_DQ_ADJLOW, S_DQ_ADJCLOSE, S_DQ_ADJFACTOR, S_DQ_AVGPRICE, " + \
+    #        "S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices " + \
+    #        "WHERE TRADE_DT='%s';" % date
+    #
+    # sql2 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_TURN, S_DQ_FREETURNOVER " + \
+    #        "FROM ashareeodderivativeindicator " + \
+    #        "WHERE S_DQ_TURN is not NULL and TRADE_DT='%s';" % date
 
     with TimeLog('sql query1,'):
         table1 = pd.read_sql(sql1, conn)
 
     with TimeLog('sql query2,'):
-       table2 = pd.read_sql(sql2, conn)
+        table2 = pd.read_sql(sql2, conn)
 
     table = table1.merge(table2, on=['TRADE_DT', 'S_INFO_WINDCODE'], how='inner')
     return table
+
 
 def getDataByWindcode(windcode, table):
     data = table[table.S_INFO_WINDCODE == windcode]
@@ -84,18 +66,17 @@ def getDataByWindcode(windcode, table):
 
     return data
 
-def addData(conn, date):
-    codes = getWindcodes(conn, date)
-    if not len(codes):
-        print 'No new data!'
-        exit()
+
+def addData(conn, start_date, end_date):
+    codes = getWindcodes(conn)
+    assert codes
 
     dest_path = "csvData_basic"
     dest_path = os.path.join(curDir(), dest_path)
     if not os.path.exists(dest_path):
         os.mkdir(dest_path)
 
-    table = getAllDataByDate(conn, date)
+    table = getAllDataByDate(conn, start_date, end_date)
 
     for (code,) in tqdm(codes):
         codenum = code.split('.')[0]
@@ -107,9 +88,13 @@ def addData(conn, date):
             data = data.append(data, ignore_index=True)
         data.to_csv(tgt)
 
+
 if __name__ == '__main__':
-    dates = sys.argv[1:]
+    start_date = sys.argv[1]
+    try:
+        end_date = sys.argv[2]
+    except:
+        start_date = end_date
     conn = connectSQL()
-    for current_date in dates:
-        with TimeLog(current_date):
-            addData(conn, current_date)
+    with TimeLog("%s-%s" % (start_date, end_date)):
+        addData(conn, start_date, end_date)

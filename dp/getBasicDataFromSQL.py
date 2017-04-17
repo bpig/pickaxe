@@ -1,13 +1,4 @@
-import MySQLdb
-import os
-import time
-import numpy as np
-import pandas as pd
-
-
-def connectSQL():
-    conn = MySQLdb.connect('localhost', 'yyzc', 'yyzc', 'daily_data')
-    return conn
+from common import *
 
 
 def getWindcodes(conn):
@@ -22,29 +13,9 @@ def getWindcodes(conn):
     return codes
 
 
-def getAllDataByDate(conn, start_date='20040601', end_date='20180101'):
-    sql1 = 'SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, S_DQ_ADJLOW, S_DQ_ADJCLOSE, S_DQ_ADJFACTOR, S_DQ_AVGPRICE \
-                    , S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices WHERE \
-                     TRADE_DT>\'%s\' and TRADE_DT<\'%s\';' % (start_date, end_date)
-    sql2 = 'SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_TURN, S_DQ_FREETURNOVER FROM ashareeodderivativeindicator WHERE \
-                     S_DQ_TURN is not NULL and TRADE_DT>\'%s\' and TRADE_DT<\'%s\';' % (start_date, end_date)
-    start_time = time.time()
-    print 'executing query1...'
-    result1 = pd.read_sql(sql1, conn)
-    duration = time.time() - start_time
-    print 'done. {}s used.'.format(duration)
-
-    start_time = time.time()
-    print 'executing query2...'
-    result2 = pd.read_sql(sql2, conn)
-    duration = time.time() - start_time
-    print 'done. {}s used.'.format(duration)
-    return result1, result2
-
-
 def getDataByWindcode(windcode, result1, result2):
     start_time = time.time()
-    print 'processing %s...'%windcode
+    print 'processing %s...' % windcode
 
     data1 = result1[result1.S_INFO_WINDCODE == windcode]
     data2 = result2[result2.S_INFO_WINDCODE == windcode]
@@ -64,7 +35,6 @@ def getDataByWindcode(windcode, result1, result2):
     print 'done. {}s used.'.format(duration)
     final_result['TRADE_DT'] = final_result['TRADE_DT'].astype(str)
     return final_result
-
 
 
 if __name__ == '__main__':
