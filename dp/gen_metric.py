@@ -161,36 +161,36 @@ def ComputeMA5_GT_MA20(stockData, derivativeData):
         derivativeData['MA5_GT_MA20_' + str(gt)] = stockData['MA5_GT_MA20_' + str(gt)][:-gt]
 
 
-def HandleData(st, no_halt=False):
-    stockData = pd.read_csv(os.path.join(BASIC_DATA, st), parse_dates=[0])
+def HandleData(st_code, no_halt=False):
+    stock = pd.read_csv(os.path.join(BASIC_DATA, st_code), parse_dates=[0])
 
     if no_halt:
-        stockData = stockData[stockData['S_DQ_VOLUME'] > 0].reset_index(drop=True)
+        stock = stock[stock['S_DQ_VOLUME'] > 0].reset_index(drop=True)
 
-    derivativeData = pd.DataFrame(stockData['TRADE_DT'])
+    metric = pd.DataFrame(stock['TRADE_DT'])
 
-    ComputeMA(stockData, derivativeData)
-    ComputeEMA(stockData, derivativeData)
-    ComputeBIAS(stockData, derivativeData)
-    ComputeMTM(stockData, derivativeData)
-    ComputePSY(stockData, derivativeData)
-    ComputeRSI(stockData, derivativeData)
-    ComputeVR(stockData, derivativeData)
-    ComputeOCDELTA(stockData, derivativeData)
-    ComputeAADELTA(stockData, derivativeData)
-    ComputeOODELTA(stockData, derivativeData)
-    ComputeTSTD(stockData, derivativeData)
-    ComputeTopOverCurrent(stockData, derivativeData)
-    ComputeTopDistance(stockData, derivativeData)
-    ComputeMA5_GT_MA20(stockData, derivativeData)
+    ComputeMA(stock, metric)
+    ComputeEMA(stock, metric)
+    ComputeBIAS(stock, metric)
+    ComputeMTM(stock, metric)
+    ComputePSY(stock, metric)
+    ComputeRSI(stock, metric)
+    ComputeVR(stock, metric)
+    ComputeOCDELTA(stock, metric)
+    ComputeAADELTA(stock, metric)
+    ComputeOODELTA(stock, metric)
+    ComputeTSTD(stock, metric)
+    ComputeTopOverCurrent(stock, metric)
+    ComputeTopDistance(stock, metric)
+    ComputeMA5_GT_MA20(stock, metric)
 
-    assert len(derivativeData['TRADE_DT']) > 0, st
-    derivativeData['TRADE_DT'] = derivativeData['TRADE_DT'].dt.strftime('%Y%m%d')
+    assert len(metric['TRADE_DT']) > 0, st_code
+    metric['TRADE_DT'] = metric['TRADE_DT'].dt.strftime('%Y%m%d')
 
     if no_halt:
-        derivativeData.to_csv(os.path.join(NO_HALT_METRIC_DATA, st))
+        metric.to_csv(os.path.join(NO_HALT_METRIC_DATA, st_code))
     else:
-        derivativeData.to_csv(os.path.join(METRIC_DATA, st))
+        metric.to_csv(os.path.join(METRIC_DATA, st_code))
 
 
 if __name__ == '__main__':
