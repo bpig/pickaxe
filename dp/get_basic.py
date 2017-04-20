@@ -1,15 +1,6 @@
 from common import *
 
 
-def getWindcodes(conn):
-    with TimeLog('getting codes'):
-        cur = conn.cursor()
-        sql = "select distinct S_INFO_WINDCODE from ashareeodprices"
-        cur.execute(sql)
-        codes = cur.fetchall()
-    return codes
-
-
 def getAllDataByDate(conn, start_date, end_date):
     sql1 = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGH, S_DQ_ADJLOW, S_DQ_ADJCLOSE, " + \
            "S_DQ_ADJFACTOR, S_DQ_AVGPRICE , S_DQ_VOLUME, S_DQ_AMOUNT FROM ashareeodprices " + \

@@ -35,6 +35,15 @@ def connectSQL():
     return conn
 
 
+def getWindcodes(conn):
+    with TimeLog('getting codes'):
+        cur = conn.cursor()
+        sql = "select distinct S_INFO_WINDCODE from ashareeodprices"
+        cur.execute(sql)
+        codes = cur.fetchall()
+    return codes
+
+
 def strtodatetime(datestr, format="%Y%m%d"):
     return datetime.datetime.strptime(datestr, format)
 

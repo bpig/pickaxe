@@ -3,7 +3,7 @@
 
 from common import *
 
-stockDataPathList = ['csvData_basic//']
+basic_data = 'csvData_basic/'
 derivativeDataPath = 'csvData_derivative//'
 
 MAList = [5, 10, 20, 30, 60, 125]
@@ -165,13 +165,8 @@ def ComputeMA5_GT_MA20(stockData, derivativeData):
 
 
 def HandleData(fileName):
-    date = pd.read_csv(os.path.join(stockDataPathList[0], fileName), parse_dates=[1])['TRADE_DT']
-    derivativeData = pd.DataFrame({'TRADE_DT': date})
-    stockData = pd.DataFrame({'TRADE_DT': date})
-
-    for stockDataPath in stockDataPathList:
-        oneFileData = pd.read_csv(os.path.join(stockDataPath, fileName), parse_dates=[1]).drop('Unnamed: 0', axis=1)
-        stockData = pd.merge(stockData, oneFileData, on='TRADE_DT')
+    stockData = pd.read_csv(os.path.join(basic_data, fileName), parse_dates=[1]).drop('Unnamed: 0', axis=1)
+    derivativeData = pd.DataFrame(stockData['TRADE_DT'])
 
     ComputeMA(stockData, derivativeData)
     ComputeEMA(stockData, derivativeData)
@@ -188,13 +183,13 @@ def HandleData(fileName):
     ComputeTopDistance(stockData, derivativeData)
     ComputeMA5_GT_MA20(stockData, derivativeData)
 
-    if len(derivativeData['TRADE_DT']) > 0:
-        # date to int format
-        derivativeData['TRADE_DT'] = derivativeData['TRADE_DT'].dt.strftime('%Y%m%d')
+    assert len(derivativeData['TRADE_DT'])
+    derivativeData['TRADE_DT'] = derivativeData['TRADE_DT'].dt.strftime('%Y%m%d')
 
     derivativeData.to_csv(os.path.join(derivativeDataPath, fileName))
 
 
 if __name__ == '__main__':
-    for fileName in tqdm(os.listdir(stockDataPathList[0])):
-        HandleData(fileName)
+    st_list = sorted(os.listdir(basic_data))
+    for st in tqdm(st_list):
+        HandleData(st)
