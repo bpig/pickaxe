@@ -3,9 +3,6 @@
 
 from common import *
 
-basic_data = 'csvData_basic/'
-derivativeDataPath = 'csvData_derivative//'
-
 MAList = [5, 10, 20, 30, 60, 125]
 EMAList = [5, 10, 20, 30, 60, 125]
 BIASList = [5, 10, 20, 30, 60, 125]
@@ -164,8 +161,8 @@ def ComputeMA5_GT_MA20(stockData, derivativeData):
         derivativeData['MA5_GT_MA20_' + str(gt)] = stockData['MA5_GT_MA20_' + str(gt)][:-gt]
 
 
-def HandleData(fileName):
-    stockData = pd.read_csv(os.path.join(basic_data, fileName), parse_dates=[1])
+def HandleData(st):
+    stockData = pd.read_csv(os.path.join(BASIC_DATA, st), parse_dates=[0])
     derivativeData = pd.DataFrame(stockData['TRADE_DT'])
 
     ComputeMA(stockData, derivativeData)
@@ -183,13 +180,14 @@ def HandleData(fileName):
     ComputeTopDistance(stockData, derivativeData)
     ComputeMA5_GT_MA20(stockData, derivativeData)
 
-    assert len(derivativeData['TRADE_DT'])
+    assert len(derivativeData['TRADE_DT']) > 0, st
     derivativeData['TRADE_DT'] = derivativeData['TRADE_DT'].dt.strftime('%Y%m%d')
 
-    derivativeData.to_csv(os.path.join(derivativeDataPath, fileName))
+    derivativeData.to_csv(os.path.join(METRIC_DATA, st))
 
 
 if __name__ == '__main__':
-    st_list = sorted(os.listdir(basic_data))
-    for st in tqdm(st_list):
-        HandleData(st)
+    st_list = sorted(os.listdir(BASIC_DATA))
+    with TimeLog("metric, "):
+        for st in tqdm(st_list):
+            HandleData(st)

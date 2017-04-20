@@ -38,8 +38,7 @@ def addData(conn, start_date, end_date):
     codes = getWindcodes(conn)
     assert codes
 
-    dest_path = "csvData_basic"
-    dest_path = os.path.join(curDir(), dest_path)
+    dest_path = os.path.join(curDir(), BASIC_DATA)
     if not os.path.exists(dest_path):
         os.mkdir(dest_path)
 
@@ -53,7 +52,10 @@ def addData(conn, start_date, end_date):
         if os.path.exists(tgt):
             data = pd.DataFrame.from_csv(tgt)
             data = data.append(data, ignore_index=True)
-        data.to_csv(tgt, index=False)
+        if len(data):
+            data.to_csv(tgt, index=False)
+        else:
+            print code, "no data"
 
 
 if __name__ == '__main__':

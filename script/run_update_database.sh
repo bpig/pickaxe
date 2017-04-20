@@ -19,6 +19,7 @@ info()
 
 fail_info()
 {
+    echo $1" database update failed"
     mail_robot "database update failed" "$1"
 }
 
@@ -53,7 +54,7 @@ update_table(){
     scp -P 8022 yingyang@61.130.4.98:~/.backups/$1.sql .
     if grep -qc "INSERT" $1.sql
     then
-        mysql -uyyzc -pyyzc_123 -h192.168.3.131 daily_data < $1.sql
+        mysql -ujxb -pjxb daily_data < $1.sql
 	if [ $? -ne 0 ]
 	then
 	    fail_info $1" insert data faile"
@@ -75,7 +76,8 @@ done
 
 if [ $sum -eq 0 ]
 then
-  mail_robot "database update success" "finished"  
+    mail_robot "database update success" "finished"  
+    echo "success"
 fi
 
 

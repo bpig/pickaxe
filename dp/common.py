@@ -10,6 +10,10 @@ import numpy as np
 pd.options.mode.chained_assignment = None
 
 
+BASIC_DATA = "basic_data"
+METRIC_DATA = "metric_data"
+NO_HALT_METRIC_DATA = "no_halt_metric_data"
+
 class TimeLog:
     def __init__(self, name=""):
         self.n = name
