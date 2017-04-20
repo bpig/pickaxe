@@ -53,7 +53,7 @@ def addData(conn, start_date, end_date):
         if os.path.exists(tgt):
             data = pd.DataFrame.from_csv(tgt)
             data = data.append(data, ignore_index=True)
-        data.to_csv(tgt)
+        data.to_csv(tgt, index=False)
 
 
 if __name__ == '__main__':

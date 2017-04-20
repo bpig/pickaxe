@@ -169,7 +169,7 @@ def HandleData(fileName):
     stockData = pd.DataFrame({'TRADE_DT': date})
 
     for stockDataPath in stockDataPathList:
-        oneFileData = pd.read_csv(os.path.join(stockDataPath, fileName), parse_dates=[1]).drop('Unnamed: 0', axis=1)
+        oneFileData = pd.read_csv(os.path.join(stockDataPath, fileName), parse_dates=[1])
         stockData = pd.merge(stockData, oneFileData, on='TRADE_DT')
 
     # without halt

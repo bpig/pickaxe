@@ -165,7 +165,7 @@ def ComputeMA5_GT_MA20(stockData, derivativeData):
 
 
 def HandleData(fileName):
-    stockData = pd.read_csv(os.path.join(basic_data, fileName), parse_dates=[1]).drop('Unnamed: 0', axis=1)
+    stockData = pd.read_csv(os.path.join(basic_data, fileName), parse_dates=[1])
     derivativeData = pd.DataFrame(stockData['TRADE_DT'])
 
     ComputeMA(stockData, derivativeData)
