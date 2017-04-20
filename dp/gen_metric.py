@@ -161,8 +161,12 @@ def ComputeMA5_GT_MA20(stockData, derivativeData):
         derivativeData['MA5_GT_MA20_' + str(gt)] = stockData['MA5_GT_MA20_' + str(gt)][:-gt]
 
 
-def HandleData(st):
+def HandleData(st, no_halt=False):
     stockData = pd.read_csv(os.path.join(BASIC_DATA, st), parse_dates=[0])
+
+    if no_halt:
+        stockData = stockData[stockData['S_DQ_VOLUME'] > 0].reset_index(drop=True)
+
     derivativeData = pd.DataFrame(stockData['TRADE_DT'])
 
     ComputeMA(stockData, derivativeData)
@@ -183,11 +187,18 @@ def HandleData(st):
     assert len(derivativeData['TRADE_DT']) > 0, st
     derivativeData['TRADE_DT'] = derivativeData['TRADE_DT'].dt.strftime('%Y%m%d')
 
-    derivativeData.to_csv(os.path.join(METRIC_DATA, st))
+    if no_halt:
+        derivativeData.to_csv(os.path.join(NO_HALT_METRIC_DATA, st))
+    else:
+        derivativeData.to_csv(os.path.join(METRIC_DATA, st))
 
 
 if __name__ == '__main__':
     st_list = sorted(os.listdir(BASIC_DATA))
+    try:
+        no_halt = int(sys.argv[1])
+    except:
+        no_halt = False
     with TimeLog("metric, "):
         for st in tqdm(st_list):
-            HandleData(st)
+            HandleData(st, no_halt)
