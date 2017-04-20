@@ -55,7 +55,8 @@ def addData(conn, start_date, end_date):
         if len(data):
             data.to_csv(tgt, index=False)
         else:
-            print code, "no data"
+            return code
+    return ""
 
 
 if __name__ == '__main__':
@@ -65,5 +66,11 @@ if __name__ == '__main__':
     except:
         end_date = start_date
     conn = connectSQL()
+    no_data_code = set()
     with TimeLog("%s-%s" % (start_date, end_date)):
-        addData(conn, start_date, end_date)
+        code = addData(conn, start_date, end_date)
+        if code:
+            no_data_code.add(code)
+    print "\n".join(no_data_code)
+    print "no_data total", len(no_data_code)
+    

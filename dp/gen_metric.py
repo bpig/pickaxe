@@ -19,152 +19,152 @@ TopDistanceList = [20, 60, 125]
 MA5_GT_MA20List = [10]
 
 
-def ComputeMA(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputeMA(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for ma in MAList:
-        stockData['MA_' + str(ma)] = \
-            pd.Series.rolling(stockData['S_DQ_ADJCLOSE'], window=ma).mean()
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        stock['MA_' + str(ma)] = \
+            pd.Series.rolling(stock['S_DQ_ADJCLOSE'], window=ma).mean()
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for ma in MAList:
-        derivativeData['MA_' + str(ma)] = stockData['MA_' + str(ma)]
+        metric['MA_' + str(ma)] = stock['MA_' + str(ma)]
 
 
-def ComputeEMA(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputeEMA(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for ema in EMAList:
-        stockData['EMA_' + str(ema)] = \
-            pd.Series.ewm(stockData['S_DQ_ADJCLOSE'], span=ema).mean()
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        stock['EMA_' + str(ema)] = \
+            pd.Series.ewm(stock['S_DQ_ADJCLOSE'], span=ema).mean()
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for ema in EMAList:
-        derivativeData['EMA_' + str(ema)] = stockData['EMA_' + str(ema)]
+        metric['EMA_' + str(ema)] = stock['EMA_' + str(ema)]
 
 
-def ComputeBIAS(stockData, derivativeData):
+def ComputeBIAS(stock, metric):
     for bias in BIASList:
-        stockData['BIAS_' + str(bias)] \
-            = (stockData['S_DQ_ADJCLOSE'] - stockData['MA_' + str(bias)]) / stockData['MA_' + str(bias)]
+        stock['BIAS_' + str(bias)] \
+            = (stock['S_DQ_ADJCLOSE'] - stock['MA_' + str(bias)]) / stock['MA_' + str(bias)]
 
-        derivativeData['BIAS_' + str(bias)] = stockData['BIAS_' + str(bias)]
+        metric['BIAS_' + str(bias)] = stock['BIAS_' + str(bias)]
 
 
-def ComputeMTM(stockData, derivativeData):
+def ComputeMTM(stock, metric):
     for mtm in MTMList:
-        adjClosePre = stockData['S_DQ_ADJCLOSE'][mtm:].reset_index(drop=True)
-        stockData['MTM_' + str(mtm)] = \
-            (stockData['S_DQ_ADJCLOSE'] - adjClosePre) / adjClosePre
+        adjClosePre = stock['S_DQ_ADJCLOSE'][mtm:].reset_index(drop=True)
+        stock['MTM_' + str(mtm)] = \
+            (stock['S_DQ_ADJCLOSE'] - adjClosePre) / adjClosePre
 
-        derivativeData['MTM_' + str(mtm)] = stockData['MTM_' + str(mtm)]
+        metric['MTM_' + str(mtm)] = stock['MTM_' + str(mtm)]
 
 
-def ComputePSY(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputePSY(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for psy in PSYList:
-        stockData['PSY_' + str(psy)] = \
-            pd.Series.rolling(stockData[stockData > 0]['MTM_1'], window=psy).count() / psy
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        stock['PSY_' + str(psy)] = \
+            pd.Series.rolling(stock[stock > 0]['MTM_1'], window=psy).count() / psy
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for psy in PSYList:
-        derivativeData['PSY_' + str(psy)] = stockData['PSY_' + str(psy)][:-psy]
+        metric['PSY_' + str(psy)] = stock['PSY_' + str(psy)][:-psy]
 
 
-def ComputeRSI(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputeRSI(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for rsi in RSIList:
-        n1 = pd.Series.rolling(stockData[stockData > 0]['MTM_1'].fillna(0), window=rsi)
-        n2 = pd.Series.rolling(stockData[stockData < 0]['MTM_1'].fillna(0), window=rsi)
-        stockData['RSI_' + str(rsi)] = 1 - 1 / (1 - n1.sum() / n2.sum())
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        n1 = pd.Series.rolling(stock[stock > 0]['MTM_1'].fillna(0), window=rsi)
+        n2 = pd.Series.rolling(stock[stock < 0]['MTM_1'].fillna(0), window=rsi)
+        stock['RSI_' + str(rsi)] = 1 - 1 / (1 - n1.sum() / n2.sum())
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for rsi in RSIList:
-        derivativeData['RSI_' + str(rsi)] = stockData['RSI_' + str(rsi)][:-rsi]
+        metric['RSI_' + str(rsi)] = stock['RSI_' + str(rsi)][:-rsi]
 
 
-def ComputeVR(stockData, derivativeData):
-    stockData['VOLUME_PREV'] = stockData['S_DQ_VOLUME'][1:].reset_index(drop=True)
+def ComputeVR(stock, metric):
+    stock['VOLUME_PREV'] = stock['S_DQ_VOLUME'][1:].reset_index(drop=True)
 
-    stockData.sort_values('TRADE_DT', inplace=True)
+    stock.sort_values('TRADE_DT', inplace=True)
     for vr in VRList:
-        n1 = pd.Series.rolling(stockData['VOLUME_PREV'].replace(0, np.nan), window=vr)
-        stockData['VR_' + str(vr)] = stockData['S_DQ_VOLUME'] / n1.mean()
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        n1 = pd.Series.rolling(stock['VOLUME_PREV'].replace(0, np.nan), window=vr)
+        stock['VR_' + str(vr)] = stock['S_DQ_VOLUME'] / n1.mean()
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for vr in VRList:
-        derivativeData['VR_' + str(vr)] = stockData['VR_' + str(vr)]
+        metric['VR_' + str(vr)] = stock['VR_' + str(vr)]
 
 
-def ComputeOCDELTA(stockData, derivativeData):
+def ComputeOCDELTA(stock, metric):
     for OCDELTA in OCDELTAList:
-        adjOpenPre = stockData['S_DQ_ADJOPEN'][OCDELTA:].reset_index(drop=True)
-        stockData['OCDELTA_' + str(OCDELTA)] = (stockData['S_DQ_ADJCLOSE'] - adjOpenPre) / adjOpenPre
+        adjOpenPre = stock['S_DQ_ADJOPEN'][OCDELTA:].reset_index(drop=True)
+        stock['OCDELTA_' + str(OCDELTA)] = (stock['S_DQ_ADJCLOSE'] - adjOpenPre) / adjOpenPre
 
-        derivativeData['OCDELTA_' + str(OCDELTA)] = stockData['OCDELTA_' + str(OCDELTA)]
+        metric['OCDELTA_' + str(OCDELTA)] = stock['OCDELTA_' + str(OCDELTA)]
 
 
-def ComputeAADELTA(stockData, derivativeData):
-    stockData['ADJAVGPRICE'] = stockData['S_DQ_AVGPRICE'] * stockData['S_DQ_ADJFACTOR']
+def ComputeAADELTA(stock, metric):
+    stock['ADJAVGPRICE'] = stock['S_DQ_AVGPRICE'] * stock['S_DQ_ADJFACTOR']
 
     for AADELTA in AADELTAList:
-        adjAvgPre = stockData['ADJAVGPRICE'][AADELTA:].reset_index(drop=True)
-        stockData['AADELTA_' + str(AADELTA)] = (stockData['ADJAVGPRICE'] - adjAvgPre) / adjAvgPre
+        adjAvgPre = stock['ADJAVGPRICE'][AADELTA:].reset_index(drop=True)
+        stock['AADELTA_' + str(AADELTA)] = (stock['ADJAVGPRICE'] - adjAvgPre) / adjAvgPre
 
-        derivativeData['AADELTA_' + str(AADELTA)] = stockData['AADELTA_' + str(AADELTA)]
+        metric['AADELTA_' + str(AADELTA)] = stock['AADELTA_' + str(AADELTA)]
 
 
-def ComputeOODELTA(stockData, derivativeData):
+def ComputeOODELTA(stock, metric):
     for OODELTA in OODELTAList:
-        adjOpenPre = stockData['S_DQ_ADJOPEN'][OODELTA:].reset_index(drop=True)
-        stockData['OODELTA_' + str(OODELTA)] = (stockData['S_DQ_ADJOPEN'] - adjOpenPre) / adjOpenPre
+        adjOpenPre = stock['S_DQ_ADJOPEN'][OODELTA:].reset_index(drop=True)
+        stock['OODELTA_' + str(OODELTA)] = (stock['S_DQ_ADJOPEN'] - adjOpenPre) / adjOpenPre
 
-        derivativeData['OODELTA_' + str(OODELTA)] = stockData['OODELTA_' + str(OODELTA)]
+        metric['OODELTA_' + str(OODELTA)] = stock['OODELTA_' + str(OODELTA)]
 
 
-def ComputeTSTD(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputeTSTD(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for tstd in TSTDList:
-        stockData['TURNOVER_STD_' + str(tstd)] \
-            = pd.Series.rolling(stockData['S_DQ_TURN'], window=tstd).std()
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        stock['TURNOVER_STD_' + str(tstd)] \
+            = pd.Series.rolling(stock['S_DQ_TURN'], window=tstd).std()
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for tstd in TSTDList:
-        derivativeData['TURNOVER_STD_' + str(tstd)] = stockData['TURNOVER_STD_' + str(tstd)]
+        metric['TURNOVER_STD_' + str(tstd)] = stock['TURNOVER_STD_' + str(tstd)]
 
 
-def ComputeTopOverCurrent(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputeTopOverCurrent(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for toc in TopOverCurrentList:
-        n1 = pd.Series.rolling(stockData['S_DQ_ADJHIGH'], window=toc)
-        stockData['TopOverCurrent_' + str(toc)] = n1.max() / stockData['S_DQ_ADJCLOSE']
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        n1 = pd.Series.rolling(stock['S_DQ_ADJHIGH'], window=toc)
+        stock['TopOverCurrent_' + str(toc)] = n1.max() / stock['S_DQ_ADJCLOSE']
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for toc in TopOverCurrentList:
-        derivativeData['TopOverCurrent_' + str(toc)] = stockData['TopOverCurrent_' + str(toc)]
+        metric['TopOverCurrent_' + str(toc)] = stock['TopOverCurrent_' + str(toc)]
 
 
-def ComputeTopDistance(stockData, derivativeData):
-    stockData.sort_values('TRADE_DT', inplace=True)
+def ComputeTopDistance(stock, metric):
+    stock.sort_values('TRADE_DT', inplace=True)
     for td in TopDistanceList:
-        n1 = pd.Series.rolling(stockData['S_DQ_ADJHIGH'], window=td).apply(np.argmax)
-        stockData['TopDistance_' + str(td)] = n1 / td
+        n1 = pd.Series.rolling(stock['S_DQ_ADJHIGH'], window=td).apply(np.argmax)
+        stock['TopDistance_' + str(td)] = n1 / td
 
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for td in TopDistanceList:
-        derivativeData['TopDistance_' + str(td)] = stockData['TopDistance_' + str(td)]
+        metric['TopDistance_' + str(td)] = stock['TopDistance_' + str(td)]
 
 
-def ComputeMA5_GT_MA20(stockData, derivativeData):
-    stockData['MA_5_minus_MA_20'] = stockData['MA_5'] - stockData['MA_20']
+def ComputeMA5_GT_MA20(stock, metric):
+    stock['MA_5_minus_MA_20'] = stock['MA_5'] - stock['MA_20']
 
-    stockData.sort_values('TRADE_DT', inplace=True)
+    stock.sort_values('TRADE_DT', inplace=True)
     for gt in MA5_GT_MA20List:
-        stockData['MA5_GT_MA20_' + str(gt)] = pd.Series.rolling(
-            stockData[stockData > 0]['MA_5_minus_MA_20'], window=gt).count() / gt
-    stockData.sort_values('TRADE_DT', ascending=False, inplace=True)
+        stock['MA5_GT_MA20_' + str(gt)] = pd.Series.rolling(
+            stock[stock > 0]['MA_5_minus_MA_20'], window=gt).count() / gt
+    stock.sort_values('TRADE_DT', ascending=False, inplace=True)
 
     for gt in MA5_GT_MA20List:
-        derivativeData['MA5_GT_MA20_' + str(gt)] = stockData['MA5_GT_MA20_' + str(gt)][:-gt]
+        metric['MA5_GT_MA20_' + str(gt)] = stock['MA5_GT_MA20_' + str(gt)][:-gt]
 
 
 def HandleData(st_code, no_halt=False):
@@ -172,6 +172,10 @@ def HandleData(st_code, no_halt=False):
 
     if no_halt:
         stock = stock[stock['S_DQ_VOLUME'] > 0].reset_index(drop=True)
+
+    if len(stock) == 0:
+        print st_code
+        return
 
     metric = pd.DataFrame(stock['TRADE_DT'])
 
