@@ -5,6 +5,7 @@ import pandas as pd
 import time
 import datetime
 from tqdm import tqdm
+import numpy as np
 
 pd.options.mode.chained_assignment = None
 
