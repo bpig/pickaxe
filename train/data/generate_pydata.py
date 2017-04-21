@@ -41,8 +41,8 @@ def loadMarketData(top_dir):
 
 
 def loadStockData(top_dir, codefile):
-    basic_file_path = top_dir + 'csvData_basic/' + codefile
-    derivative_file_path = top_dir + 'csvData_derivativeNoHalt/' + codefile
+    basic_file_path = top_dir + 'basic_data/' + codefile
+    derivative_file_path = top_dir + 'no_halt_metric_data/' + codefile
     if not os.path.isfile(derivative_file_path):
         print 'derivative data don\'t exist, skipped!\n'
         return None, None
@@ -222,7 +222,7 @@ if __name__ == '__main__':
         start_date = '20161231'
         end_date = '20171231'
 
-    top_dir = 'DeepQuant/data/'
+    top_dir = '/home/shuai.li/pickaxe/dp/'
     dest_path = '%s_pydata_L%d_T%d/' % (phase, DATA_LENGTH, T)
 
     if not os.path.exists(dest_path):
@@ -232,7 +232,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     loadMarketData(top_dir)
-    for codefile in os.listdir(top_dir + 'csvData_basic/'):
+    for codefile in os.listdir(top_dir + 'basic_data/'):
         counter += processFile(
             top_dir, codefile, int(codefile.split('.')[0]),
             start_date, end_date, phase, DATA_LENGTH, T)
