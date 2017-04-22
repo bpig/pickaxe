@@ -126,35 +126,35 @@ def generateMarketData():
             vrQuintile_3[date] = sortedVR[2 * stockNum / 5]
             vrQuintile_4[date] = sortedVR[stockNum / 5]
 
-    dataNameList = ['TRADE_DT', 'AVGDELTA', 'AVGTURNOVER', 
-                    'AVGFREETURNOVER', 'UPSTOCKRATIO_0', 
+    dataNameList = ['TRADE_DT', 'AVGDELTA', 'AVGTURNOVER',
+                    'AVGFREETURNOVER', 'UPSTOCKRATIO_0',
                     'UPSTOCKRATIO_5', 'DOWNSTOCKRATIO_5',
                     'TurnoverQuintile_1', 'TurnoverQuintile_2',
                     'TurnoverQuintile_3', 'TurnoverQuintile_4',
                     'VRQuintile_1', 'VRQuintile_2', 'VRQuintile_3',
-                    'VRQuintile_4', 'AVGRELATIVEDELTA', 'AVGAADELTA_5', 
+                    'VRQuintile_4', 'AVGRELATIVEDELTA', 'AVGAADELTA_5',
                     'AVGOODELTA_1', 'STDOCDELTA_1', 'STDAADELTA_5']
 
     market = pd.DataFrame({'AVGDELTA': avgDeltaDict,
-                               'AVGTURNOVER': avgTurnoverDict,
-                               'AVGFREETURNOVER': avgFreeTurnoverDict,
-                               'UPSTOCKRATIO_0': upStockRatioDict,
-                               'UPSTOCKRATIO_5': upStock5RatioDict,
-                               'DOWNSTOCKRATIO_5': downStock5RatioDict,
-                               'TurnoverQuintile_1': turnoverQuintile_1,
-                               'TurnoverQuintile_2': turnoverQuintile_2,
-                               'TurnoverQuintile_3': turnoverQuintile_3,
-                               'TurnoverQuintile_4': turnoverQuintile_4,
-                               'VRQuintile_1': vrQuintile_1,
-                               'VRQuintile_2': vrQuintile_2,
-                               'VRQuintile_3': vrQuintile_3,
-                               'VRQuintile_4': vrQuintile_4,
-                               'AVGRELATIVEDELTA': avgOCDeltaDict,
-                               'AVGAADELTA_5': avgAA5DeltaDict,
-                               'AVGOODELTA_1': avgOODeltaDict,
-                               'STDOCDELTA_1': stdOCDeltaDict,
-                               'STDAADELTA_5': stdAA5DeltaDict
-                               })
+                           'AVGTURNOVER': avgTurnoverDict,
+                           'AVGFREETURNOVER': avgFreeTurnoverDict,
+                           'UPSTOCKRATIO_0': upStockRatioDict,
+                           'UPSTOCKRATIO_5': upStock5RatioDict,
+                           'DOWNSTOCKRATIO_5': downStock5RatioDict,
+                           'TurnoverQuintile_1': turnoverQuintile_1,
+                           'TurnoverQuintile_2': turnoverQuintile_2,
+                           'TurnoverQuintile_3': turnoverQuintile_3,
+                           'TurnoverQuintile_4': turnoverQuintile_4,
+                           'VRQuintile_1': vrQuintile_1,
+                           'VRQuintile_2': vrQuintile_2,
+                           'VRQuintile_3': vrQuintile_3,
+                           'VRQuintile_4': vrQuintile_4,
+                           'AVGRELATIVEDELTA': avgOCDeltaDict,
+                           'AVGAADELTA_5': avgAA5DeltaDict,
+                           'AVGOODELTA_1': avgOODeltaDict,
+                           'STDOCDELTA_1': stdOCDeltaDict,
+                           'STDAADELTA_5': stdAA5DeltaDict
+                           })
     market['TRADE_DT'] = market.index
     market.sort_values('TRADE_DT', ascending=False, inplace=True)
     market = market.reset_index(drop=True).loc[:, dataNameList]
