@@ -4,17 +4,16 @@
 from common import *
 
 stock_datas = [BASIC_DATA, METRIC_DATA]
-marketDataPath = 'csvData_marketNoSubnew//'
 
-removeSubnew = 100
+removeSubnew = 3
 
-deltaDict = {}
-turnoverDict = {}
-freeTurnoverDict = {}
-ocDeltaDict = {}
-aa5DeltaDict = {}
-ooDeltaDict = {}
-vrDict = {}
+deltaDict = defaultdict(list)
+turnoverDict = defaultdict(list)
+freeTurnoverDict = defaultdict(list)
+ocDeltaDict = defaultdict(list)
+aa5DeltaDict = defaultdict(list)
+ooDeltaDict = defaultdict(list)
+vrDict = defaultdict(list)
 
 avgDeltaDict = {}
 avgTurnoverDict = {}
@@ -38,36 +37,34 @@ vrQuintile_3 = {}
 vrQuintile_4 = {}
 
 
-def SeparateByDate(oneStockDict, usedDict):
-    for date in oneStockDict:
-        if np.isnan(oneStockDict[date]):
+def collect_by_date(s, kv):
+    for date, value in s.iteritems():
+        if np.isnan(value):
             continue
-        if date not in usedDict:
-            usedDict[date] = []
-        usedDict[date].append(oneStockDict[date])
+        kv[date].append(value)
 
 
-def HandleEachStockData(fileName, removeSubnew):
+def HandleEachStockData(st_code, removeSubnew):
     frames = []
-    for stockDataPath in stock_datas:
-        oneFileData = pd.read_csv(os.path.join(stockDataPath, fileName), parse_dates=[1], index_col=[1])
+    for data in stock_datas:
+        oneFileData = pd.read_csv(os.path.join(data, st_code), parse_dates=[0], index_col=[0])
         frames.append(oneFileData)
-    stockData = pd.concat(frames, axis=1, join_axes=[frames[0].index])
+    stock = pd.concat(frames, axis=1, join_axes=[frames[0].index])
 
     # remove subnew
     if removeSubnew != 0:
-        stockData = stockData.iloc[:-removeSubnew]
+        stock = stock.iloc[:-removeSubnew]
 
     # remove halt
-    stockData = stockData[stockData['S_DQ_VOLUME'] > 0]
+    stock = stock[stock['S_DQ_VOLUME'] > 0]
 
-    SeparateByDate(stockData['MTM_1'].to_dict(), deltaDict)
-    SeparateByDate(stockData['S_DQ_TURN'].to_dict(), turnoverDict)
-    SeparateByDate(stockData['S_DQ_FREETURNOVER'].to_dict(), freeTurnoverDict)
-    SeparateByDate(stockData['OCDELTA_1'].to_dict(), ocDeltaDict)
-    SeparateByDate(stockData['AADELTA_5'].to_dict(), aa5DeltaDict)
-    SeparateByDate(stockData['OODELTA_1'].to_dict(), ooDeltaDict)
-    SeparateByDate(stockData['VR_5'].to_dict(), vrDict)
+    collect_by_date(stock['MTM_1'], deltaDict)
+    collect_by_date(stock['S_DQ_TURN'], turnoverDict)
+    collect_by_date(stock['S_DQ_FREETURNOVER'], freeTurnoverDict)
+    collect_by_date(stock['OCDELTA_1'], ocDeltaDict)
+    collect_by_date(stock['AADELTA_5'], aa5DeltaDict)
+    collect_by_date(stock['OODELTA_1'], ooDeltaDict)
+    collect_by_date(stock['VR_5'], vrDict)
 
 
 def generateMarketData():
@@ -129,14 +126,16 @@ def generateMarketData():
             vrQuintile_3[date] = sortedVR[2 * stockNum / 5]
             vrQuintile_4[date] = sortedVR[stockNum / 5]
 
-    dataNameList = ['TRADE_DT',
-                    'AVGDELTA', 'AVGTURNOVER', 'AVGFREETURNOVER', 'UPSTOCKRATIO_0', 'UPSTOCKRATIO_5',
-                    'DOWNSTOCKRATIO_5',
-                    'TurnoverQuintile_1', 'TurnoverQuintile_2', 'TurnoverQuintile_3', 'TurnoverQuintile_4',
-                    'VRQuintile_1', 'VRQuintile_2', 'VRQuintile_3', 'VRQuintile_4',
-                    'AVGRELATIVEDELTA', 'AVGAADELTA_5', 'AVGOODELTA_1', 'STDOCDELTA_1', 'STDAADELTA_5']
-    # print pd.DataFrame.from_dict(avgDeltaDict, orient='index')
-    marketData = pd.DataFrame({'AVGDELTA': avgDeltaDict,
+    dataNameList = ['TRADE_DT', 'AVGDELTA', 'AVGTURNOVER', 
+                    'AVGFREETURNOVER', 'UPSTOCKRATIO_0', 
+                    'UPSTOCKRATIO_5', 'DOWNSTOCKRATIO_5',
+                    'TurnoverQuintile_1', 'TurnoverQuintile_2',
+                    'TurnoverQuintile_3', 'TurnoverQuintile_4',
+                    'VRQuintile_1', 'VRQuintile_2', 'VRQuintile_3',
+                    'VRQuintile_4', 'AVGRELATIVEDELTA', 'AVGAADELTA_5', 
+                    'AVGOODELTA_1', 'STDOCDELTA_1', 'STDAADELTA_5']
+
+    market = pd.DataFrame({'AVGDELTA': avgDeltaDict,
                                'AVGTURNOVER': avgTurnoverDict,
                                'AVGFREETURNOVER': avgFreeTurnoverDict,
                                'UPSTOCKRATIO_0': upStockRatioDict,
@@ -156,17 +155,20 @@ def generateMarketData():
                                'STDOCDELTA_1': stdOCDeltaDict,
                                'STDAADELTA_5': stdAA5DeltaDict
                                })
-    marketData['TRADE_DT'] = marketData.index
-    marketData.sort_values('TRADE_DT', ascending=False, inplace=True)
-    marketData = marketData.reset_index(drop=True).loc[:, dataNameList]
+    market['TRADE_DT'] = market.index
+    market.sort_values('TRADE_DT', ascending=False, inplace=True)
+    market = market.reset_index(drop=True).loc[:, dataNameList]
 
-    assert len(marketData['TRADE_DT']) > 0
-    marketData['TRADE_DT'] = marketData['TRADE_DT'].dt.strftime('%Y%m%d')
+    assert not market.empty
+    market['TRADE_DT'] = market['TRADE_DT'].dt.strftime('%Y%m%d')
 
-    marketData.to_csv(os.path.join(marketDataPath, 'market.csv'))
+    market.to_csv(os.path.join(MARKET_DATA, 'market.csv'), index=False)
 
 
 if __name__ == '__main__':
+    if not os.path.exists(MARKET_DATA):
+        os.mkdir(MARKET_DATA)
+
     stocks = sorted(os.listdir(BASIC_DATA))
     with TimeLog("handle each stock, "):
         for st_code in tqdm(stocks):
