@@ -10,13 +10,13 @@ test_data = []
 test_delta = []
 test_saledate = []
 test_buydate = []
-test_info = []  # 涨停(bool)|跌停(bool)|股票代码(string)
+test_info = []
 test_float_profit = []
 recent_data = []
 recent_delta = []
 recent_saledate = []
 recent_buydate = []
-recent_info = []  # 涨停(bool)|跌停(bool)|股票代码(string)
+recent_info = []
 recent_float_profit = []
 
 
@@ -78,7 +78,7 @@ def checkStrong(data):
     return False
 
 
-def processFile(top_dir, codefile, st_code, start_date, end_date, phase, DATA_LENGTH, T, maxhalt=12):
+def processFile(top_dir, codefile, st_code, start_date, end_date, phase, DATA_LENGTH, T):
     basic_data, derivative_data = loadStockData(top_dir, codefile)
     if derivative_data is None:
         return 0
@@ -120,18 +120,17 @@ def processFile(top_dir, codefile, st_code, start_date, end_date, phase, DATA_LE
     if length < DATA_LENGTH + T:
         print 'too short, skipped!\n'
         return 0
-    # process
-    counter = 0
+
     for i in xrange(length - DATA_LENGTH - T - 1):
-        if length - i - T <= 3: # 100
+        if length - i - T <= 3:  # 100
             continue
         # checks
         strt = i + T + DATA_LENGTH
         end = i + T + 1
         if date_arr[i] > end_date or date_arr[i] < start_date:
             continue
-        # if not checkValidData(data[i:strt + 1], T):
-        #     continue
+        if not checkValidData(data[i:strt + 1], T):
+            continue
         normed_data = normalize_local(data[end:strt + 1])
         if normed_data is None:
             continue
@@ -177,9 +176,6 @@ def processFile(top_dir, codefile, st_code, start_date, end_date, phase, DATA_LE
             globals()[phase + '_delta'].append(delta)
             globals()[phase + '_turnover'].append(turnover_arr[i:i + T + 1])
             globals()[phase + '_vr'].append(vr_arr[i:i + T + 1])
-        counter += 1
-    print '%d data processed' % counter
-    return counter
 
 
 def saveData(dest_path, phase):
@@ -233,8 +229,7 @@ if __name__ == '__main__':
     loadMarketData(top_dir)
     stocks = sorted(os.listdir(top_dir + 'basic_data/'))
     for st in tqdm(stocks):
-        processFile(
-            top_dir, st, int(st.split('.')[0]),
-            start_date, end_date, phase, DATA_LENGTH, T)
+        processFile(top_dir, st, int(st.split('.')[0]),
+                    start_date, end_date, phase, DATA_LENGTH, T)
 
     saveData(dest_path, phase)
