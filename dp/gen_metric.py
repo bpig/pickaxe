@@ -173,7 +173,7 @@ def HandleData(st_code, no_halt=False):
     if no_halt:
         stock = stock[stock['S_DQ_VOLUME'] > 0].reset_index(drop=True)
 
-    if len(stock) == 0:
+    if stock.empty:
         print st_code
         return
 
@@ -194,16 +194,23 @@ def HandleData(st_code, no_halt=False):
     ComputeTopDistance(stock, metric)
     ComputeMA5_GT_MA20(stock, metric)
 
-    assert len(metric['TRADE_DT']) > 0, st_code
+    assert not metric.empty, st_code
     metric['TRADE_DT'] = metric['TRADE_DT'].dt.strftime('%Y%m%d')
 
     if no_halt:
-        metric.to_csv(os.path.join(NO_HALT_METRIC_DATA, st_code))
+        tgt = os.path.join(NO_HALT_METRIC_DATA, st_code)
     else:
-        metric.to_csv(os.path.join(METRIC_DATA, st_code))
+        tgt = os.path.join(METRIC_DATA, st_code)
+
+    metric.to_csv(tgt, index=False)
 
 
 if __name__ == '__main__':
+    if not os.path.exists(NO_HALT_METRIC_DATA):
+        os.mkdir(NO_HALT_METRIC_DATA)
+    if not os.path.exists(METRIC_DATA):
+        os.mkdir(METRIC_DATA)
+
     st_list = sorted(os.listdir(BASIC_DATA))
     try:
         no_halt = int(sys.argv[1])
