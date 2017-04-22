@@ -34,21 +34,21 @@ def normalize_local(data_):
 
 
 def loadMarketData(top_dir):
-    market_file_path = top_dir + 'csvData_marketNoSubnew/market.csv'
-    globals()['market_data'] = pd.DataFrame.from_csv(market_file_path)
+    path = top_dir + 'market_data/market.csv'
+    globals()['market_data'] = pd.read_csv(path)
     globals()['market_data'].index = market_data['TRADE_DT']
     return market_data
 
 
 def loadStockData(top_dir, codefile):
     basic_file_path = top_dir + 'basic_data/' + codefile
-    derivative_file_path = top_dir + 'no_halt_metric_data/' + codefile
+    derivative_file_path = top_dir + 'metric_data/' + codefile
     if not os.path.isfile(derivative_file_path):
-        print 'derivative data don\'t exist, skipped!\n'
+        print "derivative data don't exist, skipped!"
         return None, None
 
-    basic_data = pd.DataFrame.from_csv(basic_file_path)
-    derivative_data = pd.DataFrame.from_csv(derivative_file_path)
+    basic_data = pd.read_csv(basic_file_path)
+    derivative_data = pd.read_csv(derivative_file_path)
 
     basic_data['S_DQ_AVGPRICE'] = basic_data['S_DQ_AVGPRICE'] * basic_data['S_DQ_ADJFACTOR']
     basic_data.index = basic_data['TRADE_DT']
@@ -93,13 +93,13 @@ def processFile(top_dir, codefile, st_code, start_date, end_date, phase, DATA_LE
     marketList = ['AVGDELTA', 'AVGTURNOVER', 'UPSTOCKRATIO_0', 'UPSTOCKRATIO_5', 'DOWNSTOCKRATIO_5',
                   'TurnoverQuintile_1', 'TurnoverQuintile_2', 'TurnoverQuintile_3', 'TurnoverQuintile_4',
                   'VRQuintile_1', 'VRQuintile_2', 'VRQuintile_3', 'VRQuintile_4']
-    if len(basic_data) == 0:
+    if basic_data.empty:
         return 0
 
     basic_data = basic_data[['TRADE_DT'] + basicList]
     for derivative in derivativeList:
         basic_data[derivative] = derivative_data[derivative]
-    if len(market_data) > 0 and len(basic_data) > 100:
+    if not market_data.empty and len(basic_data.index) > 3:
         for market in marketList:
             basic_data[market] = market_data[market]
     else:
@@ -123,15 +123,15 @@ def processFile(top_dir, codefile, st_code, start_date, end_date, phase, DATA_LE
     # process
     counter = 0
     for i in xrange(length - DATA_LENGTH - T - 1):
-        if length - i - T <= 100:
+        if length - i - T <= 3: # 100
             continue
         # checks
         strt = i + T + DATA_LENGTH
         end = i + T + 1
         if date_arr[i] > end_date or date_arr[i] < start_date:
             continue
-        if not checkValidData(data[i:strt + 1], T):
-            continue
+        # if not checkValidData(data[i:strt + 1], T):
+        #     continue
         normed_data = normalize_local(data[end:strt + 1])
         if normed_data is None:
             continue
@@ -213,8 +213,10 @@ if __name__ == '__main__':
     current_dir = curDir()
 
     if phase == 'train':
-        start_date = '20050101'
-        end_date = '20160630'
+        # start_date = '20050101'
+        # end_date = '20160630'
+        start_date = '20170101'
+        end_date = '20170630'
     elif phase == 'test':
         start_date = '20160630'
         end_date = '20170330'
@@ -228,13 +230,11 @@ if __name__ == '__main__':
     if not os.path.exists(dest_path):
         os.mkdir(dest_path)
 
-    counter = 0
-    start_time = time.time()
-
     loadMarketData(top_dir)
-    for codefile in os.listdir(top_dir + 'basic_data/'):
-        counter += processFile(
-            top_dir, codefile, int(codefile.split('.')[0]),
+    stocks = sorted(os.listdir(top_dir + 'basic_data/'))
+    for st in tqdm(stocks):
+        processFile(
+            top_dir, st, int(st.split('.')[0]),
             start_date, end_date, phase, DATA_LENGTH, T)
 
     saveData(dest_path, phase)
