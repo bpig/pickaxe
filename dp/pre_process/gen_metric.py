@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-from common import *
+from dp.common import *
 
 MAList = [5, 10, 20, 30, 60, 125]
 EMAList = [5, 10, 20, 30, 60, 125]

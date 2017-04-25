@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-from common import *
+from dp.common import *
 
 stock_datas = [BASIC_DATA, METRIC_DATA]
 

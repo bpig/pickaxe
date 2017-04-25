@@ -19,7 +19,7 @@ Ft2 = collections.namedtuple(
     'Ft2',
     ['ds', 'rate', 'volumn', 'amount', 'pe',
      's', 'high', 'low', 'e', 'turnover',
-     'shares', 
+     'shares',
      's_rate', 'h_rate', 'l_rate', 'e_rate',
      'status', 's_status', 'wav_status', 'e_status', 'a_rate',
      'v_rate', 'tgt'])
@@ -32,9 +32,23 @@ Ft3 = collections.namedtuple(
      'status', 's_status', 'wav_status', 'e_status', 'a_rate',
      'v_rate',
 
-     "buy_value_exlarge_order","sell_value_exlarge_order","buy_value_large_order","sell_value_large_order","buy_value_med_order","sell_value_med_order","buy_value_small_order","sell_value_small_order","buy_volume_exlarge_order","sell_volume_exlarge_order","buy_volume_large_order","sell_volume_large_order","buy_volume_med_order","sell_volume_med_order","buy_volume_small_order","sell_volume_small_order","trades_count","buy_trades_exlarge_order","sell_trades_exlarge_order","buy_trades_large_order","sell_trades_large_order","buy_trades_med_order","sell_trades_med_order","buy_trades_small_order","sell_trades_small_order","s_mfd_inflowvolume","net_inflow_rate_volume","s_mfd_inflow","net_inflow_rate_value","s_mfd_inflowvolume_large_order","net_inflow_rate_volume_l","s_mfd_inflow_large_order","net_inflow_rate_value_l","moneyflow_pct_volume_l","moneyflow_pct_value_l","buy_value_exlarge_order_act","sell_value_exlarge_order_act","buy_value_large_order_act","sell_value_large_order_act","buy_value_med_order_act","sell_value_med_order_act","buy_value_small_order_act","sell_value_small_order_act","buy_volume_exlarge_order_act","sell_volume_exlarge_order_act","buy_volume_large_order_act","sell_volume_large_order_act","buy_volume_med_order_act","sell_volume_med_order_act","buy_volume_small_order_act","sell_volume_small_order_act",
+     "buy_value_exlarge_order", "sell_value_exlarge_order", "buy_value_large_order", "sell_value_large_order",
+     "buy_value_med_order", "sell_value_med_order", "buy_value_small_order", "sell_value_small_order",
+     "buy_volume_exlarge_order", "sell_volume_exlarge_order", "buy_volume_large_order", "sell_volume_large_order",
+     "buy_volume_med_order", "sell_volume_med_order", "buy_volume_small_order", "sell_volume_small_order",
+     "trades_count", "buy_trades_exlarge_order", "sell_trades_exlarge_order", "buy_trades_large_order",
+     "sell_trades_large_order", "buy_trades_med_order", "sell_trades_med_order", "buy_trades_small_order",
+     "sell_trades_small_order", "s_mfd_inflowvolume", "net_inflow_rate_volume", "s_mfd_inflow", "net_inflow_rate_value",
+     "s_mfd_inflowvolume_large_order", "net_inflow_rate_volume_l", "s_mfd_inflow_large_order",
+     "net_inflow_rate_value_l", "moneyflow_pct_volume_l", "moneyflow_pct_value_l", "buy_value_exlarge_order_act",
+     "sell_value_exlarge_order_act", "buy_value_large_order_act", "sell_value_large_order_act",
+     "buy_value_med_order_act", "sell_value_med_order_act", "buy_value_small_order_act", "sell_value_small_order_act",
+     "buy_volume_exlarge_order_act", "sell_volume_exlarge_order_act", "buy_volume_large_order_act",
+     "sell_volume_large_order_act", "buy_volume_med_order_act", "sell_volume_med_order_act",
+     "buy_volume_small_order_act", "sell_volume_small_order_act",
 
-     "s_li_initiativebuyrate","s_li_initiativebuymoney","s_li_initiativebuyamount","s_li_initiativesellrate","s_li_initiativesellmoney","s_li_initiativesellamount",
+     "s_li_initiativebuyrate", "s_li_initiativebuymoney", "s_li_initiativebuyamount", "s_li_initiativesellrate",
+     "s_li_initiativesellmoney", "s_li_initiativesellamount",
 
      'tgt',
      ])
@@ -47,11 +61,25 @@ Ft4 = collections.namedtuple(
      'status', 's_status', 'wav_status', 'e_status', 'a_rate',
      'v_rate',
 
-     "buy_value_exlarge_order","sell_value_exlarge_order","buy_value_large_order","sell_value_large_order","buy_value_med_order","sell_value_med_order","buy_value_small_order","sell_value_small_order","buy_volume_exlarge_order","sell_volume_exlarge_order","buy_volume_large_order","sell_volume_large_order","buy_volume_med_order","sell_volume_med_order","buy_volume_small_order","sell_volume_small_order","trades_count","buy_trades_exlarge_order","sell_trades_exlarge_order","buy_trades_large_order","sell_trades_large_order","buy_trades_med_order","sell_trades_med_order","buy_trades_small_order","sell_trades_small_order","s_mfd_inflowvolume","net_inflow_rate_volume","s_mfd_inflow","net_inflow_rate_value","s_mfd_inflowvolume_large_order","net_inflow_rate_volume_l","s_mfd_inflow_large_order","net_inflow_rate_value_l","moneyflow_pct_volume_l","moneyflow_pct_value_l","buy_value_exlarge_order_act","sell_value_exlarge_order_act","buy_value_large_order_act","sell_value_large_order_act","buy_value_med_order_act","sell_value_med_order_act","buy_value_small_order_act","sell_value_small_order_act","buy_volume_exlarge_order_act","sell_volume_exlarge_order_act","buy_volume_large_order_act","sell_volume_large_order_act","buy_volume_med_order_act","sell_volume_med_order_act","buy_volume_small_order_act","sell_volume_small_order_act",
+     "buy_value_exlarge_order", "sell_value_exlarge_order", "buy_value_large_order", "sell_value_large_order",
+     "buy_value_med_order", "sell_value_med_order", "buy_value_small_order", "sell_value_small_order",
+     "buy_volume_exlarge_order", "sell_volume_exlarge_order", "buy_volume_large_order", "sell_volume_large_order",
+     "buy_volume_med_order", "sell_volume_med_order", "buy_volume_small_order", "sell_volume_small_order",
+     "trades_count", "buy_trades_exlarge_order", "sell_trades_exlarge_order", "buy_trades_large_order",
+     "sell_trades_large_order", "buy_trades_med_order", "sell_trades_med_order", "buy_trades_small_order",
+     "sell_trades_small_order", "s_mfd_inflowvolume", "net_inflow_rate_volume", "s_mfd_inflow", "net_inflow_rate_value",
+     "s_mfd_inflowvolume_large_order", "net_inflow_rate_volume_l", "s_mfd_inflow_large_order",
+     "net_inflow_rate_value_l", "moneyflow_pct_volume_l", "moneyflow_pct_value_l", "buy_value_exlarge_order_act",
+     "sell_value_exlarge_order_act", "buy_value_large_order_act", "sell_value_large_order_act",
+     "buy_value_med_order_act", "sell_value_med_order_act", "buy_value_small_order_act", "sell_value_small_order_act",
+     "buy_volume_exlarge_order_act", "sell_volume_exlarge_order_act", "buy_volume_large_order_act",
+     "sell_volume_large_order_act", "buy_volume_med_order_act", "sell_volume_med_order_act",
+     "buy_volume_small_order_act", "sell_volume_small_order_act",
 
-     "s_li_initiativebuyrate","s_li_initiativebuymoney","s_li_initiativebuyamount","s_li_initiativesellrate","s_li_initiativesellmoney","s_li_initiativesellamount",
+     "s_li_initiativebuyrate", "s_li_initiativebuymoney", "s_li_initiativebuyamount", "s_li_initiativesellrate",
+     "s_li_initiativesellmoney", "s_li_initiativesellamount",
 
-     "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R",
+     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
 
      'tgt',
      ])
@@ -76,6 +104,7 @@ Cc = collections.namedtuple(
 
 Ans = collections.namedtuple("Ans", ['code', 'prob', 'tgt'])
 
+
 def getLine(fin):
     for l in open(fin):
         l = l.strip()
@@ -83,10 +112,12 @@ def getLine(fin):
             continue
         yield l
 
+
 def getKv(fin):
     for l in getLine(fin):
         pos = l.find(",")
         yield l[:pos], l[pos + 1:]
+
 
 def getFtKv(fin):
     for key, value in getKv(fin):
@@ -94,11 +125,13 @@ def getFtKv(fin):
         items = map(lambda x: x.split("_"), items)
         yield key, items
 
+
 def getFt(fin, dtype=Ft2):
     kv = {}
     for k, v in getFtKv(fin):
         kv[k] = dtype(*v)
     return kv
+
 
 def getFtEx(fin):
     keyfile = fin + ".key.ex.npy"
@@ -109,25 +142,28 @@ def getFtEx(fin):
         "%d keys not equal %d values" % (len(keys), len(values))
     return dict(zip(keys, values))
 
+
 def getAns(fin):
     def ansTrans(x):
         return Ans(*x.split("_"))
-    
+
     for key, value in getKv(fin):
         yield key, map(ansTrans, value.split(","))
 
+
 def formatAns(_):
     return "_".join(_)
+
 
 if __name__ == '__main__':
     # aux = getFt("macro/2010/2016.ft.aux", Aux)
     # keys = aux.keys()
     # key = keys[0]
     # print len(aux[key].ds), len(aux[key].work_day)
-    
+
     # ft = getFt("macro/2010/2016.ft")
     # print len(ft[key].ds), len(ft[key].target)
-    
+
     for k, ans in getAns("ans/2016_pc"):
         print k, [_.code for _ in ans]
 
@@ -172,4 +208,3 @@ if __name__ == '__main__':
 #  0,    1,      2,      3,  4, 5,    6,   7, 8,        9,     10,
 # s-rate, h-rate, l-rate, e-rate, status, s-status, wav-status, e-status, target
 #     11,     12,     13,     14,     15,       16,         17,       18,     19
-

@@ -1,4 +1,4 @@
-from common import *
+from dp.common import *
 
 
 def getAllDataByDate(conn, start_date, end_date):
@@ -73,4 +73,3 @@ if __name__ == '__main__':
             no_data_code.add(code)
     print "\n".join(no_data_code)
     print "no_data total", len(no_data_code)
-    

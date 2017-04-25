@@ -1,5 +1,5 @@
 import tushare as ts
-from common import *
+from dp.common import *
 
 
 def download(name, dest_dir):
