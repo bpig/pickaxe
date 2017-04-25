@@ -28,7 +28,7 @@ def dump_data(conn, start_date, end_date):
         os.mkdir(dest_path)
 
     df = get_data(conn, start_date, end_date)
-
+    empty_st = []
     for (st,) in tqdm(st_list):
         st_code = st.split('.')[0]
         tgt = os.path.join(dest_path, st_code)
@@ -40,8 +40,8 @@ def dump_data(conn, start_date, end_date):
         if not data.empty:
             data.to_csv(tgt, index=False)
         else:
-            return st
-    return ""
+            empty_st += [st]
+    return empty_st
 
 
 if __name__ == '__main__':
@@ -51,10 +51,8 @@ if __name__ == '__main__':
     except:
         end_date = start_date
     conn = conn_sql()
-    no_data_code = set()
     with TimeLog("%s-%s" % (start_date, end_date)):
-        code = dump_data(conn, start_date, end_date)
-        if code:
-            no_data_code.add(code)
-    print "\n".join(no_data_code)
-    print "no_data total", len(no_data_code)
+        empty_st = dump_data(conn, start_date, end_date)
+
+    print "\n".join(empty_st)
+    print "no_data total", len(empty_st)
