@@ -29,7 +29,7 @@ def getSC(appName='aux'):
 def read_csv(iterator):
     content = "\n".join(list(iterator))
     f = StringIO(content)
-    columns = ["dt", "s", "h", "l", "e", "av", "vol", "m", "t", "ft"]
+    columns = ["dt", "s", "h", "l", "e", "av", "v", "m", "t", "ft"]
     df = pd.read_csv(f, header=None, names=columns)
     return df
 
