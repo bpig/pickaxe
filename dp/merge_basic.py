@@ -14,4 +14,5 @@ if __name__ == '__main__':
         else:
             df = df.append(stock, ignore_index=True)
     df.fillna(0, inplace=True)
+    df.drop("S_DQ_ADJFACTOR", inplace=True)
     df.to_csv("merge.cc", index=False, header=False)
