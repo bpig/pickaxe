@@ -12,6 +12,6 @@ if __name__ == '__main__':
     start_date = '2015-04-01'
     end_date = '2017-10-12'
 
-    dest_dir = os.path.join(curDir(), "index")
+    dest_dir = os.path.join(cur_dir(), "index")
     download("zh500", dest_dir)
     download("hs300", dest_dir)

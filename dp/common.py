@@ -7,6 +7,7 @@ import datetime
 from tqdm import tqdm
 import numpy as np
 from collections import defaultdict
+from StringIO import StringIO
 
 pd.options.mode.chained_assignment = None
 
@@ -28,11 +29,11 @@ class TimeLog:
         print "%s %.2fs" % (self.n, time.time() - self.t)
 
 
-def curDir():
+def cur_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
 
-def connectSQL():
+def conn_sql():
     conn = pymysql.connect(
         host='localhost',
         port=3306,
@@ -42,7 +43,7 @@ def connectSQL():
     return conn
 
 
-def getWindcodes(conn):
+def get_st_list(conn):
     with TimeLog('getting codes'):
         cur = conn.cursor()
         sql = "select distinct S_INFO_WINDCODE from ashareeodprices"

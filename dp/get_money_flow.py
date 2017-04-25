@@ -28,9 +28,9 @@ def getDataByWindcode(st_code, all_data):
 if __name__ == '__main__':
     if not os.path.exists(MONEY_DATA):
         os.mkdir(MONEY_DATA)
-    conn = connectSQL()
+    conn = conn_sql()
     all_data = getAllDataByDate(conn, start_date='20040601', end_date='20170101')
-    codes = getWindcodes(conn)
+    codes = get_st_list(conn)
 
     for (st,) in tqdm(codes):
         st_code = st.split('.')[0]
