@@ -1,3 +1,6 @@
+import os
+
+print os.path.abspath(os.curdir)
 from dp.common import *
 
 if __name__ == '__main__':
