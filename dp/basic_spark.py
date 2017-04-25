@@ -8,9 +8,9 @@ from pyspark import SparkContext
 def getKv(line):
     if not line:
         return ""
-    pos = line.find(",")
-    key = line[:pos]
-    value = line[pos + 1:]
+    pos = line.rfind(",")
+    key = line[pos+1:]
+    value = line[:pos]
     return key, value
 
 
@@ -26,21 +26,22 @@ def getSC(appName='aux'):
 # def f(iterator): yield sum(iterator)
 # rdd.mapPartitions(f).collect()
 
-def cat(iterator):
+def read_csv(iterator):
     content = "\n".join(list(iterator))
-    f = StringIO()
-    f.write(content)
-    df = pd.read_csv(f)
+    f = StringIO(content)
+    df = pd.read_csv(f, header=None)
     return df
 
+def f((k, v)):
+    return len(v)
 
 if __name__ == "__main__":
     sc = getSC()
     model = "f12"
-    fin = "htk/" + "test.cc"
-    rdd = sc.textFile(fin, 1000)
-    rdd = rdd.map(getKv).filter(len).groupbyKey().mapValues(cat)
-    rdd.collect()
+    fin = "htk/" + "merge.cc"
+    rdd = sc.textFile(fin, 2)
+    rdd = rdd.map(getKv).filter(len).groupByKey().mapValues(read_csv).map(f)
+    print rdd.collect()
     # groupByKey().mapValues(cal).filter(lambda x: len(x[1]))
     # rdd.cache()
 
