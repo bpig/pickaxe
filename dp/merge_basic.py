@@ -5,7 +5,7 @@ from common import *
 if __name__ == '__main__':
     st_list = sorted(os.listdir(BASIC_DATA))
     df = None
-    for st in st_list[:2] + ["300359.csv"]:
+    for st in st_list[:2]:
         print st
         stock = pd.read_csv(os.path.join(BASIC_DATA, st), parse_dates=[0])
         stock['code'] = st[:-4]
@@ -14,5 +14,5 @@ if __name__ == '__main__':
         else:
             df = df.append(stock, ignore_index=True)
     df.fillna(0, inplace=True)
-    df.drop("S_DQ_ADJFACTOR", inplace=True)
+    # df.drop("S_DQ_ADJFACTOR", inplace=True)
     df.to_csv("merge.cc", index=False, header=False)

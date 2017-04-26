@@ -29,18 +29,17 @@ def dump_data(conn, start_date, end_date):
 
     df = get_data(conn, start_date, end_date)
     empty_st = []
-    for (st,) in tqdm(st_list):
-        st_code = st.split('.')[0]
+    for (st_code,) in tqdm(st_list):
         tgt = os.path.join(dest_path, st_code)
 
-        data = df[df.S_INFO_WINDCODE == st]
+        data = df[df.S_INFO_WINDCODE == st_code]
         if os.path.exists(tgt):
             data = pd.DataFrame.from_csv(tgt)
             data = data.append(data, ignore_index=True)
         if not data.empty:
             data.to_csv(tgt, index=False)
         else:
-            empty_st += [st]
+            empty_st += [st_code]
     return empty_st
 
 
