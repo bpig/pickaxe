@@ -44,7 +44,7 @@ def cal(df):
         for col in ["s", "h", "l", "e", "ft", "m", "v"]:
             df[col + `win`] = pd.Series.rolling(df[col], window=win).mean()
             df[col + `win`] = pd.Series.rolling(df[col], window=win).std()
-    df.drop(["st", "buy", "sell", "pe", "dt", "day"], axis=1, inplace=True)
+    df.drop(["st", "buy", "sell", "pe", "t", "dt", "day"], axis=1, inplace=True)
 
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df.dropna(inplace=True)

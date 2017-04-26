@@ -20,7 +20,9 @@ def normalize_fea():
 def raw_fea():
     if not os.path.exists(RAW_DATA):
         os.mkdir(RAW_DATA)
-    st_list = sorted(os.listdir(BASIC_DATA))
+    if not os.path.exists(MVN_DATA):
+        os.mkdir(MVN_DATA)
+    st_list = sorted(os.listdir(BASIC_DATA))[:2]
     columns = ["st", "dt", "s", "h", "l", "e", "v", "m", "t", "ft"]
     x = None
     xx = None

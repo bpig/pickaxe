@@ -6,7 +6,6 @@ src/test/small*
 model*
 ans*
 log*
-loooooo.log
 daily*
 smsr_dumper
 raw
@@ -16,3 +15,6 @@ other
 share
 src/ts/macro*
 src/ts/top*
+*_data
+*log
+*.cc
