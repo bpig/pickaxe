@@ -25,7 +25,7 @@ def cal(df):
     df["l_r"] = df.l / df.pe
     df["e_r"] = df.e / df.pe
 
-    df["sts"] = np.where(df.ft > 0, 1, 0).astype(np.int8)  # 1 : ok, 0 : close , status
+    df["sts"] = np.where(df.ft > 0, 1, 0).astype(np.int8)  
 
     df["s_sts"] = df.s_r.map(gen_status).astype(np.int8)
     df["e_sts"] = df.e_r.map(gen_status).astype(np.int8)
@@ -47,5 +47,16 @@ def cal(df):
     return df
 
 
-def select_column(df):
-    columns = ["s", "h", "l", "e", "ft", "m", "v"]
+def comb_fea(df):
+    ans = []
+    L = 15
+    for row in range(0, len(df) - L + 1):
+        fea = []
+        for col in df.columns:
+            if col == "tgt":
+                continue
+            fea += list(df[col][row: row + L])
+        ans += [fea]
+    df = pd.DataFrame(ans)
+    df.dropna(inplace=True)
+    return df
