@@ -6,12 +6,12 @@ from basic import *
 def normalize_fea():
     if not os.path.exists(FEA_DATA):
         os.mkdir(FEA_DATA)
-    st_list = sorted(os.listdir(BASIC_DATA))
-    mu = pd.read_csv(os.path.join(RAW_DATA, "mu"), index=False, header=False)
-    delta = pd.read_csv(os.path.join(RAW_DATA, "delta"), index=False, header=False)
+    st_list = sorted(os.listdir(RAW_DATA))
+    mu = pd.read_csv(os.path.join(MVN_DATA, "mu"), index_col=None, header=None)[0]
+    delta = pd.read_csv(os.path.join(MVN_DATA, "delta"), index_col=None, header=None)[0]
 
     for st_code in tqdm(st_list):
-        st = pd.read_csv(os.path.join(RAW_DATA, st_code), index=False, header=False)
+        st = pd.read_csv(os.path.join(RAW_DATA, st_code), index_col=None, header=None)
         st = (st - mu) / delta
         tgt = os.path.join(FEA_DATA, st_code)
         st.to_csv(tgt, index=False, header=None)
@@ -50,9 +50,9 @@ def raw_fea():
     delta = xx / ct - mu * mu
     delta.fillna(0)
     delta **= .5
-    delta += 1
-    mu.to_csv(os.path.join(RAW_DATA, "mu"), index=False)
-    delta.to_csv(os.path.join(RAW_DATA, "delta"), index=False)
+    delta[delta == 0] = 1
+    mu.to_csv(os.path.join(MVN_DATA, "mu"), index=False)
+    delta.to_csv(os.path.join(MVN_DATA, "delta"), index=False)
 
 
 if __name__ == "__main__":

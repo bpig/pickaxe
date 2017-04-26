@@ -33,7 +33,7 @@ def cal(df):
     df["l_sts"] = df.l_r.map(gen_status).astype(np.int8)
     df["h_sts"] = df.h_r.map(gen_status).astype(np.int8)
 
-    df["work_day"] = range(len(df), 0, -1)
+    df["day"] = range(len(df), 0, -1)
 
     df["buy"] = df.e[2:].reset_index(drop=True)
     df["sell"] = df.e[1:].reset_index(drop=True)
@@ -44,7 +44,7 @@ def cal(df):
         for col in ["s", "h", "l", "e", "ft", "m", "v"]:
             df[col + `win`] = pd.Series.rolling(df[col], window=win).mean()
             df[col + `win`] = pd.Series.rolling(df[col], window=win).std()
-    df.drop(["st", "buy", "sell", "pe", "dt"], axis=1, inplace=True)
+    df.drop(["st", "buy", "sell", "pe", "dt", "day"], axis=1, inplace=True)
 
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df.dropna(inplace=True)

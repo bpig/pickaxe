@@ -18,7 +18,7 @@ MARKET_DATA = "market_data"
 MONEY_DATA = "money_data"
 RAW_DATA = "raw_data"
 FEA_DATA = "fea_data"
-
+MVN_DATA = "mvn_data"
 
 class TimeLog:
     def __init__(self, name=""):
