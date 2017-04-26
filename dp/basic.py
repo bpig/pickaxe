@@ -12,13 +12,14 @@ def gen_status(rate):
 
 
 def cal(df):
+    df = df[df.m != 0]
     df.sort_values('dt', ascending=False, inplace=True)
-    df.reset_index(drop=True)
+    df.reset_index(drop=True, inplace=True)
 
     df["pe"] = df.e[1:].reset_index(drop=True)
 
-    df["m_r"] = df.m[1:].reset_index(drop=True) / df.m
-    df["v_r"] = df.v[1:].reset_index(drop=True) / df.v
+    df["m_r"] = df.m / df.m[1:].reset_index(drop=True)
+    df["v_r"] = df.v / df.v[1:].reset_index(drop=True)
 
     df["s_r"] = df.s / df.pe
     df["h_r"] = df.h / df.pe
@@ -44,6 +45,10 @@ def cal(df):
             df[col + `win`] = pd.Series.rolling(df[col], window=win).mean()
             df[col + `win`] = pd.Series.rolling(df[col], window=win).std()
     df.drop(["st", "buy", "sell", "pe", "dt"], axis=1, inplace=True)
+
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.dropna(inplace=True)
+    df.reset_index(drop=True, inplace=True)
     return df
 
 
@@ -56,7 +61,8 @@ def comb_fea(df):
             if col == "tgt":
                 continue
             fea += list(df[col][row: row + L])
+        fea += [df["tgt"][row]]
         ans += [fea]
     df = pd.DataFrame(ans)
-    df.dropna(inplace=True)
+    # print df.shape
     return df

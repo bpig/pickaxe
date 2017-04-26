@@ -10,7 +10,7 @@ if __name__ == "__main__":
     x = None
     xx = None
     ct = 0
-    for st_code in st_list[:2]:
+    for st_code in tqdm(st_list):
         tgt = os.path.join(FEA_DATA, st_code)
 
         df = pd.read_csv(os.path.join(BASIC_DATA, st_code))
@@ -18,8 +18,10 @@ if __name__ == "__main__":
         df.columns = columns
         df = cal(df)
 
-        # df.to_csv(tgt, index=False)
+        df.to_csv(tgt, index=False)
+
         df = comb_fea(df)
+
         df.to_csv(tgt, index=False, header=None)
         if x is None:
             x = df.sum()
@@ -29,10 +31,12 @@ if __name__ == "__main__":
             xx += (df * df).sum()
         ct += df.index.size
 
+    x.to_csv("x")
+    xx.to_csv("xx")
     mu = x / ct
     delta = xx / ct - mu * mu
     delta.fillna(0)
     delta **= .5
     delta += 1
     mu.to_csv("mu")
-    delta.to_csv(delta)
+    delta.to_csv("delta")
