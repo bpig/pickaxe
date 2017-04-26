@@ -11,7 +11,9 @@ def gen_status(rate):
     return 0
 
 
-def cal((st_code, df)):
+def cal(df):
+    df.sort_values('TRADE_DT', ascending=False, inplace=True).reset_index(drop=True)
+
     df["pe"] = df.e[1:].reset_index(drop=True)
 
     df["m_r"] = df.m[1:].reset_index(drop=True) / df.m
@@ -40,4 +42,9 @@ def cal((st_code, df)):
         for col in ["s", "h", "l", "e", "ft", "m", "v"]:
             df[col + `win`] = pd.Series.rolling(df[col], window=win).mean()
             df[col + `win`] = pd.Series.rolling(df[col], window=win).std()
+    df.drop(["buy", "sell", "dt", "pe"], axes=1)
     return df
+
+
+def select_column(df):
+    columns = ["s", "h", "l", "e", "ft", "m", "v"]

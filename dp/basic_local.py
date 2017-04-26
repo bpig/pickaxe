@@ -9,5 +9,5 @@ if __name__ == "__main__":
         df = pd.read_csv(st)
         df.columns = columns
         st_code = st[:-4]
-        df = cal((st_code, df))
+        df = cal(df)
         df.to_csv(st_code + ".fea", index=False)
