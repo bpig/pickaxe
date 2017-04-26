@@ -25,7 +25,7 @@ def cal(df):
     df["l_r"] = df.l / df.pe
     df["e_r"] = df.e / df.pe
 
-    df["sts"] = np.where(df.ft > 0, 1, 0).astype(np.int8)  
+    df["sts"] = np.where(df.ft > 0, 1, 0).astype(np.int8)
 
     df["s_sts"] = df.s_r.map(gen_status).astype(np.int8)
     df["e_sts"] = df.e_r.map(gen_status).astype(np.int8)
