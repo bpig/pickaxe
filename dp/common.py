@@ -16,7 +16,9 @@ METRIC_DATA = "metric_data"
 NO_HALT_METRIC_DATA = "no_halt_metric_data"
 MARKET_DATA = "market_data"
 MONEY_DATA = "money_data"
+RAW_DATA = "raw_data"
 FEA_DATA = "fea_data"
+
 
 class TimeLog:
     def __init__(self, name=""):
