@@ -24,6 +24,7 @@ FLAT_DATA = "flat_data/"
 FEA_DATA = "fea_data/"
 MVN_DATA = "mvn_data/"
 TRAIN_DATA = "train_data/"
+PARA_DATA = "para_data/"
 
 COL = {
     "S_INFO_WINDCODE": "st",
