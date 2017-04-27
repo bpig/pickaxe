@@ -41,16 +41,13 @@ def train(model="test"):
     datafile = "train_data/"
     data = read_data(datafile)
 
-    print "model={m}, macro={d}".format(d=datafile, m=model)
+    print "model={m}, data={d}".format(d=datafile, m=model)
     model_dir = "model/" + model + "/"
-    if not os.path.exists(model_dir):
-        os.mkdir(model_dir)
+    makedirs(model_dir)
 
     if False:
-        print "load model"
         model = loadModel(model_dir)
     else:
-        print "make model"
         model = makeModel(model_dir, len(data.fea[0]))
 
     gamma = 0.6
@@ -100,4 +97,5 @@ def train(model="test"):
 
 
 if __name__ == '__main__':
+    get_args()
     train("test")

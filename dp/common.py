@@ -9,6 +9,7 @@ import numpy as np
 from collections import defaultdict
 from StringIO import StringIO
 import collections
+from argparse import ArgumentParser
 
 pd.options.mode.chained_assignment = None
 
@@ -49,10 +50,14 @@ class TimeLog:
         print "%s %.2fs" % (self.n, time.time() - self.t)
 
 
-def need_dir(dirname):
+def makedirs(dirname):
     if not os.path.exists(dirname):
         print "mkdir,", dirname
-        os.mkdir(dirname)
+        os.makedirs(dirname)
+
+
+def need_dir(dirname):
+    makedirs(dirname)
 
     def wrap(fun):
         def _inter(*args):
@@ -88,6 +93,19 @@ def get_st_list(conn):
         cur.execute(sql)
         codes = cur.fetchall()
     return codes
+
+
+def get_args(desc=""):
+    parser = ArgumentParser(description=desc)
+    parser.add_argument("-d", dest="d", action="store_true", default=False,
+                        help="direct, no filter")
+    parser.add_argument("-c", dest="c", type=int, default=50,
+                        help="ct")
+    parser.add_argument("-g", dest="g", default="",
+                        help="gpu id")
+    args = parser.parse_args()
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.g
+    return args
 
 
 def strtodatetime(datestr, format="%Y%m%d"):
