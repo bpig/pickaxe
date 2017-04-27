@@ -70,9 +70,12 @@ def train(model="test"):
         return learning_rate
 
     scheduler = LearningRateScheduler(lr_scheduler)
-    model.compile(loss='binary_crossentropy',
+    # model.compile(loss='binary_crossentropy',
+    #               optimizer=Adam(lr=lr),
+    #               metrics=['accuracy'])
+    model.compile(loss='mse',
                   optimizer=Adam(lr=lr),
-                  metrics=['accuracy'])
+                  metrics=['mae', 'acc'])
 
     filepath = model_dir + "/e{epoch:d}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc',
@@ -83,9 +86,9 @@ def train(model="test"):
                         validation_split=0.1,
                         nb_epoch=sum(n_epochs), callbacks=callbacks_list)
 
-    for i in zip(history.epoch, history.history['loss'], history.history['acc'],
-                 history.history['val_loss'], history.history['val_acc']):
-        value = "epoch=%d, loss=%f, acc=%f, val_loss=%f, val_acc=%f" % i
+    for i in zip(history.epoch, history.history['loss'], history.history['mae'],
+                 history.history['val_loss'], history.history['val_mae']):
+        value = "epoch=%d, loss=%f, mae=%f, val_loss=%f, val_mae=%f" % i
         print value
 
     print 'saving...'
