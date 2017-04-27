@@ -75,7 +75,7 @@ def train(model="test"):
     #               metrics=['accuracy'])
     model.compile(loss='mse',
                   optimizer=Adam(lr=lr))
-                  # metrics=['mae'])
+    # metrics=['mae'])
 
     filepath = model_dir + "/e{epoch:d}.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='mse',

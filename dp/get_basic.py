@@ -18,6 +18,7 @@ def get_data(conn, start_date, end_date):
     df = df1.merge(df2, on=['TRADE_DT', 'S_INFO_WINDCODE'], how='inner')
     return df
 
+
 @need_dir(BASIC_DATA)
 def dump_data(conn, start_date, end_date):
     st_list = get_st_list(conn)
@@ -26,7 +27,7 @@ def dump_data(conn, start_date, end_date):
     df = get_data(conn, start_date, end_date)
     empty_st = []
     for (st_code,) in tqdm(st_list):
-        tgt = os.path.join(BASIC_DATA, st_code)
+        tgt = BASIC_DATA + st_code
 
         data = df[df.S_INFO_WINDCODE == st_code]
         if os.path.exists(tgt):
