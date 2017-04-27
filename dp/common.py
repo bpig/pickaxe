@@ -8,6 +8,7 @@ from tqdm import tqdm
 import numpy as np
 from collections import defaultdict
 from StringIO import StringIO
+import collections
 
 pd.options.mode.chained_assignment = None
 
@@ -19,6 +20,7 @@ MONEY_DATA = "money_data"
 RAW_DATA = "raw_data"
 FEA_DATA = "fea_data"
 MVN_DATA = "mvn_data"
+
 
 class TimeLog:
     def __init__(self, name=""):

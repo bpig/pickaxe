@@ -6,9 +6,8 @@
 # from __future__ import division
 
 from common import *
-import cmvn
 
-Datasets = collections.namedtuple('Datasets', ['key', 'fea', 'tgt'])
+Datasets = collections.namedtuple('Datasets', ['fea', 'tgt'])
 
 
 class DataSet(object):
@@ -55,43 +54,23 @@ class DataSet(object):
 
 
 def base_data(datafile):
-    keyfile = datafile + ".key.npy"
     feafile = datafile + ".fea.npy"
     tgtfile = datafile + ".tgt.npy"
 
-    print "using cached"
-    keys = np.load(keyfile)
     feas = np.load(feafile)
     tgts = np.load(tgtfile)
-    return keys, feas, tgts
+    return feas, tgts
 
 
-def read_data(datafile, division=None):
-    print time.ctime(), "begin load macro"
+def read_data(datafile):
+    print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
-    if division:
-        tgts = np.asarray(map(lambda x: [1, 0] if x < division else [0, 1], tgts))
+    #    if division:
+    #        tgts = np.asarray(map(lambda x: [1, 0] if x < division else [0, 1], tgts))
     feas = feas.astype(np.float32)
-    print "total", ct, "dim", len(feas[0]), tgts.dtype, "division", division
-
-    # t = tgts == 1
-    # part = t.sum()
-
-    # perm = np.random.permutation(ct)
-    # select = np.zeros(ct)
-    # select[t] = 1
-    # for idx in perm:
-    #     if t[idx]:
-    #         continue
-    #     select[idx] = 1
-    #     part -= 1
-    #     if part == 0:
-    #         break
-    # tgts = tgts[select.astype(np.bool)]
-    # keys = keys[select.astype(np.bool)]
-    # feas = feas[select.astype(np.bool)]
+    print "total", ct, "dim", len(feas[0]), tgts.dtype
 
     print time.ctime(), "finish load macro"
-    return Datasets(key=keys, fea=feas, tgt=tgts)
+    return Datasets(fea=feas, tgt=tgts)
