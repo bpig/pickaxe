@@ -9,6 +9,7 @@ import numpy as np
 from collections import defaultdict
 from StringIO import StringIO
 import collections
+import cPickle as pickle
 from argparse import ArgumentParser
 
 pd.options.mode.chained_assignment = None

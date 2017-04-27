@@ -24,10 +24,10 @@ def normalize_fea(st_list, gid):
             df = df.append(st, ignore_index=True)
 
     fea = df[df.columns[:-1]].as_matrix().astype(np.float32)
-    np.save(PARA_DATA + "fea_%s.npy" % gid, fea)
+    np.save(PARA_DATA + "fea%s.npy" % gid, fea)
 
     tgt = df[df.columns[-1]].as_matrix().reshape(-1, 1).astype(np.float32)
-    np.save(PARA_DATA + "tgt_%s.npy" % gid, tgt)
+    np.save(PARA_DATA + "tgt%s.npy" % gid, tgt)
 
 
 @need_dir(MVN_DATA)
@@ -52,9 +52,9 @@ def raw_fea(st_list, gid):
 
 if __name__ == "__main__":
     makedirs(PARA_DATA)
-    st_list = open(sys.argv[1]).readlines()
-    st_list = map(str.strip, st_list)
-    st_list = filter(len, st_list)
-    gid = sys.argv[2]
-    raw_fea(st_list, gid)
+    gid = sys.argv[1]
+    tgt = PARA_DATA + "st_list%s" % gid
+    st_list = pickle.load(open(tgt))
+    print st_list[0], len(st_list)
+    # raw_fea(st_list, gid)
     # normalize_fea(st_list, gid)
