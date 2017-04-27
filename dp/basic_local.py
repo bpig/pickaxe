@@ -10,11 +10,30 @@ def normalize_fea():
     mu = pd.read_csv(os.path.join(MVN_DATA, "mu"), index_col=None, header=None)[0]
     delta = pd.read_csv(os.path.join(MVN_DATA, "delta"), index_col=None, header=None)[0]
 
+    df = None
     for st_code in tqdm(st_list):
-        st = pd.read_csv(os.path.join(RAW_DATA, st_code), index_col=None, header=None)
+        try:
+            st = pd.read_csv(os.path.join(RAW_DATA, st_code), index_col=None, header=None)
+        except:
+            continue
+        if st.empty:
+            continue
         st = (st - mu) / delta
         tgt = os.path.join(FEA_DATA, st_code)
         st.to_csv(tgt, index=False, header=None)
+        if df is None:
+            df = st
+        else:
+            df = df.append(st, ignore_index=True)
+
+    fea = df[df.columns[:-1]].as_matrix()
+    print df.shape
+    print fea.shape
+    np.save("fea.npy", fea)
+
+    tgt = df[df.columns[-1]].as_matrix().reshape(-1, 1)
+    print tgt.shape
+    np.save("tgt.npy", tgt)
 
 
 def raw_fea():
@@ -22,7 +41,7 @@ def raw_fea():
         os.mkdir(RAW_DATA)
     if not os.path.exists(MVN_DATA):
         os.mkdir(MVN_DATA)
-    st_list = sorted(os.listdir(BASIC_DATA))[:2]
+    st_list = sorted(os.listdir(BASIC_DATA))
     columns = ["st", "dt", "s", "h", "l", "e", "v", "m", "t", "ft"]
     x = None
     xx = None
@@ -38,7 +57,8 @@ def raw_fea():
         # df.to_csv(tgt, index=False)
 
         df = comb_fea(df)
-
+        if df.empty:
+            continue
         df.to_csv(tgt, index=False, header=None)
         if x is None:
             x = df.sum()
@@ -58,5 +78,5 @@ def raw_fea():
 
 
 if __name__ == "__main__":
-    raw_fea()
+    # raw_fea()
     normalize_fea()
