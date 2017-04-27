@@ -39,7 +39,7 @@ class MVN:
     def raw_dump(self, gid):
         self.x.to_csv(PARA_DATA + "x%s" % gid)
         self.xx.to_csv(PARA_DATA + "xx%s" % gid)
-        np.save("ct%s" % gid, self.ct)
+        np.save(PARA_DATA + "ct%s" % gid, self.ct)
 
 
 def gen_status(rate):

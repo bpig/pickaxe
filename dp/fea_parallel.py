@@ -57,4 +57,4 @@ if __name__ == "__main__":
     st_list = filter(len, st_list)
     gid = sys.argv[2]
     raw_fea(st_list, gid)
-    normalize_fea(st_list, gid)
+    # normalize_fea(st_list, gid)
