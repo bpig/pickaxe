@@ -37,7 +37,9 @@ def dump_data(conn, start_date, end_date):
             data.to_csv(tgt, index=False)
         else:
             empty_st += [st_code]
-    return empty_st
+
+    print "\n".join(empty_st)
+    print "no_data total", len(empty_st)
 
 
 if __name__ == '__main__':
@@ -48,7 +50,7 @@ if __name__ == '__main__':
         end_date = start_date
     conn = conn_sql()
     with TimeLog("%s-%s" % (start_date, end_date)):
-        empty_st = dump_data(conn, start_date, end_date)
+        dump_data(conn, start_date, end_date)
 
-    print "\n".join(empty_st)
-    print "no_data total", len(empty_st)
+
+

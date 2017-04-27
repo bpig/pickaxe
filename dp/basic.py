@@ -3,6 +3,41 @@
 from common import *
 
 
+class MVN:
+    def __init__(self):
+        self.x = None
+        self.xx = None
+        self.ct = 0
+        self.columns = None
+
+    def collect(self, df):
+        if self.columns is None:
+            self.columns = df.columns
+        if self.x is None:
+            self.x = df.sum()
+            self.xx = (df * df).sum()
+        else:
+            self.x += df.sum()
+            self.xx += (df * df).sum()
+        self.ct += len(df)
+
+    def dump(self):
+        mu = self.x / self.ct
+        delta = self.xx / self.ct - mu * mu
+        delta.fillna(0)
+        delta **= .5
+        delta[delta == 0] = 1
+        mu.index = self.columns
+        delta.index = self.columns
+
+        np.save(MVN_DATA + "mu.npy", mu.as_matrix())
+        np.save(MVN_DATA + "delta.npy", delta.as_matrix())
+
+        mu.to_csv(MVN_DATA + "mu")
+        delta.to_csv(MVN_DATA + "delta")
+
+
+
 def gen_status(rate):
     if rate <= 0.901:
         return 2
@@ -59,9 +94,11 @@ def flat_fea(df):
         for col in df.columns:
             if col == "tgt":
                 continue
-            columns += [col + `_` for _ in range(L)]
+            if row == 0:
+                columns += [col + "_" + `_` for _ in range(L)]
             fea += list(df[col][row: row + L])
-        columns += ["tgt"]
+        if row == 0:
+            columns += ["tgt"]
         fea += [df["tgt"][row]]
         ans += [fea]
     df = pd.DataFrame(ans, columns=columns)

@@ -19,7 +19,7 @@ MARKET_DATA = "market_data/"
 MONEY_DATA = "money_data/"
 
 PROC_DATA = "proc_data/"
-FLAT_DATA = "flat_data"
+FLAT_DATA = "flat_data/"
 FEA_DATA = "fea_data/"
 MVN_DATA = "mvn_data/"
 TRAIN_DATA = "train_data/"
@@ -68,7 +68,7 @@ def cur_dir():
 
 
 def get_total_st():
-    return sorted(os.listdir(FEA_DATA))
+    return sorted(os.listdir(BASIC_DATA))
 
 
 def conn_sql():

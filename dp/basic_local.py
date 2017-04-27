@@ -31,40 +31,6 @@ def normalize_fea():
     np.save(TRAIN_DATA + "tgt.npy", tgt)
 
 
-class MVN:
-    def __init__(self):
-        self.x = None
-        self.xx = None
-        self.ct = 0
-        self.columns = []
-
-    def collect(self, df):
-        if not self.columns:
-            self.columns = df.columns
-        if self.x is None:
-            self.x = df.sum()
-            self.xx = (df * df).sum()
-        else:
-            self.x += df.sum()
-            self.xx += (df * df).sum()
-        self.ct += len(df)
-
-    def dump(self):
-        mu = self.x / self.ct
-        delta = self.xx / self.ct - mu * mu
-        delta.fillna(0)
-        delta **= .5
-        delta[delta == 0] = 1
-        mu.index = self.columns
-        delta.index = self.columns
-
-        np.save(MVN_DATA + "mu.npy", mu.as_matrix())
-        np.save(MVN_DATA + "delta.npy", delta.as_matrix())
-
-        mu.to_csv(MVN_DATA + "mu")
-        delta.to_csv(MVN_DATA + "delta")
-
-
 @need_dir(MVN_DATA)
 @need_dir(PROC_DATA)
 @need_dir(FLAT_DATA)
@@ -75,7 +41,7 @@ def raw_fea():
     for st_code in tqdm(st_list):
         df = pd.read_csv(BASIC_DATA + st_code)
         assert len(df.columns) == len(COL)
-        df.rename(columns=COL)
+        df.rename(columns=COL, inplace=True)
 
         df = proc_fea(df)
         df.to_csv(PROC_DATA + st_code, index=False)
