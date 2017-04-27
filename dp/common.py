@@ -20,7 +20,7 @@ MONEY_DATA = "money_data"
 RAW_DATA = "raw_data"
 FEA_DATA = "fea_data"
 MVN_DATA = "mvn_data"
-
+TRAIN_DATA = "train_data"
 
 class TimeLog:
     def __init__(self, name=""):
@@ -33,9 +33,21 @@ class TimeLog:
         print "%s %.2fs" % (self.n, time.time() - self.t)
 
 
+def need_dir(dirname):
+    if not os.path.exists(dirname):
+        print "mkdir,", dirname
+        os.mkdir(dirname)
+    def wrap(fun):
+        def _inter(*args):
+            fun(*args)
+        return _inter
+    return wrap
+
 def cur_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
+def get_total_st():
+    return sorted(os.listdir(FEA_DATA))
 
 def conn_sql():
     conn = pymysql.connect(

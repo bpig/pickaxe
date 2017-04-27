@@ -11,7 +11,7 @@ from feeder import read_data
 
 def makeModel(model_dir, input_dim):
     model = Sequential()
-    model.add(Dense(2048, input_dim=input_dim, activation="relu"))
+    model.add(Dense(1024, input_dim=input_dim, activation="sigmoid"))
     model.add(Dropout(0.3))
     model.add(Dense(1024, activation="relu"))
     model.add(Dropout(0.3))
@@ -38,7 +38,7 @@ def loadModel(model_dir, model_file="weight.hdf5"):
 
 
 def train(model="test"):
-    datafile = "train_data"
+    datafile = "train_data/"
     data = read_data(datafile)
 
     print "model={m}, macro={d}".format(d=datafile, m=model)
@@ -54,7 +54,7 @@ def train(model="test"):
         model = makeModel(model_dir, len(data.fea[0]))
 
     gamma = 0.6
-    n_epochs = [10, 10]
+    n_epochs = [100]
     lr = 0.001
     batch_size = 1024
 
@@ -74,11 +74,11 @@ def train(model="test"):
     #               optimizer=Adam(lr=lr),
     #               metrics=['accuracy'])
     model.compile(loss='mse',
-                  optimizer=Adam(lr=lr),
-                  metrics=['mae', 'acc'])
+                  optimizer=Adam(lr=lr))
+                  # metrics=['mae'])
 
     filepath = model_dir + "/e{epoch:d}.hdf5"
-    checkpoint = ModelCheckpoint(filepath, monitor='val_acc',
+    checkpoint = ModelCheckpoint(filepath, monitor='mse',
                                  verbose=1, save_best_only=False, mode='auto')
     callbacks_list = [scheduler, checkpoint]
 
@@ -86,10 +86,10 @@ def train(model="test"):
                         validation_split=0.1,
                         nb_epoch=sum(n_epochs), callbacks=callbacks_list)
 
-    for i in zip(history.epoch, history.history['loss'], history.history['mae'],
-                 history.history['val_loss'], history.history['val_mae']):
-        value = "epoch=%d, loss=%f, mae=%f, val_loss=%f, val_mae=%f" % i
-        print value
+    # for i in zip(history.epoch, history.history['loss'], history.history['mae'],
+    #              history.history['val_loss'], history.history['val_mae']):
+    #     value = "epoch=%d, loss=%f, mae=%f, val_loss=%f, val_mae=%f" % i
+    #     print value
 
     print 'saving...'
     weightPath = model_dir + '/weight.hdf5'

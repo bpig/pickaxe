@@ -64,5 +64,8 @@ def comb_fea(df):
         fea += [df["tgt"][row]]
         ans += [fea]
     df = pd.DataFrame(ans)
+    # df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    # df.dropna(inplace=True)
+    # df.reset_index(drop=True, inplace=True)
     # print df.shape
     return df

@@ -54,8 +54,8 @@ class DataSet(object):
 
 
 def base_data(datafile):
-    feafile = datafile + ".fea.npy"
-    tgtfile = datafile + ".tgt.npy"
+    feafile = datafile + "fea.npy"
+    tgtfile = datafile + "tgt.npy"
 
     feas = np.load(feafile)
     tgts = np.load(tgtfile)
@@ -64,7 +64,7 @@ def base_data(datafile):
 
 def read_data(datafile):
     print time.ctime(), "begin load data"
-    keys, feas, tgts = base_data(datafile)
+    feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
     #    if division:

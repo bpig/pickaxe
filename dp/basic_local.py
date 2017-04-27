@@ -2,11 +2,9 @@
 from common import *
 from basic import *
 
-
+@need_dir(FEA_DATA)
 def normalize_fea():
-    if not os.path.exists(FEA_DATA):
-        os.mkdir(FEA_DATA)
-    st_list = sorted(os.listdir(RAW_DATA))
+    st_list = get_total_st()
     mu = pd.read_csv(os.path.join(MVN_DATA, "mu"), index_col=None, header=None)[0]
     delta = pd.read_csv(os.path.join(MVN_DATA, "delta"), index_col=None, header=None)[0]
 
@@ -35,13 +33,10 @@ def normalize_fea():
     print tgt.shape
     np.save("tgt.npy", tgt)
 
-
+@need_dir(MVN_DATA)
+@need_dir(RAW_DATA)
 def raw_fea():
-    if not os.path.exists(RAW_DATA):
-        os.mkdir(RAW_DATA)
-    if not os.path.exists(MVN_DATA):
-        os.mkdir(MVN_DATA)
-    st_list = sorted(os.listdir(BASIC_DATA))
+    st_list = get_total_st()
     columns = ["st", "dt", "s", "h", "l", "e", "v", "m", "t", "ft"]
     x = None
     xx = None
@@ -76,7 +71,10 @@ def raw_fea():
     mu.to_csv(os.path.join(MVN_DATA, "mu"), index=False)
     delta.to_csv(os.path.join(MVN_DATA, "delta"), index=False)
 
+    np.save(os.path.join(MVN_DATA, "mu.npy"), mu.as_matrix())
+    np.save(os.path.join(MVN_DATA, "delta.npy"), delta.as_matrix())
+
 
 if __name__ == "__main__":
-    # raw_fea()
+    raw_fea()
     normalize_fea()
