@@ -3,11 +3,10 @@ from common import *
 import keras.backend as K
 from keras.models import Model, Sequential
 from keras.optimizers import SGD, Adam
-from keras.regularizers import l2
 from keras.layers import *
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
 from keras.models import model_from_json
-from mlp_feeder import read_data
+from feeder import read_data
 
 
 def makeModel(model_dir, input_dim):
@@ -18,7 +17,7 @@ def makeModel(model_dir, input_dim):
     model.add(Dropout(0.3))
     model.add(Dense(1024, activation="relu"))
     model.add(Dropout(0.3))
-    model.add(Dense(2, activation="sigmoid"))
+    model.add(Dense(1))
 
     model.summary()
     model_path = model_dir + "/model.json"
@@ -38,36 +37,26 @@ def loadModel(model_dir, model_file="weight.hdf5"):
     return model
 
 
-def train(model, args):
-    idx = int(model[-2:])
-    with open("conf/model.yaml") as fin:
-        cfg = yaml.load(fin)[model[:3]]
-
-    fe_version = cfg["fe"]
-    datafile = "macro/fe/%s/train" % fe_version
-
-    division = cfg["division"][idx]
-    data = read_data(datafile, division)
+def train(model="test"):
+    datafile = "train_data"
+    data = read_data(datafile)
 
     print "model={m}, macro={d}".format(d=datafile, m=model)
     model_dir = "model/" + model + "/"
     if not os.path.exists(model_dir):
         os.mkdir(model_dir)
 
-    init_log(model_dir, 'train')
-    logger = logging.getLogger('train')
-
-    if args.load:
+    if False:
         print "load model"
         model = loadModel(model_dir)
     else:
         print "make model"
         model = makeModel(model_dir, len(data.fea[0]))
 
-    gamma = cfg['gamma'] if 'gamma' in cfg else 0.4
-    n_epochs = cfg['epochs'] if 'epochs' in cfg else [10, 10]
-    lr = cfg['lr'] if 'lr' in cfg else 0.001
-    batch_size = cfg['batch_size'] if 'batch_size' in cfg else 1024
+    gamma = 0.6
+    n_epochs = [10, 10]
+    lr = 0.001
+    batch_size = 1024
 
     def lr_scheduler(epoch):
         learning_rate = lr
@@ -94,25 +83,18 @@ def train(model, args):
                         validation_split=0.1,
                         nb_epoch=sum(n_epochs), callbacks=callbacks_list)
 
-    logger.info(time.ctime())
-    logger.info(" ".join(sys.argv))
     for i in zip(history.epoch, history.history['loss'], history.history['acc'],
                  history.history['val_loss'], history.history['val_acc']):
         value = "epoch=%d, loss=%f, acc=%f, val_loss=%f, val_acc=%f" % i
-        logger.info(value)
+        print value
 
     print 'saving...'
     weightPath = model_dir + '/weight.hdf5'
     model.save_weights(weightPath, overwrite=True)
 
     print 'training finished'
-    logging.shutdown()
     K.clear_session()
 
 
 if __name__ == '__main__':
-    args = getArgs()
-    models = getUsedModel(args.tgt, checkExist=False)
-    print models
-    for m in models:
-        train(m, args)
+    train("test")
