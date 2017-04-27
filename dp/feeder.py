@@ -67,10 +67,8 @@ def read_data(datafile):
     feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
-    #    if division:
-    #        tgts = np.asarray(map(lambda x: [1, 0] if x < division else [0, 1], tgts))
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype
 
-    print time.ctime(), "finish load macro"
+    print time.ctime(), "finish load data"
     return Datasets(fea=feas, tgt=tgts)

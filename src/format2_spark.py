@@ -49,7 +49,7 @@ def getSC(appName='aux'):
         .set("spark.kryoserializer.buffer.max", "1000")
     sc = SparkContext(appName=appName, conf=sconf)
     sc.addPyFile("src/data_loader.py")
-    sc.addPyFile("src/basic.py")
+    sc.addPyFile("src/fea.py")
     sc.addPyFile("src/fea_kernel.py")
     sc.addPyFile("src/fea_core.py")
     sc.addPyFile("src/common.py")

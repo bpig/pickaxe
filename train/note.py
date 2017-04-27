@@ -13,7 +13,7 @@ fs = [
 "./helpfuncs/date.py",
 "./helpfuncs/ChooseChannel.py",
 "./helpfuncs/__init__.py",
-"./helpfuncs/basic.py",
+"./helpfuncs/fea.py",
 "./helpfuncs/finance.py",
 "./train_and_test_Regression.py",
 ]

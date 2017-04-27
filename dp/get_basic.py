@@ -51,6 +51,3 @@ if __name__ == '__main__':
     conn = conn_sql()
     with TimeLog("%s-%s" % (start_date, end_date)):
         dump_data(conn, start_date, end_date)
-
-
-

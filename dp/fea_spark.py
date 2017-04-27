@@ -3,7 +3,7 @@ from StringIO import StringIO
 import pandas as pd
 from pyspark import SparkConf
 from pyspark import SparkContext
-from basic import *
+from fea import *
 
 
 def getKv(line):
@@ -20,7 +20,7 @@ def getSC(appName='fea'):
         .set("spark.akka.frameSize", "1000") \
         .set("spark.kryoserializer.buffer.max", "1000")
     sc = SparkContext(appName=appName, conf=sconf)
-    sc.addPyFile("basic.py")
+    sc.addPyFile("fea.py")
     return sc
 
 

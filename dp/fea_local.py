@@ -1,6 +1,6 @@
 #!/bin/env python
 from common import *
-from basic import *
+from fea import *
 
 
 @need_dir(FEA_DATA)

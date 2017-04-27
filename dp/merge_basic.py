@@ -1,18 +1,14 @@
-import os
-
 from common import *
 
 if __name__ == '__main__':
-    st_list = sorted(os.listdir(BASIC_DATA))
+    st_list = get_total_st()
     df = None
-    for st in st_list[:2]:
-        print st
-        stock = pd.read_csv(os.path.join(BASIC_DATA, st), parse_dates=[0])
-        stock['code'] = st[:-4]
+    for st in st_list:
+        stock = pd.read_csv(BASIC_DATA + st)
+        stock.rename(columns=COL)
+        stock = stock[stock.m != 0]
         if df is None:
-            df = stock.copy()
+            df = stock
         else:
             df = df.append(stock, ignore_index=True)
-    df.fillna(0, inplace=True)
-    # df.drop("S_DQ_ADJFACTOR", inplace=True)
     df.to_csv("merge.cc", index=False, header=False)
