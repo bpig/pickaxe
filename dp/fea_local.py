@@ -36,23 +36,27 @@ def normalize_fea():
 @need_dir(FLAT_DATA)
 def raw_fea():
     st_list = get_total_st()
-
+    st_list = os.listdir(FLAT_DATA)
     mvn = MVN()
     for st_code in tqdm(st_list):
-        df = pd.read_csv(BASIC_DATA + st_code)
-        assert len(df.columns) == len(COL)
-        df.rename(columns=COL, inplace=True)
+        # df = pd.read_csv(BASIC_DATA + st_code)
+        # assert len(df.columns) == len(COL)
+        # df.rename(columns=COL, inplace=True)
 
-        df = proc_fea(df)
-        df.to_csv(PROC_DATA + st_code, index=False)
+        # df = proc_fea(df)
+        # df.to_csv(PROC_DATA + st_code, index=False)
 
-        df = flat_fea(df)
-        df.to_csv(FLAT_DATA + st_code, index=False)
-
+        # df = flat_fea(df)
+        # df.to_csv(FLAT_DATA + st_code, index=False)
+        try:
+            df = pd.read_csv(FLAT_DATA + st_code)
+        except:
+            print st_code
+            continue
         mvn.collect(df)
     mvn.dump()
 
 
 if __name__ == "__main__":
     raw_fea()
-    normalize_fea()
+#    normalize_fea()

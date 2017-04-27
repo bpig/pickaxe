@@ -37,9 +37,11 @@ class MVN:
         delta.to_csv(MVN_DATA + "delta")
 
     def raw_dump(self, gid):
-        self.x.to_csv(PARA_DATA + "x%s" % gid)
-        self.xx.to_csv(PARA_DATA + "xx%s" % gid)
-        np.save(PARA_DATA + "ct%s" % gid, self.ct)
+        if self.x is None:
+            return
+        self.x.to_csv(PARA_DATA + "mvn/x%s" % gid)
+        self.xx.to_csv(PARA_DATA + "mvn/xx%s" % gid)
+        np.save(PARA_DATA + "mvn/ct%s" % gid, self.ct)
 
 
 def gen_status(rate):

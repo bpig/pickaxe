@@ -5,9 +5,8 @@ from fea import *
 
 @need_dir(FEA_DATA)
 def normalize_fea(st_list, gid):
-    mu = pd.Series.from_csv(MVN_DATA + "mu").reset_index(drop=True)
-    delta = pd.Series.from_csv(MVN_DATA + "delta").reset_index(drop=True)
-
+    mu = pd.Series.from_csv(MVN_DATA + "mu")
+    delta = pd.Series.from_csv(MVN_DATA + "delta")
     df = None
     for st_code in tqdm(st_list):
         try:
@@ -24,10 +23,10 @@ def normalize_fea(st_list, gid):
             df = df.append(st, ignore_index=True)
 
     fea = df[df.columns[:-1]].as_matrix().astype(np.float32)
-    np.save(PARA_DATA + "fea%s.npy" % gid, fea)
+    np.save(PARA_DATA + "norm/fea%s.npy" % gid, fea)
 
     tgt = df[df.columns[-1]].as_matrix().reshape(-1, 1).astype(np.float32)
-    np.save(PARA_DATA + "tgt%s.npy" % gid, tgt)
+    np.save(PARA_DATA + "norm/tgt%s.npy" % gid, tgt)
 
 
 @need_dir(MVN_DATA)
@@ -41,20 +40,24 @@ def raw_fea(st_list, gid):
         df.rename(columns=COL, inplace=True)
 
         df = proc_fea(df)
+        if df.empty:
+            continue
         df.to_csv(PROC_DATA + st_code, index=False)
 
         df = flat_fea(df)
+        if df.empty:
+            continue
         df.to_csv(FLAT_DATA + st_code, index=False)
-
         mvn.collect(df)
     mvn.raw_dump(gid)
 
 
 if __name__ == "__main__":
     makedirs(PARA_DATA)
-    gid = sys.argv[1]
-    tgt = PARA_DATA + "st_list%s" % gid
+    phase, gid = sys.argv[1:]
+    tgt = PARA_DATA + "st_list/%s" % gid
     st_list = pickle.load(open(tgt))
-    print st_list[0], len(st_list)
-    # raw_fea(st_list, gid)
-    # normalize_fea(st_list, gid)
+    if phase == "raw":
+        raw_fea(st_list, gid)
+    elif phase == "norm":
+        normalize_fea(st_list, gid)
