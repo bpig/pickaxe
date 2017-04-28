@@ -4,6 +4,7 @@ from fea import *
 
 
 @need_dir(FEA_DATA)
+@need_dir(PARA_DATA + "norm")
 def normalize_fea(st_list, gid):
     mu = pd.Series.from_csv(MVN_DATA + "mu")
     delta = pd.Series.from_csv(MVN_DATA + "delta")
@@ -32,6 +33,7 @@ def normalize_fea(st_list, gid):
 @need_dir(MVN_DATA)
 @need_dir(PROC_DATA)
 @need_dir(FLAT_DATA)
+@need_dir(PARA_DATA + "mvn")
 def raw_fea(st_list, gid):
     mvn = MVN()
     for st_code in tqdm(st_list):
@@ -53,7 +55,6 @@ def raw_fea(st_list, gid):
 
 
 if __name__ == "__main__":
-    makedirs(PARA_DATA)
     phase, gid = sys.argv[1:]
     tgt = PARA_DATA + "st_list/%s" % gid
     st_list = pickle.load(open(tgt))

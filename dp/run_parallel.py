@@ -1,10 +1,9 @@
 from common import *
 
-
+@need_dir(PARA_DATA + "st_list")
 def split_list(par):
     st_list = get_total_st()
     step = (len(st_list) + par - 1) / par
-    makedirs(PARA_DATA + "st_list")
     for i in range(0, len(st_list), step):
         tgt = PARA_DATA + "st_list/%d" % (i / step)
         pickle.dump(st_list[i:i + step], open(tgt, "w"))
@@ -56,7 +55,7 @@ def col_mu_delta(par):
     mu.to_csv(MVN_DATA + "mu")
     delta.to_csv(MVN_DATA + "delta")
 
-
+@need_dir(TRAIN_DATA)
 def col_train_data(par):
     fea = []
     tgt = []
@@ -80,7 +79,6 @@ if __name__ == '__main__':
         exit(0)
 
     makedirs(PARA_DATA)
-    makedirs(TRAIN_DATA)
     par = int(sys.argv[1])
     split_list(par)
     with TimeLog("run raw"):

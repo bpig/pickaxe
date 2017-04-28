@@ -55,7 +55,10 @@ class TimeLog:
 def makedirs(dirname):
     if not os.path.exists(dirname):
         print "mkdir,", dirname
-        os.makedirs(dirname)
+        try: # parallel makedir
+            os.makedirs(dirname)
+        except:
+            pass
 
 
 def need_dir(dirname):
@@ -80,7 +83,7 @@ def get_total_st():
 
 def conn_sql():
     conn = pymysql.connect(
-        host='localhost',
+        host='11.251.215.153',
         port=3306,
         user='jxb',
         passwd='jxb',
@@ -99,12 +102,18 @@ def get_st_list(conn):
 
 def get_args(desc=""):
     parser = ArgumentParser(description=desc)
-    parser.add_argument("-d", dest="d", action="store_true", default=False,
-                        help="direct, no filter")
+    parser.add_argument("-d", dest="d", action="store_true", 
+                        default=False, help="direct, no filter")
     parser.add_argument("-c", dest="c", type=int, default=50,
                         help="ct")
     parser.add_argument("-g", dest="g", default="",
                         help="gpu id")
+    parser.add_argument("-m", dest="m", default="test",
+                        help="model dir")
+    parser.add_argument("-p", dest="p", default="",
+                        help="project")
+    parser.add_argument("-opt", dest="opt", default="adam",
+                        help="adam")
     args = parser.parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.g
     return args

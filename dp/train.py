@@ -37,12 +37,12 @@ def loadModel(model_dir, model_file="weight.hdf5"):
     return model
 
 
-def train(model="test"):
+def train(args):
     datafile = "train_data/"
     data = read_data(datafile)
 
-    print "model={m}, data={d}".format(d=datafile, m=model)
-    model_dir = "model/" + model + "/"
+    print "model={m}, data={d}".format(d=datafile, m=args.m)
+    model_dir = "model/" + args.m + "/"
     makedirs(model_dir)
 
     if False:
@@ -51,7 +51,7 @@ def train(model="test"):
         model = makeModel(model_dir, len(data.fea[0]))
 
     gamma = 0.6
-    n_epochs = [100]
+    n_epochs = [10, 10]
     lr = 0.001
     batch_size = 1024
 
@@ -67,16 +67,16 @@ def train(model="test"):
         return learning_rate
 
     scheduler = LearningRateScheduler(lr_scheduler)
-    # model.compile(loss='binary_crossentropy',
-    #               optimizer=Adam(lr=lr),
-    #               metrics=['accuracy'])
-    model.compile(loss='mse',
-                  optimizer=Adam(lr=lr))
-    # metrics=['mae'])
+    if args.opt == "adam":
+        optimizer = Adam(lr=lr)
+    else:
+        optimizer = SGD(lr=lr)
+    model.compile(loss='mse', optimizer=optimizer)
 
     filepath = model_dir + "/e{epoch:d}.hdf5"
-    checkpoint = ModelCheckpoint(filepath, monitor='mse',
-                                 verbose=1, save_best_only=False, mode='auto')
+    checkpoint = ModelCheckpoint(
+        filepath, monitor='mse',
+        verbose=1, save_best_only=False, mode='auto')
     callbacks_list = [scheduler, checkpoint]
 
     history = model.fit(data.fea, data.tgt, batch_size=batch_size,
@@ -97,5 +97,5 @@ def train(model="test"):
 
 
 if __name__ == '__main__':
-    get_args()
-    train("test")
+    args = get_args()
+    train(args)
