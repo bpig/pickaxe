@@ -36,7 +36,6 @@ def normalize_fea():
 @need_dir(FLAT_DATA)
 def raw_fea():
     st_list = get_total_st()
-    st_list = os.listdir(FLAT_DATA)
     mvn = MVN()
     for st_code in tqdm(st_list):
         df = pd.read_csv(BASIC_DATA + st_code)
@@ -59,4 +58,4 @@ def raw_fea():
 
 if __name__ == "__main__":
     raw_fea()
-#    normalize_fea()
+# normalize_fea()
