@@ -9,7 +9,7 @@ from keras.models import model_from_json
 from feeder import read_data
 
 
-def makeModel(model_dir, input_dim):
+def make_model(model_dir, input_dim):
     model = Sequential()
     model.add(Dense(1024, input_dim=input_dim, activation="sigmoid"))
     model.add(Dropout(0.3))
@@ -26,7 +26,7 @@ def makeModel(model_dir, input_dim):
     return model
 
 
-def loadModel(model_dir, model_file="weight.hdf5"):
+def load_model(model_dir, model_file="weight.hdf5"):
     model_path = model_dir + "/model.json"
     with open(model_path, 'r') as f:
         model_json = f.read()
@@ -46,9 +46,9 @@ def train(args):
     makedirs(model_dir)
 
     if False:
-        model = loadModel(model_dir)
+        model = load_model(model_dir)
     else:
-        model = makeModel(model_dir, len(data.fea[0]))
+        model = make_model(model_dir, len(data.fea[0]))
 
     gamma = 0.6
     n_epochs = [10, 10]

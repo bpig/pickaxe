@@ -1,5 +1,6 @@
 from common import *
 
+
 @need_dir(PARA_DATA + "st_list")
 def split_list(par):
     st_list = get_total_st()
@@ -10,7 +11,7 @@ def split_list(par):
 
 
 def run_parallel(par, phase):
-    cmd = "parallel  ./fea_parallel.py %s :::" % phase
+    cmd = "parallel  ./fea_wrap.py %s :::" % phase
     for i in range(par):
         cmd += " %d" % i
     os.system(cmd)
@@ -55,17 +56,23 @@ def col_mu_delta(par):
     mu.to_csv(MVN_DATA + "mu")
     delta.to_csv(MVN_DATA + "delta")
 
+
 @need_dir(TRAIN_DATA)
 def col_train_data(par):
     fea = []
     tgt = []
+    key = []
     for n in range(par):
+        block_key = np.load(PARA_DATA + "norm/key%d.npy" % n)
         block_fea = np.load(PARA_DATA + "norm/fea%d.npy" % n)
         block_tgt = np.load(PARA_DATA + "norm/tgt%d.npy" % n)
+        key += [block_key]
         fea += [block_fea]
         tgt += [block_tgt]
+    key = np.concatenate(key)
     fea = np.concatenate(fea)
     tgt = np.concatenate(tgt)
+    np.save(TRAIN_DATA + "key", key)
     np.save(TRAIN_DATA + "fea", fea)
     np.save(TRAIN_DATA + "tgt", tgt)
 
@@ -74,7 +81,7 @@ if __name__ == '__main__':
     if sys.argv[1] == "clean":
         with TimeLog("clean"):
             os.system("rm -rf %s %s %s %s %s" % (
-                PARA_DATA, PROC_DATA, MVN_DATA, 
+                PARA_DATA, PROC_DATA, MVN_DATA,
                 FLAT_DATA, FEA_DATA))
         exit(0)
 

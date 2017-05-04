@@ -8,6 +8,8 @@ from fea import *
 def normalize_fea(st_list, gid):
     mu = pd.Series.from_csv(MVN_DATA + "mu")
     delta = pd.Series.from_csv(MVN_DATA + "delta")
+    mu.drop("dt", inplace=True)
+    delta.drop("dt", inplace=True)
     df = None
     for st_code in tqdm(st_list):
         try:
@@ -18,12 +20,16 @@ def normalize_fea(st_list, gid):
             continue
         st = (st - mu) / delta
         st.to_csv(FEA_DATA + st_code, index=False)
+        st['dt'] = st_code + '_' + st['dt']
         if df is None:
             df = st
         else:
             df = df.append(st, ignore_index=True)
 
-    fea = df[df.columns[:-1]].as_matrix().astype(np.float32)
+    key = df[df.columns[:-2]].as_matrix().astype(np.float32)
+    np.save(PARA_DATA + "norm/key%s.npy" % gid, key)
+
+    fea = df[df.columns[:-2]].as_matrix().astype(np.float32)
     np.save(PARA_DATA + "norm/fea%s.npy" % gid, fea)
 
     tgt = df[df.columns[-1]].as_matrix().reshape(-1, 1).astype(np.float32)

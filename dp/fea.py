@@ -78,12 +78,12 @@ def proc_fea(df):
     sell = df.e[1:].reset_index(drop=True)
     df["tgt"] = sell / buy
 
-    wins = [2, 3, 5, 7, 15]
+    wins = [2, 3, 5, 7, 10, 15, 20]
     for win in wins:
         for col in ["s", "h", "l", "e", "ft", "m", "v"]:
             df[col + `win`] = pd.Series.rolling(df[col], window=win).mean()
             df[col + `win`] = pd.Series.rolling(df[col], window=win).std()
-    df.drop(["st", "t", "dt"], axis=1, inplace=True)
+    df.drop(["st", "t"], axis=1, inplace=True)
 
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df.dropna(inplace=True)
@@ -98,13 +98,14 @@ def flat_fea(df):
     for row in range(0, len(df) - L + 1):
         fea = []
         for col in df.columns:
-            if col == "tgt":
+            if col == "tgt" or col == "dt":
                 continue
             if row == 0:
                 columns += [col + "_" + `_` for _ in range(L)]
             fea += list(df[col][row: row + L])
         if row == 0:
-            columns += ["tgt"]
+            columns += ["dt", "tgt"]
+        fea += [df["dt"][row]]
         fea += [df["tgt"][row]]
         ans += [fea]
     df = pd.DataFrame(ans, columns=columns)
