@@ -8,8 +8,8 @@ from fea import *
 def normalize_fea(st_list, gid):
     mu = pd.Series.from_csv(MVN_DATA + "mu")
     delta = pd.Series.from_csv(MVN_DATA + "delta")
-    mu.drop("dt", inplace=True)
-    delta.drop("dt", inplace=True)
+    mu["dt"] = 0
+    delta["dt"] = 1
     df = None
     for st_code in tqdm(st_list):
         try:
@@ -20,20 +20,22 @@ def normalize_fea(st_list, gid):
             continue
         st = (st - mu) / delta
         st.to_csv(FEA_DATA + st_code, index=False)
-        st['dt'] = st_code + '_' + st['dt']
+        st['dt'] = st_code + '_' + st['dt'].astype(np.int).astype(np.str)
         if df is None:
             df = st
         else:
             df = df.append(st, ignore_index=True)
 
-    key = df[df.columns[:-2]].as_matrix().astype(np.float32)
+    key = df["dt"].as_matrix()
     np.save(PARA_DATA + "norm/key%s.npy" % gid, key)
 
-    fea = df[df.columns[:-2]].as_matrix().astype(np.float32)
+    tgt = df["tgt"].as_matrix().reshape(-1, 1).astype(np.float32)
+    np.save(PARA_DATA + "norm/tgt%s.npy" % gid, tgt)
+
+    df.drop(["dt", "tgt"], axis=1, inplace=True)
+    fea = df.as_matrix().astype(np.float32)
     np.save(PARA_DATA + "norm/fea%s.npy" % gid, fea)
 
-    tgt = df[df.columns[-1]].as_matrix().reshape(-1, 1).astype(np.float32)
-    np.save(PARA_DATA + "norm/tgt%s.npy" % gid, tgt)
 
 
 @need_dir(MVN_DATA)
