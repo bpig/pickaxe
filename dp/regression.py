@@ -28,6 +28,8 @@ def gain(predictFile):
         increase, count = 0, 0
         ds = record[0]
         for i in range(1, len(record)):
+            if count == 3:
+                break
             buySt = record[i]
             stock = stocks['st' == buySt]
             stock.sort_values('dt', asecending=True, inplace=True)
@@ -56,7 +58,5 @@ def gain(predictFile):
         total = sum(money)
         return total
 
-
-
 if __name__ == "__main__":
-    gain("../data/predict.txt")
+    print gain("../data/predict.txt")
