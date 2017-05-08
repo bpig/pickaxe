@@ -65,10 +65,20 @@ def base_data(datafile):
     return keys, feas, tgts
 
 
-def read_data(datafile):
+def read_data(datafile, begin, end):
     print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile)
+
     ct = len(tgts)
+    index = np.asarray([True] * ct)
+    for c, (k, d) in enumerate(keys):
+        if d < begin or d > end:
+            index[c] = False
+
+    keys = keys[index]
+    tgts = tgts[index]
+    feas = feas[index]
+
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype

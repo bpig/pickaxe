@@ -38,10 +38,12 @@ def load_model(model_dir, model_file="weight.hdf5"):
 
 
 def train(args):
-    datafile = "train_data/"
-    data = read_data(datafile)
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[args.v]
+        begin, end = map(int, cfg["train"].split("-"))
+    data = read_data(cfg.data, begin, end)
 
-    print "model={m}, data={d}".format(d=datafile, m=args.m)
+    print "model={m}, data={d}".format(d=cfg.data, m=args.m)
     model_dir = "model/" + args.m + "/"
     makedirs(model_dir)
 
@@ -79,15 +81,9 @@ def train(args):
         verbose=1, save_best_only=False, mode='auto')
     callbacks_list = [scheduler, checkpoint]
 
-    history = model.fit(data.fea, data.tgt, batch_size=batch_size,
-                        validation_split=0.1,
-                        nb_epoch=sum(n_epochs), callbacks=callbacks_list)
-
-    # for i in zip(history.epoch, history.history['loss'], history.history['mae'],
-    #              history.history['val_loss'], history.history['val_mae']):
-    #     value = "epoch=%d, loss=%f, mae=%f, val_loss=%f, val_mae=%f" % i
-    #     print value
-
+    model.fit(data.fea, data.tgt, batch_size=batch_size,
+              validation_split=0.1,
+              nb_epoch=sum(n_epochs), callbacks=callbacks_list)
     print 'saving...'
     weightPath = model_dir + '/weight.hdf5'
     model.save_weights(weightPath, overwrite=True)

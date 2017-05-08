@@ -4,32 +4,25 @@ from feeder import read_data
 from train import load_model
 from operator import itemgetter
 
-def gen_ans(pred, predSet, fout):
-    ans = zip(predSet.key, pred, predSet.tgt)
+
+def gen_ans(pred, data, fout):
+    ans = zip(data.key, pred, data.tgt)
     ans = sorted(ans, key=itemgetter(2), reverse=True)[:10]
 
     for i in ans:
         print i[0][0], i[0][1], i[1][0], i[2][0]
 
-    
-    # fout = open(fout, "w")
-    # for ds in sorted(ans.keys()):
-    #     st = ans[ds]
-    #     st = sorted(st, key=lambda x: x[1], reverse=True)
-    #     st = map(lambda (x, y, z): (x, str(y), str(z)), st)
-    #     st = map(lambda x: "_".join(x), st)
-    #     fout.write(ds + "," + ",".join(st) + "\n")
-
 
 def predict(args):
     makedirs("ans")
-    datafile = "train_data/"
-    fout = "ans/" + args.m
-    predSet = read_data(datafile)
+    with open("conf/fea.yaml") as fin:
+        cfg = yaml.load(fin)[args.v]
+        begin, end = map(int, cfg["test"].split("-"))
+    data = read_data(cfg.data, begin, end)
     model = load_model("model/" + args.m)
 
-    pred = model.predict(predSet.fea, batch_size=1024, verbose=1)
-    gen_ans(pred, predSet, fout)
+    pred = model.predict(data.fea, batch_size=1024, verbose=1)
+    gen_ans(pred, data, "ans/" + args.m)
     K.clear_session()
 
 

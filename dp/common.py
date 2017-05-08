@@ -11,6 +11,7 @@ from StringIO import StringIO
 import collections
 import cPickle as pickle
 from argparse import ArgumentParser
+import yaml
 
 pd.options.mode.chained_assignment = None
 
@@ -55,7 +56,7 @@ class TimeLog:
 def makedirs(dirname):
     if not os.path.exists(dirname):
         print "mkdir,", dirname
-        try: # parallel makedir
+        try:  # parallel makedir
             os.makedirs(dirname)
         except:
             pass
@@ -102,8 +103,8 @@ def get_st_list(conn):
 
 def get_args(desc=""):
     parser = ArgumentParser(description=desc)
-    parser.add_argument("-d", dest="d", action="store_true", 
-                        default=False, help="direct, no filter")
+    parser.add_argument("-v", dest="v", default="", require=True,
+                        help="fea version")
     parser.add_argument("-c", dest="c", type=int, default=50,
                         help="ct")
     parser.add_argument("-g", dest="g", default="",
