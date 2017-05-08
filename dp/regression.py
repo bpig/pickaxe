@@ -12,26 +12,49 @@ def get_data(start_date, end_date):
 
     assert len(df.columns) == len(COL)
     df.rename(columns=COL, inplace=True)
-    df = df[df.m != 0]
-    df.reset_index(drop=True, inplace=True)
 
     return df
+
 
 def gain(predictFile):
     predict = pd.read_csv(predictFile)
     ds = predict['ds'].values
     stocks = get_data(min(ds), max(ds))
 
-    for record in predict.values:
+    money = [0.5, 0.5]
+
+    for i, record in enumerate(predict.values):
+        flag = i % 2
+        increase, count = 0, 0
         ds = record[0]
         for i in range(1, len(record)):
             buySt = record[i]
             stock = stocks['st' == buySt]
-            stock.sort_values('dt', asecending=False, inplace=True)
+            stock.sort_values('dt', asecending=True, inplace=True)
             info = stock.T.values
-            index = info[0].index(ds)
+            index = info[1].index(ds)
+            assert index > 0
+            if index + 1 >= len(info[1]):
+                print "warning: % no tomorrow data" %buySt
+                continue
+            if info[7][index+1]==0 :
+                print "warning: %s stop, 无法买入" % buySt
+                continue
+            buyPrice = float(info[5][index])
+            if float(info[4][index+1]) > buyPrice:
+                print "warning: %s too expensive to buy, 无法买入" % buySt
+                continue
+            sellPrice = float(info[5][index+1])
+            if float(info[3][index+2] < sellPrice):
+                sellPrice = float(info[5][index+2]) * 0.9
+            increase += sellPrice / buyPrice
+            count += 1
 
+        if count > 0:
+            money[flag] *= (increase / count - 0.0015)
 
+        total = sum(money)
+        return total
 
 
 
