@@ -31,8 +31,8 @@ def dump_data(conn, start_date, end_date):
 
         data = df[df.S_INFO_WINDCODE == st_code]
         if os.path.exists(tgt):
-            data = pd.DataFrame.from_csv(tgt)
-            data = data.append(data, ignore_index=True)
+            ori = pd.DataFrame.from_csv(tgt)
+            data = ori.append(data, ignore_index=True)
         if not data.empty:
             data.to_csv(tgt, index=False)
         else:
