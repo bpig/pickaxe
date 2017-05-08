@@ -7,7 +7,8 @@
 
 from common import *
 
-Datasets = collections.namedtuple('Datasets', ['fea', 'tgt'])
+Datasets = collections.namedtuple(
+    'Datasets', ['key', 'fea', 'tgt'])
 
 
 class DataSet(object):
@@ -56,19 +57,21 @@ class DataSet(object):
 def base_data(datafile):
     feafile = datafile + "fea.npy"
     tgtfile = datafile + "tgt.npy"
+    keyfile = datafile + "key.npy"
 
     feas = np.load(feafile)
     tgts = np.load(tgtfile)
-    return feas, tgts
+    keys = np.load(keyfile)
+    return keys, feas, tgts
 
 
 def read_data(datafile):
     print time.ctime(), "begin load data"
-    feas, tgts = base_data(datafile)
+    keys, feas, tgts = base_data(datafile)
     ct = len(tgts)
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     print "total", ct, "dim", len(feas[0]), tgts.dtype
 
     print time.ctime(), "finish load data"
-    return Datasets(fea=feas, tgt=tgts)
+    return Datasets(key=keys, fea=feas, tgt=tgts)
