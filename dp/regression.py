@@ -23,8 +23,8 @@ def gain(predictFile):
 
     money = [0.5, 0.5]
 
-    for i, record in enumerate(predict.values):
-        flag = i % 2
+    for n, record in enumerate(predict.values):
+        flag = n % 2
         increase, count = 0, 0
         ds = record[0]
         for i in range(1, len(record)):
