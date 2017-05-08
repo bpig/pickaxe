@@ -15,7 +15,6 @@ def get_data(start_date, end_date):
 
     return df
 
-
 def gain(predictFile):
     predict = pd.read_csv(predictFile)
     ds = predict['ds'].values
@@ -37,21 +36,21 @@ def gain(predictFile):
             index = info[1].index(ds)
             assert index > 0
             if index + 1 >= len(info[1]):
-                print "warning: % no tomorrow data" %buySt
+                print "warning: % no tomorrow data" % buySt
                 continue
-            if info[7][index+1]==0 :
+            if info[7][index + 1] == 0:
                 print "warning: %s stop, 无法买入" % buySt
                 continue
             buyPrice = float(info[5][index])
-            if float(info[4][index+1]) > buyPrice:
+            if float(info[4][index + 1]) > buyPrice:
                 print "warning: %s too expensive to buy, 无法买入" % buySt
                 continue
-            sellPrice = float(info[5][index+1])
-            if float(info[3][index+2] < sellPrice):
-                sellPrice = float(info[5][index+2]) * 0.9
+            sellPrice = float(info[5][index + 1])
+            if float(info[3][index + 2] < sellPrice):
+                sellPrice = float(info[5][index + 2]) * 0.9
             increase += sellPrice / buyPrice
             count += 1
-
+        
         if count > 0:
             money[flag] *= (increase / count - 0.0015)
 
