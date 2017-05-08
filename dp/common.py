@@ -103,7 +103,7 @@ def get_st_list(conn):
 
 def get_args(desc=""):
     parser = ArgumentParser(description=desc)
-    parser.add_argument("-v", dest="v", default="", require=True,
+    parser.add_argument("-v", dest="v", default="", required=True,
                         help="fea version")
     parser.add_argument("-c", dest="c", type=int, default=50,
                         help="ct")

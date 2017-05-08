@@ -18,7 +18,7 @@ def predict(args):
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[args.v]
         begin, end = map(int, cfg["test"].split("-"))
-    data = read_data(cfg.data, begin, end)
+    data = read_data(cfg["data"], begin, end)
     model = load_model("model/" + args.m)
 
     pred = model.predict(data.fea, batch_size=1024, verbose=1)

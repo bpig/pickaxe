@@ -54,6 +54,8 @@ def gen_status(rate):
 
 def proc_fea(df):
     df = df[df.m != 0]
+    df.drop(["st", "t"], axis=1, inplace=True)
+
     df.sort_values('dt', ascending=False, inplace=True)
     df.reset_index(drop=True, inplace=True)
 
@@ -67,23 +69,26 @@ def proc_fea(df):
     df["l_r"] = df.l / pe
     df["e_r"] = df.e / pe
 
-    df["sts"] = np.where(df.ft > 0, 1, 0).astype(np.int8)
+    df["sts"] = np.where(df.ft > 0, 1, 0)
 
-    df["s_sts"] = df.s_r.map(gen_status).astype(np.int8)
-    df["e_sts"] = df.e_r.map(gen_status).astype(np.int8)
-    df["l_sts"] = df.l_r.map(gen_status).astype(np.int8)
-    df["h_sts"] = df.h_r.map(gen_status).astype(np.int8)
+    df["s_sts"] = df.s_r.map(gen_status)
+    df["e_sts"] = df.e_r.map(gen_status)
+    df["l_sts"] = df.l_r.map(gen_status)
+    df["h_sts"] = df.h_r.map(gen_status)
 
-    buy = df.e[2:].reset_index(drop=True)
+    df.sort_values('dt', inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    wins = [2, 3, 5, 7, 10, 20]
+    for win in wins:
+        for col in ["s", "h", "l", "e", "ft", "m", "v"]:
+            stat = pd.Series.rolling(df[col], window=win)
+            df[col + `win` + "_mean"] = stat.mean()
+            df[col + `win` + "_std"] = stat.std()
+    buy = df.e
     sell = df.e[1:].reset_index(drop=True)
     df["tgt"] = sell / buy
 
-    wins = [2, 3, 5, 7, 10, 15, 20]
-    for win in wins:
-        for col in ["s", "h", "l", "e", "ft", "m", "v"]:
-            df[col + `win`] = pd.Series.rolling(df[col], window=win).mean()
-            df[col + `win`] = pd.Series.rolling(df[col], window=win).std()
-    df.drop(["st", "t"], axis=1, inplace=True)
+    df.sort_values('dt', ascending=False, inplace=True)
 
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df.dropna(inplace=True)

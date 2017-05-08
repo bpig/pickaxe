@@ -87,11 +87,11 @@ if __name__ == '__main__':
 
     makedirs(PARA_DATA)
     par = int(sys.argv[1])
-    # split_list(par)
-    # with TimeLog("run raw"):
-    #     run_parallel(par, "raw")
-    # with TimeLog("col mu delta"):
-    #     col_mu_delta(par)
+    split_list(par)
+    with TimeLog("run raw"):
+        run_parallel(par, "raw")
+    with TimeLog("col mu delta"):
+        col_mu_delta(par)
     with TimeLog("run norm"):
         run_parallel(par, "norm")
     with TimeLog("col train data"):

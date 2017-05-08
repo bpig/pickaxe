@@ -41,9 +41,9 @@ def train(args):
     with open("conf/fea.yaml") as fin:
         cfg = yaml.load(fin)[args.v]
         begin, end = map(int, cfg["train"].split("-"))
-    data = read_data(cfg.data, begin, end)
+    data = read_data(cfg["data"], begin, end)
 
-    print "model={m}, data={d}".format(d=cfg.data, m=args.m)
+    print "model={m}, data={d}".format(d=cfg["data"], m=args.m)
     model_dir = "model/" + args.m + "/"
     makedirs(model_dir)
 
@@ -53,7 +53,7 @@ def train(args):
         model = make_model(model_dir, len(data.fea[0]))
 
     gamma = 0.6
-    n_epochs = [10, 10]
+    n_epochs = [3,3]
     lr = 0.001
     batch_size = 1024
 
