@@ -6,15 +6,39 @@ from operator import itemgetter
 
 
 def gen_ans(pred, data, fout):
-    ans = zip(data.key, pred, data.tgt)
-    ans = sorted(ans, key=itemgetter(1), reverse=True)[:200]
     mu = 1.00086540657
     delta = 0.0320974639281
-    for i in ans:
-        if i[2][0] * delta + mu >= 1.099:
+
+    tgt = data.tgt * delta + mu
+    pred = pred * delta + mu
+
+    pred = pred.reshape(-1)
+    tgt = tgt.reshape(-1)
+
+    ans = zip(data.key, pred, tgt)
+    ans = sorted(ans, key=itemgetter(1), reverse=True)
+
+    data = defaultdict(list)
+    debug = defaultdict(list)
+    for ((k, ds), p, t) in ans:
+        if p < 1:
             continue
-        print i[0][0], i[0][1], 
-        print i[1][0] * delta + mu, i[2][0] * delta + mu
+        data[ds] += [k]
+        debug[ds] += ["%s_%.2f_%.2f" % (k, p, t)]
+    
+    pickle.dump(data, open(fout + ".pl", "w"))
+    
+    fout = open(fout, "w")
+    for ds in sorted(data.keys()):
+        fout.write(`ds` + "\n")
+        fout.write("\n".join(debug[ds][:10]))
+        fout.write("\n")
+
+    # fout = open(fout + ".debug", "w")
+    # for ds in sorted(data.keys()):
+    #     fout.write(`ds` + ",")
+    #     fout.write(",".join(data[ds]))
+    #     fout.write("\n")
 
 
 def predict(args):

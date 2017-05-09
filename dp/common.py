@@ -84,7 +84,8 @@ def get_total_st():
 
 def conn_sql():
     conn = pymysql.connect(
-        host='11.251.215.153',
+#        host='11.251.215.153',
+        host='localhost',
         port=3306,
         user='jxb',
         passwd='jxb',

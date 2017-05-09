@@ -1,61 +1,52 @@
+# coding:utf-8
 from common import *
 
-def get_data(start_date, end_date):
-    sql = "SELECT S_INFO_WINDCODE, TRADE_DT, S_DQ_ADJOPEN, S_DQ_ADJHIGHT, S_DQ_ADJLOW, S_DQ_ADJCLOSE, " \
-          + "S_DQ_VOLUME, S_DQ_AMOUNT, S_DQ_TURN, S_DQ_FREETURNOVER FROM ashareeeodprices " \
-          + "WHERE TRADE_DT>='%s' and TRADE_DT<='%s';" % (start_date, end_date)
-
-    conn = conn_sql()
-
-    with TimeLog('sql query,'):
-        df = pd.read_sql(sql, conn)
-
-    assert len(df.columns) == len(COL)
-    df.rename(columns=COL, inplace=True)
-
-    return df
-
 def gain(predictFile):
-    predict = pd.read_csv(predictFile)
-    ds = predict['ds'].values
-    stocks = get_data(min(ds), max(ds))
+    predict = pickle.load(open(predictFile))
+    ds = sorted(predict.keys())
 
     money = [0.5, 0.5]
 
-    for n, record in enumerate(predict.values):
+    for n, day in enumerate(ds):
         flag = n % 2
         increase, count = 0, 0
-        ds = record[0]
-        for i in range(1, len(record)):
+        for st_code in predict[day]:
             if count == 3:
                 break
-            buySt = record[i]
-            stock = stocks[stocks.st == buySt]
-            stock.sort_values('dt', asecending=True, inplace=True)
-            info = stock.T.values
-            index = info.index(ds)
-            assert index > 0
-            if index + 1 >= len(info[1]):
-                print "warning: % no tomorrow data" % buySt
+            tgt = BASIC_DATA + st_code
+            stock = pd.DataFrame.from_csv(tgt)
+            stock.rename(columns=COL, inplace=True)
+            stock.sort_values('dt', inplace=True)
+            stock.reset_index(drop=True, inplace=True)
+
+            idx = stock[stock.dt == day].index[0]
+
+            assert idx > 0
+            if idx + 2 >= stock.index.size:
+                # print "warning: %s no tomorrow data" % st_code
+                break
+            if stock.v[idx + 1] == 0:
+                print "warning: %s stop" % st_code
                 continue
-            if info[7][index + 1] == 0:
-                print "warning: %s stop, 无法买入" % buySt
+            buy = stock.e[idx]
+            if stock.l[idx + 1] > buy:
+                # print "warning: %s too expensive to buy" % st_code
                 continue
-            buyPrice = float(info[5][index])
-            if float(info[4][index + 1]) > buyPrice:
-                print "warning: %s too expensive to buy, 无法买入" % buySt
-                continue
-            sellPrice = float(info[5][index + 1])
-            if float(info[3][index + 2] < sellPrice):
-                sellPrice = float(info[5][index + 2]) * 0.9
-            increase += sellPrice / buyPrice
+            sell = stock.e[idx + 1]
+            # if stock.h[idx + 2] < sell:
+            #     sell = stock.l[idx + 2]
+            increase += sell / buy
             count += 1
+            print st_code, buy, sell, sell / buy
         
         if count > 0:
-            money[flag] *= (increase / count - 0.0015)
+            rate = increase / count - 0.0015
+            money[flag] *= rate
+            print day, rate
+            print
 
-        total = sum(money)
-        return total
+    total = sum(money)
+    return total
 
 if __name__ == "__main__":
-    print gain("../data/predict.txt")
+    print gain("ans/big20.pl")
