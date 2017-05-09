@@ -30,10 +30,10 @@ def gain(predictFile):
             if count == 3:
                 break
             buySt = record[i]
-            stock = stocks['st' == buySt]
+            stock = stocks[stocks.st == buySt]
             stock.sort_values('dt', asecending=True, inplace=True)
             info = stock.T.values
-            index = info[1].index(ds)
+            index = info.index(ds)
             assert index > 0
             if index + 1 >= len(info[1]):
                 print "warning: % no tomorrow data" % buySt

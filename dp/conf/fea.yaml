@@ -6,8 +6,14 @@ v0:
 
 
 v1:
-  data: train_data_2010_2016/
+  data: train_data/
   train: 20100101-20160800
+  test: 20160801-20161230
+  predict: 20161100-20170000
+
+v2:
+  data: train_data/
+  train: 20100101-20100230
   test: 20160801-20161230
   predict: 20161100-20170000
 

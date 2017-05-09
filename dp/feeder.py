@@ -66,29 +66,20 @@ def base_data(datafile):
 
 
 def read_data(datafile, begin, end):
-    print time.ctime(), "begin load data"
     keys, feas, tgts = base_data(datafile)
 
-    ct = len(tgts)
-    index = np.asarray([True] * ct)
-    v = set()
-    for c, (k, d) in enumerate(keys):
-        if d < begin or d > end:
-            index[c] = False
-        else:
-            v.add(d)
-            
+    ds = keys[:, 1]
+    index = (ds >= begin) & (ds <= end)
     keys = keys[index]
     tgts = tgts[index]
     feas = feas[index]
     ct = len(tgts)
-    print sorted(v, reverse=True)
+    # print sorted(v, reverse=True)
 
     tgts = tgts.astype(np.float32)
     feas = feas.astype(np.float32)
     print "total", ct, ", dim", len(feas[0])
 
-    print time.ctime(), "finish load data"
     return Datasets(key=keys, fea=feas, tgt=tgts)
 
 
