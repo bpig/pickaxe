@@ -5,10 +5,11 @@ def gain(predictFile):
     predict = pickle.load(open(predictFile))
     ds = sorted(predict.keys())
 
-    money = [0.5, 0.5]
+    #money = [0.5, 0.5]
+    money = 1
 
     for n, day in enumerate(ds):
-        flag = n % 2
+        #flag = n % 2
         increase, count = 0, 0
         for st_code in predict[day]:
             if count == 3:
@@ -28,11 +29,11 @@ def gain(predictFile):
             if stock.v[idx + 1] == 0:
                 print "warning: %s stop" % st_code
                 continue
-            buy = stock.e[idx]
-            if stock.l[idx + 1] > buy:
-                # print "warning: %s too expensive to buy" % st_code
-                continue
-            sell = stock.e[idx + 1]
+            buy = stock.e[idx + 1]
+            # if stock.l[idx + 1] > buy:
+            #     # print "warning: %s too expensive to buy" % st_code
+            #     continue
+            sell = stock.s[idx + 2]
             # if stock.h[idx + 2] < sell:
             #     sell = stock.l[idx + 2]
             increase += sell / buy
@@ -41,7 +42,8 @@ def gain(predictFile):
         
         if count > 0:
             rate = increase / count - 0.0015
-            money[flag] *= rate
+         #   money[flag] *= rate
+            money *= rate
             print day, rate
             print
 
