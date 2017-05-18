@@ -1,19 +1,25 @@
-v0:
-  data: train_data/
-  train: 20161010-20161223
-  test: 20161226-20161230
-  predict: 20161100-20170000
+p0:
+  data: train_data_class/
+  train: 20160101-20161231
+  test: 20170100-20170530
+
+p3:
+  data: train_data_class/
+  train: 20100101-20161231
+  test: 20170100-20170530
 
 
-v1:
-  data: train_data/
-  train: 20100101-20160800
-  test: 20160801-20161230
-  predict: 20161100-20170000
+p1:
+  data: train_data_2010_20170509/
+  train: 20100101-20161231
+  test: 20170100-20170530
 
-v2:
-  data: train_data/
-  train: 20100101-20100230
-  test: 20160801-20161230
-  predict: 20161100-20170000
+p2:
+  data: train_data_2010_20170509/
+  train: 20140101-20161231
+  test: 20170100-20170530
 
+p4:
+  data: train_data_5d_tgt/
+  train: 20100101-20161231
+  test: 20170100-20170530

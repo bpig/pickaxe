@@ -84,11 +84,10 @@ def proc_fea(df):
             stat = pd.Series.rolling(df[col], window=win)
             df[col + `win` + "_mean"] = stat.mean()
             df[col + `win` + "_std"] = stat.std()
-    buy = df.e
-    sell = df.e[1:].reset_index(drop=True)
-    df["tgt"] = sell / buy
 
     df.sort_values('dt', ascending=False, inplace=True)
+
+    df["tgt"] = pd.Series.rolling(df.e, window=5).max().shift(2) / df.h.shift(1)
 
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df.dropna(inplace=True)

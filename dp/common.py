@@ -104,16 +104,14 @@ def get_st_list(conn):
 
 def get_args(desc=""):
     parser = ArgumentParser(description=desc)
-    parser.add_argument("-v", dest="v", default="", required=True,
-                        help="fea version")
+    parser.add_argument("-p", dest="p", default="", required=True,
+                        help="project")
     parser.add_argument("-c", dest="c", type=int, default=50,
                         help="ct")
     parser.add_argument("-g", dest="g", default="",
                         help="gpu id")
-    parser.add_argument("-m", dest="m", default="test",
+    parser.add_argument("-m", dest="m", default="",
                         help="model dir")
-    parser.add_argument("-p", dest="p", default="",
-                        help="project")
     parser.add_argument("-opt", dest="opt", default="adam",
                         help="adam")
     args = parser.parse_args()

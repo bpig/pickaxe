@@ -39,6 +39,9 @@ def raw_fea():
     mvn = MVN()
     for st_code in tqdm(st_list):
         df = pd.read_csv(BASIC_DATA + st_code)
+        df.sort_values('TRADE_DT', inplace=True)
+        df.to_csv(st_code)
+        break
         assert len(df.columns) == len(COL)
         df.rename(columns=COL, inplace=True)
 

@@ -6,8 +6,8 @@ from operator import itemgetter
 
 
 def gen_ans(pred, data, fout):
-    mu = 1.00086540657
-    delta = 0.0320974639281
+    mu = 1.03372599616
+    delta = 0.059838518055
 
     tgt = data.tgt * delta + mu
     pred = pred * delta + mu
@@ -21,10 +21,8 @@ def gen_ans(pred, data, fout):
     data = defaultdict(list)
     debug = defaultdict(list)
     for ((k, ds), p, t) in ans:
-        if p < 1:
-            continue
         data[ds] += [k]
-        debug[ds] += ["%s_%.2f_%.2f" % (k, p, t)]
+        debug[ds] += ["%s_%.3f_%.3f" % (k, p, t)]
     
     pickle.dump(data, open(fout + ".pl", "w"))
     
@@ -44,11 +42,13 @@ def gen_ans(pred, data, fout):
 def predict(args):
     makedirs("ans")
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[args.v]
+        cfg = yaml.load(fin)[args.p]
         begin, end = map(int, cfg["test"].split("-"))
     with TimeLog("load data"):
         data = read_data(cfg["data"], begin, end)
-    model = load_model("model/" + args.m)
+    if not args.m:
+        args.m = args.p
+    model = load_model("model/" + args.m) #, model_file="e3.hdf5")
 
     pred = model.predict(data.fea, batch_size=1024, verbose=1)
     gen_ans(pred, data, "ans/" + args.m)

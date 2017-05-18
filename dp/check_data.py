@@ -17,8 +17,16 @@ def check(f):
     print "nan count", np.sum(np.isnan(n))
 
 if __name__ == "__main__":
-    status(TRAIN_DATA + "tgt.npy")
-    status(TRAIN_DATA + "fea.npy")
+    tgt = "train_data_class/tgt.npy"
+    n = np.load(tgt)
+    n = n * 0.152962158165 + 0.0239720825733
+    n = n.astype(np.int32)
+    print len(n)
+    print n[:5]
+    print sum(n)
+    print n.mean()
+    # status(TRAIN_DATA + "tgt.npy")
+    # status(TRAIN_DATA + "fea.npy")
     # status(MVN_DATA + "mu.npy")
     # status(MVN_DATA + "delta.npy")
     # status(PARA_DATA + "fea0.npy")

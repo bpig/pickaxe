@@ -74,9 +74,16 @@ def read_data(datafile, begin, end):
     tgts = tgts[index]
     feas = feas[index]
     ct = len(tgts)
-    # print sorted(v, reverse=True)
 
     tgts = tgts.astype(np.float32)
+    # mu = 1.03372599616
+    # delta = 0.059838518055
+    # tgts = tgts * delta + mu
+    # tmp = tgts.astype(np.int32)
+    # tgts = np.zeros((ct, 2))
+    # for i in range(ct):
+    #     tgts[i, tmp[i, 0]] = 1
+
     feas = feas.astype(np.float32)
     print "total", ct, ", dim", len(feas[0])
 

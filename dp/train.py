@@ -50,11 +50,15 @@ def load_model(model_dir, model_file="weight.hdf5"):
 
 def train(args):
     with open("conf/fea.yaml") as fin:
-        cfg = yaml.load(fin)[args.v]
+        cfg = yaml.load(fin)[args.p]
         begin, end = map(int, cfg["train"].split("-"))
     with TimeLog("load data"):
         data = read_data(cfg["data"], begin, end)
 
+    if not args.m:
+        args.m = args.p
+    else:
+        args.m = args.p + "_" + args.m
     print "model={m}, data={d}".format(d=cfg["data"], m=args.m)
     model_dir = "model/" + args.m + "/"
     makedirs(model_dir)
@@ -85,6 +89,7 @@ def train(args):
         optimizer = Adam(lr=lr)
     else:
         optimizer = SGD(lr=lr)
+    # model.compile(loss='binary_crossentropy', optimizer=optimizer)
     model.compile(loss='mse', optimizer=optimizer)
 
     filepath = model_dir + "/e{epoch:d}.hdf5"
